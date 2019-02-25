@@ -10,5 +10,26 @@
 
   <description>Homework for https://otus.ru/ Spring Developer course</description>
 
+  <properties>
+    <java.version>1.8</java.version>
+    <encoding>UTF-8</encoding>
+
+    <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    
+    <spring.version>5.1.5.RELEASE</spring.version>
+  </properties>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+  </dependencies>
+
 
 </project>
