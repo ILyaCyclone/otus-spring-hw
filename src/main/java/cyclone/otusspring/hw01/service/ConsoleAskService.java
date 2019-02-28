@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class ConsoleAskService implements AskService {
-    private Scanner scanner;
+    private final Scanner scanner;
 
     public ConsoleAskService() {
         scanner = new Scanner(System.in);
@@ -34,9 +34,7 @@ public class ConsoleAskService implements AskService {
                 .map(question -> {
                     System.out.println(question.getText());
                     AtomicInteger variantIndex = new AtomicInteger(0);
-                    question.getVariants().stream().forEach(variant -> {
-                        System.out.println(variantIndex.getAndAdd(1) + 1 + ". " + variant);
-                    });
+                    question.getVariants().forEach(variant -> System.out.println(variantIndex.getAndAdd(1) + 1 + ". " + variant));
                     int answerNumber = readInt(scanner, "Choose answer:");
                     System.out.println();
                     return new Answer(question, question.getVariants().get(answerNumber - 1));

@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Question {
-    private String text;
-    private String correctAnswer;
-    private List<String> variants;
+    private final String text;
+    private final String correctAnswer;
+    private final List<String> variants;
 
     public Question(String text, String correctAnswer, String... variants) {
         this.text = text;

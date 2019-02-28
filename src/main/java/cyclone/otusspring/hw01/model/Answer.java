@@ -1,8 +1,8 @@
 package cyclone.otusspring.hw01.model;
 
 public class Answer {
-    private Question question;
-    private String text;
+    private final Question question;
+    private final String text;
 
     public Answer(Question question, String text) {
         this.question = question;

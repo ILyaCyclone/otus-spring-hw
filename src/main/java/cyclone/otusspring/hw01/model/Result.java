@@ -1,8 +1,8 @@
 package cyclone.otusspring.hw01.model;
 
 public class Result {
-    private int total;
-    private int correct;
+    private final int total;
+    private final int correct;
 
     public Result(int total, int correct) {
         this.total = total;

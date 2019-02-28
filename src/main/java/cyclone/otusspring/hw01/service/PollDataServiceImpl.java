@@ -9,7 +9,7 @@ import java.util.List;
 
 public class PollDataServiceImpl implements PollDataService {
 
-    private PollDao pollDao;
+    private final PollDao pollDao;
 
     public PollDataServiceImpl(PollDao pollDao) {
         this.pollDao = pollDao;

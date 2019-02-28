@@ -17,7 +17,7 @@ public class CsvPollDao implements PollDao {
     private static final String CSV_SEPARATOR = ",";
     private static final String SCV_FILE_PATH = "/poll.csv";
 
-    private List<Question> questions;
+    private final List<Question> questions;
 
     public CsvPollDao() {
         // csv file is in classpath and shouldn't change on runtime, so read it right away
