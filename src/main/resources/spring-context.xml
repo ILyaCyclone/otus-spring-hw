@@ -4,14 +4,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <bean id="personService" class="cyclone.otusspring.hw01.PollServiceImpl" />
+  <bean class="cyclone.otusspring.hw01.service.PollDataServiceImpl">
+    <constructor-arg ref="pollDao"/>
+  </bean>
+  <bean id="askService" class="cyclone.otusspring.hw01.service.ConsoleAskService" />
 
 
-  <!--<bean id="personDao" class="ru.otus.spring01.dao.PersonDaoSimple"/>-->
-
-
-  <!--<bean id="personService" class="ru.otus.spring01.service.PersonServiceImpl">-->
-    <!--<constructor-arg name="dao" ref="personDao"/>-->
-  <!--</bean>-->
+  <bean id="pollDao" class="cyclone.otusspring.hw01.dao.CsvPollDao" />
 
 </beans>

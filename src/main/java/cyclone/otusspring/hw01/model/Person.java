@@ -1,4 +1,4 @@
-package cyclone.otusspring.hw01;
+package cyclone.otusspring.hw01.model;
 
 public class Person {
     private String firstName;
