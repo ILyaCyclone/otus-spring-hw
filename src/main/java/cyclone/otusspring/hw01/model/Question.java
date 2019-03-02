@@ -34,4 +34,13 @@ public class Question {
             throw new RuntimeException("Question \"" + text + "\" answer variants do not contain correct answer");
         }
     }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "text='" + text + '\'' +
+                ", correctAnswer='" + correctAnswer + '\'' +
+                ", variants=" + variants +
+                '}';
+    }
 }

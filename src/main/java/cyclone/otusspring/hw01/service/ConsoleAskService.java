@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
 public class ConsoleAskService implements AskService {
     private final Scanner scanner;
 
+    static final String ASK_FIRST_NAME = "Your first name: ";
+    static final String ASK_LAST_NAME = "Your last name: ";
+    static final String ASK_AGE = "Your age: ";
+
     public ConsoleAskService() {
         scanner = new Scanner(System.in);
     }
@@ -20,9 +24,9 @@ public class ConsoleAskService implements AskService {
 
     public Person preparePerson() {
         System.out.println("Please, tell us about yourself.");
-        String firstName = readString(scanner, "Your first name: ");
-        String lastName = readString(scanner, "Your last name: ");
-        int age = readInt(scanner, "Your age: ");
+        String firstName = readString(ASK_FIRST_NAME);
+        String lastName = readString(ASK_LAST_NAME);
+        int age = readInt(ASK_AGE);
         System.out.println("Nice to meet you, "+firstName+".\n");
 
         return new Person(firstName, lastName, age);
@@ -33,25 +37,26 @@ public class ConsoleAskService implements AskService {
         return questions.stream()
                 .map(question -> {
                     System.out.println(question.getText());
-                    AtomicInteger variantIndex = new AtomicInteger(0);
-                    question.getVariants().forEach(variant -> System.out.println(variantIndex.getAndAdd(1) + 1 + ". " + variant));
-                    int answerNumber = readInt(scanner, "Choose answer:");
+                    AtomicInteger variantIndex = new AtomicInteger(1);
+                    question.getVariants().forEach(variant -> System.out.println(variantIndex.getAndAdd(1) + ". " + variant));
+                    int answerNumber = readInt("Choose answer:");
                     System.out.println();
-                    return new Answer(question, question.getVariants().get(answerNumber - 1));
+                    String chosenVariant = question.getVariants().get(answerNumber - 1);
+                    return new Answer(question, chosenVariant);
                 })
                 .collect(Collectors.toList());
     }
 
-    private String readString(Scanner scanner, String question) {
+    String readString(String question) {
         System.out.print(ensureEndsWithSpace(question));
         return scanner.nextLine();
     }
 
 
-    private int readInt(Scanner scanner, String question) {
+    int readInt(String question) {
         System.out.print(ensureEndsWithSpace(question));
         int scannedInt = scanner.nextInt();
-        scanner.nextLine(); // new line character
+        scanner.nextLine(); // this consumes new line character left after entering a number
         return scannedInt;
     }
 
