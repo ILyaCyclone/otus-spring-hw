@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,6 +22,12 @@ class ConsoleAskServiceTest {
 
     @BeforeEach
     void setUp() {
+        // suppress System.out
+        System.setOut(new PrintStream(new OutputStream() {
+            public void write(int b) {
+                // NO-OP
+            }
+        }));
     }
 
     @Test
@@ -47,7 +55,6 @@ class ConsoleAskServiceTest {
 
     @Test
     void testAskQuestions() {
-
         final String[] variants = {"aa", "bb", "cc"};
 
         List<Question> questions = Arrays.asList(new Question("q1", variants[0], variants)
