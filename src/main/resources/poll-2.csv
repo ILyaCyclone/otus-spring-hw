@@ -1,0 +1,7 @@
+--question text (escape separator with \, if needed), correct answer, answer variants...
+Alt question 1?|aa|aa|bb|cc|dd
+Alt question 2\| containing pipe?|bb|aa|bb|cc|dd
+Alt question 3?|cc|aa|bb|cc|dd
+Alt question 4?|dd|aa|bb|cc|dd
+Alt question 5?|aa|aa|bb|cc|dd
+Alt question 6?|aa|aa|bb|cc|dd

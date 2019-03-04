@@ -10,19 +10,31 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Get poll data from CSV file with provided {@code filename}.
+ * By default CSV separator is "," symbol and lines starting with "#" are treated as comments.
+ * Customize this behavior using constructor with additional {@code csvSeparator} and {@code csvComment} parameters.
+ * Separator may be escaped using "\" symbol.
+ */
 public class CsvPollDao implements PollDao {
-    private static final String CSV_SEPARATOR = ",";
-    private static final String CSV_COMMENT = "#";
-    private static final String CSV_FILE_PATH = "/poll.csv";
+    private String csvSeparator = ",";
+    private String csvComment = "#";
 
     private final List<Question> questions;
 
-    public CsvPollDao() {
+    public CsvPollDao(String filename) {
         // csv file is in classpath and shouldn't change on runtime, so read it right away
-        this.questions = readCsvQuestions(CSV_FILE_PATH);
+        this.questions = readCsvQuestions(filename);
+    }
+
+    public CsvPollDao(String filename, String csvSeparator, String csvComment) {
+        this.csvSeparator = csvSeparator;
+        this.csvComment = csvComment;
+        this.questions = readCsvQuestions(filename);
     }
 
     public List<Question> getQuestions() {
@@ -33,10 +45,11 @@ public class CsvPollDao implements PollDao {
         URL pollFileURL = ConsolePollMain.class.getResource(filename);
         try (Stream<String> stream = Files.lines(Paths.get(pollFileURL.toURI()))) {
             return stream
-                    .filter(line -> !line.startsWith(CSV_COMMENT)) // skip comments
+                    .filter(line -> !line.startsWith(csvComment)) // skip comments
                     .map(line -> {
-                        String[] parts = line.split("(?<!\\\\)" + CSV_SEPARATOR); // comma not trailed by slash
-                        String text = parts[0].replace("\\" + CSV_SEPARATOR, CSV_SEPARATOR); // unescape comma
+//                        String[] parts = line.split("(?<!\\\\)" + csvSeparator); // separator not trailed by slash
+                        String[] parts = line.split("(?<!\\\\)" + Pattern.quote(csvSeparator)); // separator not trailed by slash
+                        String text = parts[0].replace("\\" + csvSeparator, csvSeparator); // unescape comma
                         String answer = parts[1];
                         String[] variants = Arrays.copyOfRange(parts, 2, parts.length);
 
@@ -48,5 +61,4 @@ public class CsvPollDao implements PollDao {
             throw new RuntimeException("Unable to read questions from CSV file", e);
         }
     }
-
 }

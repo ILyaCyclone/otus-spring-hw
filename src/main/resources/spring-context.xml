@@ -10,6 +10,13 @@
   <bean id="askService" class="cyclone.otusspring.hw01.service.ConsoleAskService" />
 
 
-  <bean id="pollDao" class="cyclone.otusspring.hw01.dao.CsvPollDao" />
+  <bean id="pollDao" class="cyclone.otusspring.hw01.dao.CsvPollDao" >
+    <constructor-arg value="/poll.csv"/>
+
+    <!-- Example of providing filename and customizing CSV format -->
+    <!--<constructor-arg name="filename" value="/poll-2.csv"/>-->
+    <!--<constructor-arg name="csvSeparator" value="|"/>-->
+    <!--<constructor-arg name="csvComment" value="&#45;&#45;"/>-->
+  </bean>
 
 </beans>
