@@ -10,5 +10,5 @@ public interface AskService {
 
     Person preparePerson();
 
-    List<Answer> askQuestions(List<Question> questions);
+    List<Answer> askQuestions(Person person, List<Question> questions);
 }

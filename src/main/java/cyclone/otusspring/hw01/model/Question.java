@@ -2,6 +2,7 @@ package cyclone.otusspring.hw01.model;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class Question {
     private final String text;
@@ -31,7 +32,7 @@ public class Question {
 
     private void assertVariantsContainCorrectAnswer() {
         if (variants.stream().noneMatch(variant -> variant.equals(correctAnswer))) {
-            throw new RuntimeException("Question \"" + text + "\" answer variants do not contain correct answer");
+            throw new IllegalArgumentException("Question \"" + text + "\" answer variants do not contain correct answer");
         }
     }
 
@@ -42,5 +43,20 @@ public class Question {
                 ", correctAnswer='" + correctAnswer + '\'' +
                 ", variants=" + variants +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return Objects.equals(text, question.text) &&
+                Objects.equals(correctAnswer, question.correctAnswer) &&
+                Objects.equals(variants, question.variants);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(text, correctAnswer, variants);
     }
 }

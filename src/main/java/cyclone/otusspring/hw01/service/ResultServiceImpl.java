@@ -1,23 +1,16 @@
 package cyclone.otusspring.hw01.service;
 
-import cyclone.otusspring.hw01.dao.PollDao;
 import cyclone.otusspring.hw01.model.Answer;
-import cyclone.otusspring.hw01.model.Question;
 import cyclone.otusspring.hw01.model.Result;
 
 import java.util.List;
 
-public class PollDataServiceImpl implements PollDataService {
+public class ResultServiceImpl implements ResultService {
 
-    private final PollDao pollDao;
+    private final QuestionService questionService;
 
-    public PollDataServiceImpl(PollDao pollDao) {
-        this.pollDao = pollDao;
-    }
-
-    @Override
-    public List<Question> getQuestions() {
-        return pollDao.getQuestions();
+    public ResultServiceImpl(QuestionService questionService) {
+        this.questionService = questionService;
     }
 
     @Override

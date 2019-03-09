@@ -5,17 +5,21 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
   <bean class="cyclone.otusspring.hw01.runner.PollRunnerImpl">
-    <constructor-arg type="cyclone.otusspring.hw01.service.PollDataService" ref="pollDataService"/>
+      <constructor-arg type="cyclone.otusspring.hw01.io.UserIO" ref="userIO"/>
+      <constructor-arg type="cyclone.otusspring.hw01.service.ResultService" ref="resultService"/>
     <constructor-arg type="cyclone.otusspring.hw01.service.AskService" ref="askService"/>
+      <constructor-arg type="cyclone.otusspring.hw01.service.QuestionService" ref="questionService"/>
   </bean>
 
-  <bean id="pollDataService" class="cyclone.otusspring.hw01.service.PollDataServiceImpl">
-    <constructor-arg ref="pollDao"/>
+    <bean id="resultService" class="cyclone.otusspring.hw01.service.ResultServiceImpl">
+        <constructor-arg ref="questionService"/>
   </bean>
-  <bean id="askService" class="cyclone.otusspring.hw01.service.ConsoleAskService" />
+    <bean id="askService" class="cyclone.otusspring.hw01.service.AskServiceImpl">
+        <constructor-arg ref="userIO"/>
+    </bean>
 
 
-  <bean id="pollDao" class="cyclone.otusspring.hw01.dao.CsvPollDao" >
+    <bean id="questionService" class="cyclone.otusspring.hw01.service.CsvQuestionService">
     <constructor-arg value="/poll.csv"/>
 
     <!-- Example of providing filename and customizing CSV format -->
@@ -23,5 +27,7 @@
     <!--<constructor-arg name="csvSeparator" value="|"/>-->
     <!--<constructor-arg name="csvComment" value="&#45;&#45;"/>-->
   </bean>
+
+    <bean id="userIO" class="cyclone.otusspring.hw01.io.ConsoleUserIO"/>
 
 </beans>

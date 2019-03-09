@@ -1,4 +1,4 @@
-package cyclone.otusspring.hw01.dao;
+package cyclone.otusspring.hw01.service;
 
 import cyclone.otusspring.hw01.model.Question;
 
@@ -19,18 +19,18 @@ import java.util.stream.Stream;
  * Customize this behavior using constructor with additional {@code csvSeparator} and {@code csvComment} parameters.
  * Separator may be escaped using "\" symbol.
  */
-public class CsvPollDao implements PollDao {
+public class CsvQuestionService implements QuestionService {
     private String csvSeparator = ",";
     private String csvComment = "#";
 
     private final List<Question> questions;
 
-    public CsvPollDao(String filename) {
+    public CsvQuestionService(String filename) {
         // csv file is in classpath and shouldn't change on runtime, so read it right away
         this.questions = readCsvQuestions(filename);
     }
 
-    public CsvPollDao(String filename, String csvSeparator, String csvComment) {
+    public CsvQuestionService(String filename, String csvSeparator, String csvComment) {
         this.csvSeparator = csvSeparator;
         this.csvComment = csvComment;
         this.questions = readCsvQuestions(filename);

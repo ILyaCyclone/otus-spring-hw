@@ -1,10 +1,8 @@
 package cyclone.otusspring.hw01.service;
 
-import cyclone.otusspring.hw01.dao.PollDao;
 import cyclone.otusspring.hw01.model.Answer;
 import cyclone.otusspring.hw01.model.Question;
 import cyclone.otusspring.hw01.model.Result;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -12,25 +10,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-class PollDataServiceImplTest {
-
-    @Test
-    void getQuestions() {
-        String[] variants = {"aa", "bb", "cc"};
-        List<Question> questions = Arrays.asList(new Question("q1", variants[0], variants)
-                , new Question("q2", variants[1], variants)
-                , new Question("q3", variants[2], variants));
-
-        PollDao pollDao = mock(PollDao.class);
-        when(pollDao.getQuestions()).thenReturn(questions);
-
-        PollDataServiceImpl service = new PollDataServiceImpl(pollDao);
-        List<Question> actualQuestions = service.getQuestions();
-
-        Assertions.assertIterableEquals(questions, actualQuestions);
-    }
+class ResultServiceImplTest {
 
     @Test
     void getResult_allCorrect() {
@@ -42,7 +23,7 @@ class PollDataServiceImplTest {
                 , new Answer(new Question("q3", correctAnswers[2], variants), correctAnswers[2])
         );
 
-        PollDataServiceImpl service = new PollDataServiceImpl(mock(PollDao.class));
+        ResultServiceImpl service = new ResultServiceImpl(mock(QuestionService.class));
 
         Result result = service.getResult(answers);
 
@@ -61,7 +42,7 @@ class PollDataServiceImplTest {
                 , new Answer(new Question("q3", correctAnswers[2], variants), userAnswers[2])
         );
 
-        PollDataServiceImpl service = new PollDataServiceImpl(mock(PollDao.class));
+        ResultServiceImpl service = new ResultServiceImpl(mock(QuestionService.class));
 
         Result result = service.getResult(answers);
 
