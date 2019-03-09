@@ -2,16 +2,12 @@ package cyclone.otusspring.hw01.service;
 
 import cyclone.otusspring.hw01.model.Answer;
 import cyclone.otusspring.hw01.model.Result;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class ResultServiceImpl implements ResultService {
-
-    private final QuestionService questionService;
-
-    public ResultServiceImpl(QuestionService questionService) {
-        this.questionService = questionService;
-    }
 
     @Override
     public Result getResult(List<Answer> answers) {

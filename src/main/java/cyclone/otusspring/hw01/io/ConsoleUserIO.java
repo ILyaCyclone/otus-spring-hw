@@ -1,8 +1,11 @@
 package cyclone.otusspring.hw01.io;
 
+import org.springframework.stereotype.Component;
+
 import javax.annotation.PreDestroy;
 import java.util.Scanner;
 
+@Component
 public class ConsoleUserIO implements UserIO {
 
     private final Scanner scanner;

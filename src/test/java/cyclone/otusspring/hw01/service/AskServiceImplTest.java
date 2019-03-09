@@ -11,13 +11,13 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
-import static cyclone.otusspring.hw01.service.AskServiceImpl.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class AskServiceImplTest {
 
     private UserIO userIO;
+    private MessageService messageService;
 
     static final Person TEST_PERSON = new Person("firstName", "lastName", 10);
 
@@ -27,17 +27,20 @@ class AskServiceImplTest {
         userIO = mock(UserIO.class);
         doNothing().when(userIO).println(anyString());
         doNothing().when(userIO).print(anyString());
+
+        messageService = mock(MessageService.class);
+        final String mockedString = "mocked string";
+        when(messageService.getMessage(anyString())).thenReturn(mockedString);
+        when(messageService.getMessage(anyString(), any())).thenReturn(mockedString);
     }
 
     @Test
     void testPreparePerson() {
         // arrange
-        when(userIO.readString(ASK_FIRST_NAME)).thenReturn(TEST_PERSON.getFirstName());
-        when(userIO.readString(ASK_LAST_NAME)).thenReturn(TEST_PERSON.getLastName());
-        when(userIO.readInt(ASK_AGE)).thenReturn(TEST_PERSON.getAge());
-
-
-        AskServiceImpl service = new AskServiceImpl(userIO);
+        AskServiceImpl service = spy(new AskServiceImpl(userIO, messageService));
+        doReturn(TEST_PERSON.getFirstName()).when(service).askFirstName();
+        doReturn(TEST_PERSON.getLastName()).when(service).askLastName();
+        doReturn(TEST_PERSON.getAge()).when(service).askAge();
 
         // act
         Person person = service.preparePerson();
@@ -64,7 +67,7 @@ class AskServiceImplTest {
                 .thenReturn(userAnswerNumbers[1])
                 .thenReturn(userAnswerNumbers[2]);
 
-        AskServiceImpl service = new AskServiceImpl(userIO);
+        AskServiceImpl service = new AskServiceImpl(userIO, messageService);
 
         // act
         List<Answer> answers = service.askQuestions(TEST_PERSON, questions);
@@ -88,7 +91,7 @@ class AskServiceImplTest {
 
         when(userIO.readInt(anyString())).thenReturn(userAnswerNumber);
 
-        AskServiceImpl service = new AskServiceImpl(userIO);
+        AskServiceImpl service = new AskServiceImpl(userIO, messageService);
 
         Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> service.askQuestions(TEST_PERSON, questions));
     }

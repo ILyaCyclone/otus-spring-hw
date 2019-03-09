@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
 class ResultServiceImplTest {
 
@@ -23,7 +22,7 @@ class ResultServiceImplTest {
                 , new Answer(new Question("q3", correctAnswers[2], variants), correctAnswers[2])
         );
 
-        ResultServiceImpl service = new ResultServiceImpl(mock(QuestionService.class));
+        ResultServiceImpl service = new ResultServiceImpl();
 
         Result result = service.getResult(answers);
 
@@ -42,7 +41,7 @@ class ResultServiceImplTest {
                 , new Answer(new Question("q3", correctAnswers[2], variants), userAnswers[2])
         );
 
-        ResultServiceImpl service = new ResultServiceImpl(mock(QuestionService.class));
+        ResultServiceImpl service = new ResultServiceImpl();
 
         Result result = service.getResult(answers);
 

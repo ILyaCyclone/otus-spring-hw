@@ -4,34 +4,50 @@ import cyclone.otusspring.hw01.io.UserIO;
 import cyclone.otusspring.hw01.model.Answer;
 import cyclone.otusspring.hw01.model.Person;
 import cyclone.otusspring.hw01.model.Question;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+@Service
 public class AskServiceImpl implements AskService {
-    static final String ASK_FIRST_NAME = "Your first name: ";
-    static final String ASK_LAST_NAME = "Your last name: ";
-    static final String ASK_AGE = "Your age: ";
 
     private final UserIO userIO;
+    private final MessageService messageService;
 
-    public AskServiceImpl(UserIO userIO) {
+    public AskServiceImpl(UserIO userIO, MessageService messageService) {
         this.userIO = userIO;
+        this.messageService = messageService;
     }
 
 
     public Person preparePerson() {
-        userIO.println("Please, tell us about yourself.");
+        userIO.println(messageService.getMessage("poll.before.person"));
 
-        String firstName = userIO.readString(ASK_FIRST_NAME);
-        String lastName = userIO.readString(ASK_LAST_NAME);
-        int age = userIO.readInt(ASK_AGE);
-        userIO.println("Nice to meet you, " + firstName);
+        String firstName = askFirstName();
+        String lastName = askLastName();
+        int age = askAge();
+
+        Person person = new Person(firstName, lastName, age);
+        userIO.println(messageService.getMessage("poll.after.person", person.getFirstName()));
         userIO.emptyLine();
 
-        return new Person(firstName, lastName, age);
+        return person;
     }
+
+    String askFirstName() {
+        return userIO.readString(messageService.getMessage("poll.ask.person.firstname"));
+    }
+
+    String askLastName() {
+        return userIO.readString(messageService.getMessage("poll.ask.person.lastname"));
+    }
+
+    int askAge() {
+        return userIO.readInt(messageService.getMessage("poll.ask.person.age"));
+    }
+
 
     @Override
     public List<Answer> askQuestions(Person person, List<Question> questions) {
@@ -40,7 +56,7 @@ public class AskServiceImpl implements AskService {
                     userIO.println(question.getText());
                     AtomicInteger variantIndex = new AtomicInteger(1);
                     question.getVariants().forEach(variant -> userIO.println(variantIndex.getAndAdd(1) + ". " + variant));
-                    int answerNumber = userIO.readInt("Choose answer: ");
+                    int answerNumber = userIO.readInt(messageService.getMessage("poll.ask.answer"));
 
                     userIO.emptyLine();
                     String chosenVariant = question.getVariants().get(answerNumber - 1);
