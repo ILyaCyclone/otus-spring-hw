@@ -1,22 +1,26 @@
-package cyclone.otusspring.hw01;
+package cyclone.otusspring.hw01.runner;
 
 import cyclone.otusspring.hw01.model.Answer;
 import cyclone.otusspring.hw01.model.Person;
 import cyclone.otusspring.hw01.model.Question;
 import cyclone.otusspring.hw01.model.Result;
+import cyclone.otusspring.hw01.presenter.PollPresenter;
 import cyclone.otusspring.hw01.service.AskService;
 import cyclone.otusspring.hw01.service.PollDataService;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.List;
 
-public class ConsolePollMain {
-    public static void main(String[] args) {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("/spring-context.xml");
+public class PollRunnerImpl implements PollRunner {
 
-        PollDataService pollDataService = context.getBean(PollDataService.class);
-        AskService askService = context.getBean(AskService.class);
+    private final PollDataService pollDataService;
+    private final AskService askService;
 
+    public PollRunnerImpl(PollDataService pollDataService, AskService askService) {
+        this.pollDataService = pollDataService;
+        this.askService = askService;
+    }
+
+    public void run() {
         List<Question> questions = pollDataService.getQuestions();
         Person person = askService.preparePerson();
 

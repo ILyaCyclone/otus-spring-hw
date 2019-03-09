@@ -4,7 +4,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <bean class="cyclone.otusspring.hw01.service.PollDataServiceImpl">
+  <bean class="cyclone.otusspring.hw01.runner.PollRunnerImpl">
+    <constructor-arg type="cyclone.otusspring.hw01.service.PollDataService" ref="pollDataService"/>
+    <constructor-arg type="cyclone.otusspring.hw01.service.AskService" ref="askService"/>
+  </bean>
+
+  <bean id="pollDataService" class="cyclone.otusspring.hw01.service.PollDataServiceImpl">
     <constructor-arg ref="pollDao"/>
   </bean>
   <bean id="askService" class="cyclone.otusspring.hw01.service.ConsoleAskService" />

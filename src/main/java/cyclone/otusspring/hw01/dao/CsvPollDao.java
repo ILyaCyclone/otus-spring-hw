@@ -1,6 +1,5 @@
 package cyclone.otusspring.hw01.dao;
 
-import cyclone.otusspring.hw01.ConsolePollMain;
 import cyclone.otusspring.hw01.model.Question;
 
 import java.io.IOException;
@@ -42,7 +41,7 @@ public class CsvPollDao implements PollDao {
     }
 
     private List<Question> readCsvQuestions(String filename) {
-        URL pollFileURL = ConsolePollMain.class.getResource(filename);
+        URL pollFileURL = this.getClass().getResource(filename);
         try (Stream<String> stream = Files.lines(Paths.get(pollFileURL.toURI()))) {
             return stream
                     .filter(line -> !line.startsWith(csvComment)) // skip comments
