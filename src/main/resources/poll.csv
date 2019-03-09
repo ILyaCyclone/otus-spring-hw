@@ -1,0 +1,7 @@
+#question text (escape comma with \, if needed), correct answer, answer variants...
+Question 1?,aa,aa,bb,cc,dd
+Question 2\, containing comma?,bb,aa,bb,cc,dd
+Question 3?,cc,aa,bb,cc,dd
+Question 4?,dd,aa,bb,cc,dd
+Question 5?,aa,aa,bb,cc,dd
+Question 6?,aa,aa,bb,cc,dd
