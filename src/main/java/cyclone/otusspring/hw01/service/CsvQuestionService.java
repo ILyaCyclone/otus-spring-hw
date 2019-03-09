@@ -1,6 +1,7 @@
 package cyclone.otusspring.hw01.service;
 
 import cyclone.otusspring.hw01.model.Question;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -25,15 +26,30 @@ public class CsvQuestionService implements QuestionService {
 
     private final List<Question> questions;
 
-    public CsvQuestionService(String filename) {
+    public CsvQuestionService(@Value("${cyclone.otusspring.pollfile.base}") String filenameBase
+            , @Value("${cyclone.otusspring.pollfile.ext}") String filenameExtension
+            , @Value("${cyclone.otusspring.language}") String language
+    ) {
+        String localizedFilename = getLocalizedFilename(filenameBase, filenameExtension, language);
         // csv file is in classpath and shouldn't change on runtime, so read it right away
-        this.questions = readCsvQuestions(filename);
+        this.questions = readCsvQuestions(localizedFilename);
     }
 
-    public CsvQuestionService(String filename, String csvSeparator, String csvComment) {
+    String getLocalizedFilename(String filenameBase, String extension, String language) {
+        return filenameBase + "_" + language + "." + extension;
+    }
+
+    public CsvQuestionService(@Value("${cyclone.otusspring.pollfile.base}") String filenameBase
+            , @Value("${cyclone.otusspring.pollfile.ext}") String filenameExtension
+            , @Value("${cyclone.otusspring.language}") String language
+            , String csvSeparator
+            , String csvComment) {
         this.csvSeparator = csvSeparator;
         this.csvComment = csvComment;
-        this.questions = readCsvQuestions(filename);
+
+        String localizedFilename = getLocalizedFilename(filenameBase, filenameExtension, language);
+        // csv file is in classpath and shouldn't change on runtime, so read it right away
+        this.questions = readCsvQuestions(localizedFilename);
     }
 
     public List<Question> getQuestions() {

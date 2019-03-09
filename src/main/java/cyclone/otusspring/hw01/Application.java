@@ -9,14 +9,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @ComponentScan
 @Configuration
 @PropertySource("classpath:application.properties")
 public class Application {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         context.register(Application.class);
         context.refresh();
@@ -27,8 +26,10 @@ public class Application {
 
 
     @Bean
-    QuestionService questionService(@Value("${cyclone.otusspring.pollfile}") String fileName) {
-        return new CsvQuestionService(fileName);
+    QuestionService questionService(@Value("${cyclone.otusspring.pollfile.base}") String filenameBase
+            , @Value("${cyclone.otusspring.pollfile.ext}") String filenameExtension
+            , @Value("${cyclone.otusspring.language}") String language) {
+        return new CsvQuestionService(filenameBase, filenameExtension, language);
     }
 
 

@@ -61,7 +61,7 @@ public class PollRunnerImpl implements PollRunner {
             userIO.emptyLine();
         });
 
-        userIO.println("Correct answers: " + result.asFraction() + " (" + result.asPercent() + "%)");
+        userIO.println(messageService.getMessage("poll.result", result.asFraction(), String.valueOf(result.asPercent())));
     }
 
 
