@@ -28,13 +28,14 @@ class ResultServiceImplTest {
 
         assertEquals(100, result.asPercent());
         int questionsCount = answers.size();
-        assertEquals(questionsCount+"/"+questionsCount, result.asFraction());
+        assertEquals(questionsCount + "/" + questionsCount, result.asFraction());
     }
+
     @Test
     void getResult_partiallyCorrect() {
         String[] variants = {"aa", "bb", "cc"};
         String[] correctAnswers = {variants[2], variants[0], variants[1]};
-        String[] userAnswers    = {variants[2], variants[0], variants[0]}; // should be 2/3 correct answers
+        String[] userAnswers = {variants[2], variants[0], variants[0]}; // should be 2/3 correct answers
 
         List<Answer> answers = Arrays.asList(new Answer(new Question("q1", correctAnswers[0], variants), userAnswers[0])
                 , new Answer(new Question("q2", correctAnswers[1], variants), userAnswers[1])
@@ -47,6 +48,6 @@ class ResultServiceImplTest {
 
         assertEquals(66, result.asPercent());
         int questionsCount = answers.size();
-        assertEquals(2+"/"+questionsCount, result.asFraction());
+        assertEquals(2 + "/" + questionsCount, result.asFraction());
     }
 }
