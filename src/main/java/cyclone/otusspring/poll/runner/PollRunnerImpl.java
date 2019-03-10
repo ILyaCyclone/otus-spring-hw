@@ -1,14 +1,14 @@
-package cyclone.otusspring.hw01.runner;
+package cyclone.otusspring.poll.runner;
 
-import cyclone.otusspring.hw01.io.UserIO;
-import cyclone.otusspring.hw01.model.Answer;
-import cyclone.otusspring.hw01.model.Person;
-import cyclone.otusspring.hw01.model.Question;
-import cyclone.otusspring.hw01.model.Result;
-import cyclone.otusspring.hw01.service.AskService;
-import cyclone.otusspring.hw01.service.MessageService;
-import cyclone.otusspring.hw01.service.QuestionService;
-import cyclone.otusspring.hw01.service.ResultService;
+import cyclone.otusspring.poll.io.UserIO;
+import cyclone.otusspring.poll.model.Answer;
+import cyclone.otusspring.poll.model.Person;
+import cyclone.otusspring.poll.model.Question;
+import cyclone.otusspring.poll.model.Result;
+import cyclone.otusspring.poll.service.AskService;
+import cyclone.otusspring.poll.service.MessageService;
+import cyclone.otusspring.poll.service.QuestionService;
+import cyclone.otusspring.poll.service.ResultService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

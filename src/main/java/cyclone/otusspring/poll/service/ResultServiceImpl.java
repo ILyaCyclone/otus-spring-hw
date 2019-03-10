@@ -1,7 +1,7 @@
-package cyclone.otusspring.hw01.service;
+package cyclone.otusspring.poll.service;
 
-import cyclone.otusspring.hw01.model.Answer;
-import cyclone.otusspring.hw01.model.Result;
+import cyclone.otusspring.poll.model.Answer;
+import cyclone.otusspring.poll.model.Result;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

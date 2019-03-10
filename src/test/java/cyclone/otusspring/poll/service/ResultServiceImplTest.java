@@ -1,8 +1,8 @@
-package cyclone.otusspring.hw01.service;
+package cyclone.otusspring.poll.service;
 
-import cyclone.otusspring.hw01.model.Answer;
-import cyclone.otusspring.hw01.model.Question;
-import cyclone.otusspring.hw01.model.Result;
+import cyclone.otusspring.poll.model.Answer;
+import cyclone.otusspring.poll.model.Question;
+import cyclone.otusspring.poll.model.Result;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

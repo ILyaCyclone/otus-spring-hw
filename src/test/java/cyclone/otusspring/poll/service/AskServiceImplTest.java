@@ -1,9 +1,9 @@
-package cyclone.otusspring.hw01.service;
+package cyclone.otusspring.poll.service;
 
-import cyclone.otusspring.hw01.io.UserIO;
-import cyclone.otusspring.hw01.model.Answer;
-import cyclone.otusspring.hw01.model.Person;
-import cyclone.otusspring.hw01.model.Question;
+import cyclone.otusspring.poll.io.UserIO;
+import cyclone.otusspring.poll.model.Answer;
+import cyclone.otusspring.poll.model.Person;
+import cyclone.otusspring.poll.model.Question;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

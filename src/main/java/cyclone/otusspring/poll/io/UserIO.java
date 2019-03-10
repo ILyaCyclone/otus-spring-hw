@@ -1,4 +1,4 @@
-package cyclone.otusspring.hw01.io;
+package cyclone.otusspring.poll.io;
 
 public interface UserIO {
     void print(String line);

@@ -1,6 +1,6 @@
-package cyclone.otusspring.hw01.service;
+package cyclone.otusspring.poll.service;
 
-import cyclone.otusspring.hw01.model.Question;
+import cyclone.otusspring.poll.model.Question;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,10 +1,10 @@
-package cyclone.otusspring.hw01;
+package cyclone.otusspring.poll;
 
-import cyclone.otusspring.hw01.runner.PollRunner;
-import cyclone.otusspring.hw01.service.CsvQuestionService;
-import cyclone.otusspring.hw01.service.MessageService;
-import cyclone.otusspring.hw01.service.MessageServiceImpl;
-import cyclone.otusspring.hw01.service.QuestionService;
+import cyclone.otusspring.poll.runner.PollRunner;
+import cyclone.otusspring.poll.service.CsvQuestionService;
+import cyclone.otusspring.poll.service.MessageService;
+import cyclone.otusspring.poll.service.MessageServiceImpl;
+import cyclone.otusspring.poll.service.QuestionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;

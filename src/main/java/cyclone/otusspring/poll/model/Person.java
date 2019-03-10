@@ -1,4 +1,4 @@
-package cyclone.otusspring.hw01.model;
+package cyclone.otusspring.poll.model;
 
 public class Person {
     private final String firstName;

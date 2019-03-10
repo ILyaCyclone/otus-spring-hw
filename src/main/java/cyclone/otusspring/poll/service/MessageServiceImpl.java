@@ -1,4 +1,4 @@
-package cyclone.otusspring.hw01.service;
+package cyclone.otusspring.poll.service;
 
 import org.springframework.context.MessageSource;
 

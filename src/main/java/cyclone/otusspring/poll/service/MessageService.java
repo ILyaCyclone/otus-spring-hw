@@ -1,4 +1,4 @@
-package cyclone.otusspring.hw01.service;
+package cyclone.otusspring.poll.service;
 
 public interface MessageService {
     String getMessage(String key);

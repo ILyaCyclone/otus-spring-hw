@@ -1,6 +1,6 @@
-package cyclone.otusspring.hw01.service;
+package cyclone.otusspring.poll.service;
 
-import cyclone.otusspring.hw01.model.Question;
+import cyclone.otusspring.poll.model.Question;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
