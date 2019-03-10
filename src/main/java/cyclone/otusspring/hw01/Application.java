@@ -28,8 +28,11 @@ public class Application {
     @Bean
     QuestionService questionService(@Value("${cyclone.otusspring.pollfile.base}") String filenameBase
             , @Value("${cyclone.otusspring.pollfile.ext}") String filenameExtension
-            , @Value("${cyclone.otusspring.language}") String language) {
-        return new CsvQuestionService(filenameBase, filenameExtension, language);
+            , @Value("${cyclone.otusspring.language}") String language
+            , @Value("${cyclone.otusspring.pollfile.separator:#{null}}") String csvSeparator
+            , @Value("${cyclone.otusspring.pollfile.comment:#{null}}") String csvComment
+    ) {
+        return new CsvQuestionService(filenameBase, filenameExtension, language, csvSeparator, csvComment);
     }
 
 
