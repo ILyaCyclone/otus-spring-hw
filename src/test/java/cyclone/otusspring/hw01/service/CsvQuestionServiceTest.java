@@ -1,25 +1,24 @@
 package cyclone.otusspring.hw01.service;
 
 import cyclone.otusspring.hw01.model.Question;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
+@ExtendWith(SpringExtension.class)
+@PropertySource("/application-test.properties")
+@ContextConfiguration(classes = CsvQuestionServiceTest.class)
 class CsvQuestionServiceTest {
-
-    Properties props = new Properties();
-
-    @BeforeEach
-    void setUp() throws Exception {
-        props = new Properties();
-        props.load(CsvQuestionServiceTest.class
-                .getResourceAsStream("/application-test.properties"));
-    }
 
     static final Question[] TEST_QUESTIONS = new Question[]{
             new Question("First question?", "aa1", "aa1", "bb1", "cc1", "dd1")
@@ -27,14 +26,18 @@ class CsvQuestionServiceTest {
             , new Question("Third question after comment?", "cc3", "aa3", "bb3", "cc3", "dd3")
     };
 
-    @Test
-    void getQuestions() {
-        String filenameBase = props.getProperty("cyclone.otusspring.pollfile.base");
-        String filenameExtension = props.getProperty("cyclone.otusspring.pollfile.ext");
-        String language = props.getProperty("cyclone.otusspring.language");
-        String csvSeparator = props.getProperty("cyclone.otusspring.pollfile.separator");
-        String csvComment = props.getProperty("cyclone.otusspring.pollfile.comment");
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
 
+    @Test
+    void getQuestions(@Value("${cyclone.otusspring.pollfile.base}") String filenameBase
+            , @Value("${cyclone.otusspring.pollfile.ext}") String filenameExtension
+            , @Value("${cyclone.otusspring.language}") String language
+            , @Value("${cyclone.otusspring.pollfile.separator}") String csvSeparator
+            , @Value("${cyclone.otusspring.pollfile.comment}") String csvComment
+    ) {
         CsvQuestionService service = new CsvQuestionService(filenameBase, filenameExtension, language
                 , csvSeparator, csvComment);
         List<Question> questions = service.getQuestions();
