@@ -1,53 +1,14 @@
 package cyclone.otusspring.poll;
 
 import cyclone.otusspring.poll.runner.PollRunner;
-import cyclone.otusspring.poll.service.CsvQuestionService;
-import cyclone.otusspring.poll.service.MessageService;
-import cyclone.otusspring.poll.service.MessageServiceImpl;
-import cyclone.otusspring.poll.service.QuestionService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.*;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.nio.charset.StandardCharsets;
 
-@ComponentScan
-@Configuration
-@PropertySource("classpath:application.properties")
 public class Application {
     public static void main(String[] args) {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        context.register(Application.class);
-        context.refresh();
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
         PollRunner runner = context.getBean(PollRunner.class);
         runner.run();
-    }
-
-
-    @Bean
-    QuestionService questionService(@Value("${cyclone.otusspring.pollfile.base}") String filenameBase
-            , @Value("${cyclone.otusspring.pollfile.ext}") String filenameExtension
-            , @Value("${cyclone.otusspring.language}") String language
-            , @Value("${cyclone.otusspring.pollfile.separator:#{null}}") String csvSeparator
-            , @Value("${cyclone.otusspring.pollfile.comment:#{null}}") String csvComment
-    ) {
-        return new CsvQuestionService(filenameBase, filenameExtension, language, csvSeparator, csvComment);
-    }
-
-
-//    @Bean
-//    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-//        return new PropertySourcesPlaceholderConfigurer();
-//    }
-
-    @Bean
-    public MessageService messageService(@Value("${cyclone.otusspring.language}") String language) {
-        ReloadableResourceBundleMessageSource bundle = new ReloadableResourceBundleMessageSource();
-        bundle.setBasename("/i18n/messages");
-        bundle.setDefaultEncoding(StandardCharsets.UTF_8.toString());
-
-        MessageServiceImpl messageService = new MessageServiceImpl(bundle, language);
-        return messageService;
     }
 }
