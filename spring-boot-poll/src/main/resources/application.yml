@@ -1,0 +1,7 @@
+cyclone:
+  otusspring:
+    language: en #supports "ru" and "en"
+
+    pollfile: #file name will be constructed of {pollfile.base}_{language}.{pollfile.ext} properties
+      base: /poll
+      ext: csv
