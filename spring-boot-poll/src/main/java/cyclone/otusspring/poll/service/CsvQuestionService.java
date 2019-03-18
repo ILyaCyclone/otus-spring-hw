@@ -1,6 +1,9 @@
 package cyclone.otusspring.poll.service;
 
+import cyclone.otusspring.poll.config.CsvConfigProperties;
 import cyclone.otusspring.poll.model.Question;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -19,6 +22,7 @@ import java.util.stream.Stream;
  * Customize this behavior using constructor with additional {@code csvSeparator} and {@code csvComment} parameters.
  * Separator may be escaped using "\" symbol.
  */
+@Service
 public class CsvQuestionService implements QuestionService {
     private static final String DEFAULT_CSV_SEPARATOR = ",";
     private static final String DEFAULT_CSV_COMMENT = "#";
@@ -28,26 +32,15 @@ public class CsvQuestionService implements QuestionService {
 
     private final List<Question> questions;
 
-    public CsvQuestionService(String filenameBase
-            , String filenameExtension
-            , String language
-    ) {
-        this(filenameBase, filenameExtension, language, DEFAULT_CSV_SEPARATOR, DEFAULT_CSV_COMMENT);
-    }
-
-    public CsvQuestionService(String filenameBase
-            , String filenameExtension
-            , String language
-            , String csvSeparator
-            , String csvComment) {
-        if (csvSeparator != null) {
-            this.csvSeparator = csvSeparator;
+    public CsvQuestionService(CsvConfigProperties csvConfigProperties) {
+        if (StringUtils.hasText(csvConfigProperties.getSeparator())) {
+            this.csvSeparator = csvConfigProperties.getSeparator();
         }
-        if (csvComment != null) {
-            this.csvComment = csvComment;
+        if (StringUtils.hasText(csvConfigProperties.getComment())) {
+            this.csvComment = csvConfigProperties.getComment();
         }
 
-        String localizedFilename = getLocalizedFilename(filenameBase, filenameExtension, language);
+        String localizedFilename = getLocalizedFilename(csvConfigProperties.getBase(), csvConfigProperties.getExt(), csvConfigProperties.getLocale());
         // csv file is in classpath and shouldn't change on runtime, so read it right away
         this.questions = readCsvQuestions(localizedFilename);
     }
@@ -64,7 +57,6 @@ public class CsvQuestionService implements QuestionService {
             return stream
                     .filter(line -> !line.startsWith(csvComment)) // skip comments
                     .map(line -> {
-//                        String[] parts = line.split("(?<!\\\\)" + csvSeparator); // separator not trailed by slash
                         String[] parts = line.split("(?<!\\\\)" + Pattern.quote(csvSeparator)); // separator not lead by slash
                         // unescape separator
                         parts = Arrays.stream(parts)
@@ -88,12 +80,12 @@ public class CsvQuestionService implements QuestionService {
     }
 
 
-    private String getLocalizedFilename(String filenameBase, String extension, String language) {
+    private String getLocalizedFilename(String filenameBase, String extension, String locale) {
         String localizedFilename = filenameBase;
-        if (language != null) {
-            localizedFilename += "_" + language;
+        if (StringUtils.hasText(locale)) {
+            localizedFilename += "_" + locale;
         }
-        if (extension != null) {
+        if (StringUtils.hasText(extension)) {
             localizedFilename += "." + (extension.startsWith(".") ? extension.substring(1) : extension);
         }
         return localizedFilename;

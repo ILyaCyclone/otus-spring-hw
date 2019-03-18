@@ -1,11 +1,20 @@
 package cyclone.otusspring.poll.service;
 
+import cyclone.otusspring.poll.config.CsvConfigProperties;
 import cyclone.otusspring.poll.model.Question;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = DefaultCsvQuestionServiceTest.class
-        , properties = {"spring.config.location=classpath:/default-csv.yml"}) // or @TestPropertySource(properties={....})
+@SpringBootTest(classes = {CsvQuestionService.class}
+        , properties = {"spring.config.location=classpath:/default-csv.yml"})
+@EnableConfigurationProperties(CsvConfigProperties.class)
 class DefaultCsvQuestionServiceTest extends AbstractCsvQuestionServiceTest {
+
+    @Autowired
+    public DefaultCsvQuestionServiceTest(CsvQuestionService csvQuestionService) {
+        super(csvQuestionService);
+    }
 
     static final Question[] TEST_QUESTIONS = new Question[]{
             new Question("First question?", "aa1", "aa1", "bb1", "cc1", "dd1")

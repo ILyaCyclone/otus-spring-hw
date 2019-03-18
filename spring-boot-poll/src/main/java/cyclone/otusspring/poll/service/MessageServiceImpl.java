@@ -9,9 +9,9 @@ public class MessageServiceImpl implements MessageService {
     private final MessageSource messageSource;
     private final Locale locale;
 
-    public MessageServiceImpl(MessageSource messageSource, String language) {
+    public MessageServiceImpl(MessageSource messageSource, String locale) {
         this.messageSource = messageSource;
-        this.locale = new Locale(language);
+        this.locale = new Locale(locale);
     }
 
     @Override
