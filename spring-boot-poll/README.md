@@ -15,3 +15,10 @@ Homework for https://otus.ru/ Spring Developer course
 Сделать собственный баннер для приложения.
 
 Перенести тесты и использовать spring-boot-test-starter.
+
+## HW4
+
+Перевести приложение для проведения опросов на Spring Shell.  
+Подключить Spring Shell, используя starter.
+
+Написать юнит-тесты и использовать spring-boot-test-starter
