@@ -1,6 +1,6 @@
 package cyclone.otusspring.poll.service;
 
-import cyclone.otusspring.poll.config.CsvConfigProperties;
+import cyclone.otusspring.poll.config.CsvProperties;
 import cyclone.otusspring.poll.model.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(classes = {CsvQuestionService.class}
         , properties = {"spring.config.location=classpath:/custom-csv.yml"})
-@EnableConfigurationProperties(CsvConfigProperties.class)
+@EnableConfigurationProperties(CsvProperties.class)
 class CustomCsvQuestionServiceTest extends AbstractCsvQuestionServiceTest {
 
     @Autowired

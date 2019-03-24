@@ -1,6 +1,6 @@
 package cyclone.otusspring.poll.service;
 
-import cyclone.otusspring.poll.config.CsvConfigProperties;
+import cyclone.otusspring.poll.config.CsvProperties;
 import cyclone.otusspring.poll.model.Question;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -32,15 +32,15 @@ public class CsvQuestionService implements QuestionService {
 
     private final List<Question> questions;
 
-    public CsvQuestionService(CsvConfigProperties csvConfigProperties) {
-        if (StringUtils.hasText(csvConfigProperties.getSeparator())) {
-            this.csvSeparator = csvConfigProperties.getSeparator();
+    public CsvQuestionService(CsvProperties csvProperties) {
+        if (StringUtils.hasText(csvProperties.getSeparator())) {
+            this.csvSeparator = csvProperties.getSeparator();
         }
-        if (StringUtils.hasText(csvConfigProperties.getComment())) {
-            this.csvComment = csvConfigProperties.getComment();
+        if (StringUtils.hasText(csvProperties.getComment())) {
+            this.csvComment = csvProperties.getComment();
         }
 
-        String localizedFilename = getLocalizedFilename(csvConfigProperties.getBase(), csvConfigProperties.getExt(), csvConfigProperties.getLocale());
+        String localizedFilename = getLocalizedFilename(csvProperties.getBase(), csvProperties.getExt(), csvProperties.getLocale());
         // csv file is in classpath and shouldn't change on runtime, so read it right away
         this.questions = readCsvQuestions(localizedFilename);
     }

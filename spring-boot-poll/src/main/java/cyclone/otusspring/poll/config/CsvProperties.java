@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties("cyclone.otusspring.poll.csv")
-public class CsvConfigProperties {
+public class CsvProperties {
     private String base, locale, ext, separator, comment;
 
     public String getBase() {
