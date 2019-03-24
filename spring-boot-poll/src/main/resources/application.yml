@@ -1,0 +1,10 @@
+cyclone:
+  otusspring:
+    poll:
+      locale: en #supports "ru" and "en"
+      csv: #file name will be constructed of {pollfile.base}_{language}.{pollfile.ext} properties
+        base: /poll
+        locale: en
+        ext: csv
+#        separator: "," # default separator is ,
+#        comment: "#" # default comment is #

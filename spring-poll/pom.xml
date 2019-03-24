@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>cyclone.otus-spring-hw</groupId>
-  <artifactId>otus-spring-hw</artifactId>
+  <artifactId>spring-poll</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
   <description>Homework for https://otus.ru/ Spring Developer course</description>
