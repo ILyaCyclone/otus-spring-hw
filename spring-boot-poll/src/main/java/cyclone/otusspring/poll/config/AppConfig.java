@@ -12,13 +12,19 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 public class AppConfig {
 
+    private final AppProperties appProperties;
+
+    public AppConfig(AppProperties appProperties) {
+        this.appProperties = appProperties;
+    }
+
     @Bean
-    public MessageService messageService(@Value("${cyclone.otusspring.poll.locale}") String locale) {
+    public MessageService messageService() {
         ReloadableResourceBundleMessageSource bundle = new ReloadableResourceBundleMessageSource();
         bundle.setBasename("/i18n/messages");
         bundle.setDefaultEncoding(StandardCharsets.UTF_8.toString());
 
-        MessageServiceImpl messageService = new MessageServiceImpl(bundle, locale);
+        MessageServiceImpl messageService = new MessageServiceImpl(bundle, appProperties);
         return messageService;
     }
 }

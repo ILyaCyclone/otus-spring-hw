@@ -3,8 +3,7 @@ cyclone:
     poll:
       locale: en #supports "ru" and "en"
       csv: #file name will be constructed of {pollfile.base}_{language}.{pollfile.ext} properties
-        base: /custom
+        basename: /custom
         locale: en
-        ext: csv
         separator: "|"
         comment: --

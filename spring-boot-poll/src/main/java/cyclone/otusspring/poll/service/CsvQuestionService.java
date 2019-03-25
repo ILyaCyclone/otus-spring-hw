@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Get poll data from CSV file with provided {@code filename}. Reads file once on startup.
+ * Get poll data from CSV file according to {@code CsvProperties}.
  * By default CSV separator is "," symbol and lines starting with "#" are treated as comments.
- * Customize this behavior using constructor with additional {@code csvSeparator} and {@code csvComment} parameters.
+ * Customize this behavior by providing {@code csvSeparator} or {@code csvComment} as CsvProperties or using setters.
  * Separator may be escaped using "\" symbol.
  */
 @Service
@@ -27,28 +27,27 @@ public class CsvQuestionService implements QuestionService {
     private static final String DEFAULT_CSV_SEPARATOR = ",";
     private static final String DEFAULT_CSV_COMMENT = "#";
 
+    private final CsvProperties csvProperties;
+
     private String csvSeparator = DEFAULT_CSV_SEPARATOR;
     private String csvComment = DEFAULT_CSV_COMMENT;
 
-    private final List<Question> questions;
-
     public CsvQuestionService(CsvProperties csvProperties) {
+        this.csvProperties = csvProperties;
+
         if (StringUtils.hasText(csvProperties.getSeparator())) {
             this.csvSeparator = csvProperties.getSeparator();
         }
         if (StringUtils.hasText(csvProperties.getComment())) {
             this.csvComment = csvProperties.getComment();
         }
-
-        String localizedFilename = getLocalizedFilename(csvProperties.getBase(), csvProperties.getExt(), csvProperties.getLocale());
-        // csv file is in classpath and shouldn't change on runtime, so read it right away
-        this.questions = readCsvQuestions(localizedFilename);
     }
 
 
 
     public List<Question> getQuestions() {
-        return questions;
+        String localizedFilename = getLocalizedFilename(csvProperties.getBasename(), csvProperties.getLocale());
+        return readCsvQuestions(localizedFilename);
     }
 
     private List<Question> readCsvQuestions(String filename) {
@@ -80,14 +79,11 @@ public class CsvQuestionService implements QuestionService {
     }
 
 
-    private String getLocalizedFilename(String filenameBase, String extension, String locale) {
-        String localizedFilename = filenameBase;
-        if (StringUtils.hasText(locale)) {
-            localizedFilename += "_" + locale;
+    String getLocalizedFilename(String csvBasename, String locale) {
+        if(locale == null) {
+            return csvBasename+".csv";
+        } else {
+            return csvBasename+"_"+locale+".csv";
         }
-        if (StringUtils.hasText(extension)) {
-            localizedFilename += "." + (extension.startsWith(".") ? extension.substring(1) : extension);
-        }
-        return localizedFilename;
     }
 }
