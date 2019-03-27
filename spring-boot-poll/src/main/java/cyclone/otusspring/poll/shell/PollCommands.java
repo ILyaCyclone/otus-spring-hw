@@ -9,6 +9,7 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 @ShellComponent
@@ -26,12 +27,12 @@ public class PollCommands {
         this.csvProperties = csvProperties;
     }
 
-    @ShellMethod(value = "Run the poll", group = "poll" )
+    @ShellMethod(value = "Run the poll", group = "poll")
     public void run() {
         pollRunner.run();
     }
 
-    @ShellMethod(value = "Print questions", group = "poll" )
+    @ShellMethod(value = "Print questions", group = "poll")
     public String questions() {
         return questionService.getQuestions().stream()
                 .map(Question::getText)
@@ -39,7 +40,7 @@ public class PollCommands {
     }
 
     @ShellMethod(value = "Set properties: --locale, --csv-basename, --csv-locale, --csv-separator, --csv-comment"
-        , group = "properties")
+            , group = "properties")
     public String set(
             @ShellOption(value = "--locale", defaultValue = ShellOption.NULL) String locale
             , @ShellOption(value = "--csv-basename", defaultValue = ShellOption.NULL) String csvBaseFilename
@@ -47,31 +48,31 @@ public class PollCommands {
             , @ShellOption(value = "--csv-separator", defaultValue = ShellOption.NULL) String csvSeparator
             , @ShellOption(value = "--csv-comment", defaultValue = ShellOption.NULL) String csvComment
     ) {
-        String reply = "";
-        if(locale != null) {
+        StringJoiner replyJoiner = new StringJoiner(", ");
+        if (locale != null) {
             appProperties.setLocale(locale);
-            reply += propertyIsSet("application locale", locale);
+            replyJoiner.add(propertyIsSet("application locale", locale));
         }
 
         // csv properties
         if (csvBaseFilename != null) {
             csvProperties.setBasename(csvBaseFilename);
-            reply += propertyIsSet("csv basename", csvBaseFilename);
+            replyJoiner.add(propertyIsSet("csv basename", csvBaseFilename));
 
         }
         if (csvLocale != null) {
             csvProperties.setLocale(csvLocale);
-            reply += propertyIsSet("csv basename", csvBaseFilename);
+            replyJoiner.add(propertyIsSet("csv locale", csvLocale));
         }
         if (csvSeparator != null) {
             csvProperties.setSeparator(csvSeparator);
-            reply += propertyIsSet("csv separator", csvBaseFilename);
+            replyJoiner.add(propertyIsSet("csv separator", csvSeparator));
         }
         if (csvComment != null) {
             csvProperties.setComment(csvComment);
-            reply += propertyIsSet("csv basename", csvBaseFilename);
+            replyJoiner.add(propertyIsSet("csv comment", csvComment));
         }
-        return reply;
+        return replyJoiner.toString();
     }
 
     private String propertyIsSet(String property, String value) {
@@ -106,13 +107,19 @@ public class PollCommands {
     @ShellMethod(value = "print properties", group = "properties")
     public String echo(@ShellOption(defaultValue = "*") String propertyName) {
         switch (propertyName) {
-            case "locale": return "application locale = '" + appProperties.getLocale() + '\'';
-            case "csv-basename": return "csv basename = '" + csvProperties.getBasename() + '\'';
-            case "csv-locale": return "csv locale = '" + csvProperties.getLocale() + '\'';
-            case "csv-separator": return "csv separator = '" + csvProperties.getSeparator() + '\'';
-            case "csv-comment": return "csv comment = '" + csvProperties.getComment() + '\'';
-            default: return "application: "+appProperties.propertiesAsString()
-                    +"\ncsv: "+csvProperties.propertiesAsString();
+            case "locale":
+                return "application locale = '" + appProperties.getLocale() + '\'';
+            case "csv-basename":
+                return "csv basename = '" + csvProperties.getBasename() + '\'';
+            case "csv-locale":
+                return "csv locale = '" + csvProperties.getLocale() + '\'';
+            case "csv-separator":
+                return "csv separator = '" + csvProperties.getSeparator() + '\'';
+            case "csv-comment":
+                return "csv comment = '" + csvProperties.getComment() + '\'';
+            default:
+                return "application: " + appProperties.propertiesAsString()
+                        + "\ncsv: " + csvProperties.propertiesAsString();
         }
     }
 
