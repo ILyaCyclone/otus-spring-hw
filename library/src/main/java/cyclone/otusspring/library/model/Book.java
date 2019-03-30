@@ -8,7 +8,7 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 public class Book {
-    private long bookId = -1;
+    private Long bookId;
     private long authorId;
     private long genreId;
 
@@ -16,9 +16,12 @@ public class Book {
     private Integer year;
 
     public Book(long authorId, long genreId, String title, Integer year) {
+        this(null, authorId, genreId, title, year);
+    }
+    public Book(Long bookId, long authorId, long genreId, String title, Integer year) {
         Objects.requireNonNull(title, "book title must not be null");
-        Objects.requireNonNull(authorId, "book authorId must not be null");
-        Objects.requireNonNull(genreId, "book genreId must not be null");
+//        Objects.requireNonNull(authorId, "book authorId must not be null");
+//        Objects.requireNonNull(genreId, "book genreId must not be null");
 
         this.authorId = authorId;
         this.genreId = genreId;
