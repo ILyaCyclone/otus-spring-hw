@@ -8,12 +8,16 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 public class Genre {
-    private long genreId = -1;
+    private Long genreId;
     private String name;
 
     public Genre(String name) {
-        Objects.requireNonNull(name, "genre name must not be null");
+        this(null, name);
+    }
 
+    public Genre(Long id, String name) {
+        Objects.requireNonNull(name, "genre name must not be null");
+        this.genreId = id;
         this.name = name;
     }
 }

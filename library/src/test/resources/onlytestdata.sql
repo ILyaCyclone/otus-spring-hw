@@ -6,10 +6,10 @@ insert into author (author_id, firstname, lastname, homeland) values
 
 
 insert into genre(genre_id, name) values
-(1, 'Adventures'),
-(2, 'Science fiction'),
-(3, 'Novel'),
-(4, 'Magic realism');
+(1, 'Test Adventures'),
+(2, 'Test Science fiction'),
+(3, 'Test Novel'),
+(4, 'Test Magic realism');
 
 
 
