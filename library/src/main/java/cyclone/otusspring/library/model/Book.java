@@ -22,7 +22,7 @@ public class Book {
         Objects.requireNonNull(title, "book title must not be null");
 //        Objects.requireNonNull(authorId, "book authorId must not be null");
 //        Objects.requireNonNull(genreId, "book genreId must not be null");
-
+        this.bookId = bookId;
         this.authorId = authorId;
         this.genreId = genreId;
         this.title = title;

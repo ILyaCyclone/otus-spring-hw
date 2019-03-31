@@ -14,8 +14,8 @@ insert into genre(genre_id, name) values
 
 
 insert into book (book_id, author_id, genre_id, title, year) values
-(1, 1, 1, 'Wheels', 1971),
-(2, 1, 1, 'Airport', 1968),
-(3, 2, 2, 'The End of Eternity', 1955),
-(4, 2, 2, 'Foundation', 1951),
-(5, 3, 3, '100 Years of Solitude', 1967);
+(1, 1, 1, 'Test Wheels', 1971),
+(2, 1, 1, 'Test Airport', 1968),
+(3, 2, 2, 'Test The End of Eternity', 1955),
+(4, 2, 2, 'Test Foundation', 1951),
+(5, 3, 3, 'Test 100 Years of Solitude', 1967);
