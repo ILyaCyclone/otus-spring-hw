@@ -27,6 +27,9 @@ class BookDaoJdbcTest {
     private static final Book BOOK5 = new Book(5L, 3, 3, "Test 100 Years of Solitude", 1967);
     private static final long NO_SUCH_ID = 999;
 
+    private static final Book NEW_BOOK = new Book(1, 1, "New Book", 2000);
+
+
     @Autowired
     NamedParameterJdbcOperations jdbcOperations;
     BookDaoJdbc bookDaoJdbc;
@@ -63,5 +66,53 @@ class BookDaoJdbcTest {
     @Test
     void findOne() {
         assertThat(bookDaoJdbc.findOne(2)).isEqualTo(BOOK2);
+    }
+
+
+
+    @Test
+    void testInsert() {
+        long savedId = bookDaoJdbc.save(NEW_BOOK).getBookId();
+
+        Book actual = bookDaoJdbc.findOne(savedId);
+
+        assertThat(actual.getBookId()).isNotNull();
+        assertThat(actual).isEqualToIgnoringGivenFields(NEW_BOOK, "bookId");
+    }
+
+    @Test
+    void testUpdate() {
+        Book updatedBook2 = new Book(BOOK2.getBookId(), 1, 1, "Updated " + BOOK2.getTitle(), BOOK2.getYear() + 1);
+        bookDaoJdbc.save(updatedBook2);
+
+        Book actual = bookDaoJdbc.findOne(updatedBook2.getBookId());
+
+        assertThat(actual).isEqualToComparingFieldByField(updatedBook2);
+    }
+
+    @Test
+    @DisplayName("updating non existent book throws exception")
+    void testUpdateNonExistent() {
+        Book noSuchBook = new Book(NO_SUCH_ID, 1L, 1L, "No such", 2000);
+
+        assertThatThrownBy(() -> bookDaoJdbc.save(noSuchBook)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
+    }
+
+    @Test
+    void testDelete() {
+        bookDaoJdbc.delete(BOOK2);
+        assertThat(bookDaoJdbc.findAll()).containsExactly(BOOK5, BOOK4, BOOK3, BOOK1);
+    }
+
+    @Test
+    void testDeleteById() {
+        bookDaoJdbc.delete(BOOK1.getBookId());
+        assertThat(bookDaoJdbc.findAll()).containsExactly(BOOK5, BOOK2, BOOK4, BOOK3);
+    }
+
+    @Test
+    @DisplayName("deleting non existent ID throws exception")
+    void testDeleteNonExistent() {
+        assertThatThrownBy(() -> bookDaoJdbc.delete(NO_SUCH_ID)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
     }
 }
