@@ -19,7 +19,7 @@ CREATE TABLE genre (
 CREATE TABLE book (
                       book_id   INT PRIMARY KEY AUTO_INCREMENT,
                       author_id INT     NOT NULL REFERENCES author (author_id) ON DELETE CASCADE,
-                      genre_id  INT REFERENCES genre (genre_id),
+                      genre_id  INT REFERENCES genre (genre_id) ON DELETE CASCADE,
 
                       title     varchar NOT NULL,
                       year      int,

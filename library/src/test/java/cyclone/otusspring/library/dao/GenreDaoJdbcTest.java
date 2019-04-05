@@ -26,6 +26,9 @@ class GenreDaoJdbcTest {
     private static final Genre GENRE4 = new Genre(4L, "Test Magic realism");
     private static final long NO_SUCH_ID = 999;
 
+    private static final Genre NEW_GENRE = new Genre("New Genre");
+
+
     @Autowired
     NamedParameterJdbcOperations jdbcOperations;
     GenreDaoJdbc genreDaoJdbc;
@@ -62,5 +65,53 @@ class GenreDaoJdbcTest {
     @DisplayName("finding non existent ID throws exception")
     void findOne_nonExistent() {
         assertThatThrownBy(() -> genreDaoJdbc.findOne(NO_SUCH_ID)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
+    }
+
+
+
+    @Test
+    void testInsert() {
+        long savedId = genreDaoJdbc.save(NEW_GENRE).getGenreId();
+
+        Genre actual = genreDaoJdbc.findOne(savedId);
+
+        assertThat(actual.getGenreId()).isNotNull();
+        assertThat(actual).isEqualToIgnoringGivenFields(NEW_GENRE, "genreId");
+    }
+
+    @Test
+    void testUpdate() {
+        Genre updatedGenre2 = new Genre(GENRE2.getGenreId(), "Updated " + GENRE2.getName());
+        genreDaoJdbc.save(updatedGenre2);
+
+        Genre actual = genreDaoJdbc.findOne(updatedGenre2.getGenreId());
+
+        assertThat(actual).isEqualToComparingFieldByField(updatedGenre2);
+    }
+
+    @Test
+    @DisplayName("updating non existent genre throws exception")
+    void testUpdateNonExistent() {
+        Genre noSuchGenre = new Genre(NO_SUCH_ID, "No such");
+
+        assertThatThrownBy(() -> genreDaoJdbc.save(noSuchGenre)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
+    }
+
+    @Test
+    void testDelete() {
+        genreDaoJdbc.delete(GENRE2);
+        assertThat(genreDaoJdbc.findAll()).containsExactly(GENRE1, GENRE4, GENRE3);
+    }
+
+    @Test
+    void testDeleteById() {
+        genreDaoJdbc.delete(GENRE1.getGenreId());
+        assertThat(genreDaoJdbc.findAll()).containsExactly(GENRE4, GENRE3, GENRE2);
+    }
+
+    @Test
+    @DisplayName("deleting non existent ID throws exception")
+    void testDeleteNonExistent() {
+        assertThatThrownBy(() -> genreDaoJdbc.delete(NO_SUCH_ID)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
     }
 }
