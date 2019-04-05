@@ -18,14 +18,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @JdbcTest
-//@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2
-// , replace=Replace.NONE)
+//@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2, replace=Replace.NONE)
 class AuthorDaoJdbcTest {
 
     private static final Author AUTHOR1 = new Author(1L, "Test Arthur", "Hailey", "Canada");
     private static final Author AUTHOR2 = new Author(2L, "Test Isaac", "Asimov", "Russia");
     private static final Author AUTHOR3 = new Author(3L, "Test Gabriel", "Marquez", "Argentina");
     private static final long NO_SUCH_ID = 999;
+
+    private static final Author NEW_AUTHOR = new Author("New Author", "New Lastname", "New Homeland");
 
     @Autowired
     NamedParameterJdbcOperations jdbcOperations;
@@ -63,5 +64,53 @@ class AuthorDaoJdbcTest {
     @DisplayName("finding non existent ID throws exception")
     void findOne_nonExistent() {
         assertThatThrownBy(() -> authorDaoJdbc.findOne(NO_SUCH_ID)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
+    }
+
+
+
+    @Test
+    void testInsert() {
+        long savedId = authorDaoJdbc.save(NEW_AUTHOR).getAuthorId();
+
+        Author actual = authorDaoJdbc.findOne(savedId);
+
+        assertThat(actual.getAuthorId()).isNotNull();
+        assertThat(actual).isEqualToIgnoringGivenFields(NEW_AUTHOR, "authorId");
+    }
+
+    @Test
+    void testUpdate() {
+        Author updatedAuthor2 = new Author(AUTHOR2.getAuthorId(), "Updated " + AUTHOR2.getFirstname(), "Updated " + AUTHOR2.getLastname(), "Updated " + AUTHOR2.getHomeland());
+        authorDaoJdbc.save(updatedAuthor2);
+
+        Author actual = authorDaoJdbc.findOne(updatedAuthor2.getAuthorId());
+
+        assertThat(actual).isEqualToComparingFieldByField(updatedAuthor2);
+    }
+
+    @Test
+    @DisplayName("updating non existent author throws exception")
+    void testUpdateNonExistent() {
+        Author noSuchAuthor = new Author(NO_SUCH_ID, "No such", "No such", "No such");
+
+        assertThatThrownBy(() -> authorDaoJdbc.save(noSuchAuthor)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
+    }
+
+    @Test
+    void testDelete() {
+        authorDaoJdbc.delete(AUTHOR2);
+        assertThat(authorDaoJdbc.findAll()).containsExactly(AUTHOR1, AUTHOR3);
+    }
+
+    @Test
+    void testDeleteById() {
+        authorDaoJdbc.delete(AUTHOR1.getAuthorId());
+        assertThat(authorDaoJdbc.findAll()).containsExactly(AUTHOR3, AUTHOR2);
+    }
+
+    @Test
+    @DisplayName("deleting non existent ID throws exception")
+    void testDeleteNonExistent() {
+        assertThatThrownBy(() -> authorDaoJdbc.delete(NO_SUCH_ID)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
     }
 }

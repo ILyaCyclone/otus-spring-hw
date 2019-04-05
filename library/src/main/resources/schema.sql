@@ -17,11 +17,11 @@ CREATE TABLE genre (
 
 
 CREATE TABLE book (
-    book_id   INT PRIMARY KEY AUTO_INCREMENT,
-    author_id INT     NOT NULL REFERENCES author (author_id),
-    genre_id  INT REFERENCES genre (genre_id),
+                      book_id   INT PRIMARY KEY AUTO_INCREMENT,
+                      author_id INT     NOT NULL REFERENCES author (author_id) ON DELETE CASCADE,
+                      genre_id  INT REFERENCES genre (genre_id),
 
-    title     varchar NOT NULL,
-    year      int,
-    CONSTRAINT book_unique UNIQUE (author_id, title, year)
+                      title     varchar NOT NULL,
+                      year      int,
+                      CONSTRAINT book_unique UNIQUE (author_id, title, year)
 );
