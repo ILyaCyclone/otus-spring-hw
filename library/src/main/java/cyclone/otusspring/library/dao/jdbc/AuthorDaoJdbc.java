@@ -1,5 +1,6 @@
-package cyclone.otusspring.library.dao;
+package cyclone.otusspring.library.dao.jdbc;
 
+import cyclone.otusspring.library.dao.AuthorDao;
 import cyclone.otusspring.library.model.Author;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;

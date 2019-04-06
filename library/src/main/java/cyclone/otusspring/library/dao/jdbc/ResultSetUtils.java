@@ -1,4 +1,4 @@
-package cyclone.otusspring.library.dao;
+package cyclone.otusspring.library.dao.jdbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

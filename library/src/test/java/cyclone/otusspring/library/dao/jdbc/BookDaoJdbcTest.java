@@ -1,4 +1,4 @@
-package cyclone.otusspring.library.dao;
+package cyclone.otusspring.library.dao.jdbc;
 
 import cyclone.otusspring.library.dto.BookDetails;
 import cyclone.otusspring.library.model.Book;

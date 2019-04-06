@@ -1,4 +1,4 @@
-package cyclone.otusspring.library.dao;
+package cyclone.otusspring.library.dao.jdbc;
 
 import cyclone.otusspring.library.model.Genre;
 import org.junit.jupiter.api.BeforeEach;
