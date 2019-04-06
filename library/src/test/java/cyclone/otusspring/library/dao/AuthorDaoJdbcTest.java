@@ -14,19 +14,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 
 import java.util.stream.Stream;
 
+import static cyclone.otusspring.library.dao.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @JdbcTest
 //@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2, replace=Replace.NONE)
 class AuthorDaoJdbcTest {
-
-    private static final Author AUTHOR1 = new Author(1L, "Test Arthur", "Hailey", "Canada");
-    private static final Author AUTHOR2 = new Author(2L, "Test Isaac", "Asimov", "Russia");
-    private static final Author AUTHOR3 = new Author(3L, "Test Gabriel", "Marquez", "Argentina");
-    private static final long NO_SUCH_ID = 999;
-
-    private static final Author NEW_AUTHOR = new Author("New Author", "New Lastname", "New Homeland");
 
     @Autowired
     NamedParameterJdbcOperations jdbcOperations;

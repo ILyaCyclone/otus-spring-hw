@@ -1,6 +1,9 @@
 package cyclone.otusspring.library.dao;
 
+import cyclone.otusspring.library.dto.BookDetails;
+import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
+import cyclone.otusspring.library.model.Genre;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -80,6 +83,24 @@ public class BookDaoJdbc implements BookDao {
             throw new EmptyResultDataAccessException("Expected exactly 1 book with ID " + id, 1);
         }
     }
+
+
+
+    @Override
+    public List<BookDetails> findAllWithDetails() {
+        return jdbcOperations.query("select b.book_id, b.title, b.year " +
+                ", a.author_id, a.firstname as author_firstname, a.lastname as author_lastname, a.homeland as author_homeland " +
+                ", g.genre_id, g.name as genre_name " +
+                "from book b join author a on b.author_id = a.author_id " +
+                "join genre g on b.genre_id = g.genre_id " +
+                "order by b.title", (rs, rowNum) -> new BookDetails(rs.getLong("book_id"), rs.getString("title")
+                , ResultSetUtils.optInt(rs, "year")
+                , new Author(rs.getLong("author_id"), rs.getString("author_firstname")
+                , rs.getString("author_lastname"), rs.getString("author_homeland"))
+                , new Genre(rs.getLong("genre_id"), rs.getString("genre_name")))
+        );
+    }
+
 
 
     private Book insert(Book book) {

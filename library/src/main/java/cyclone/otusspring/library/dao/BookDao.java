@@ -1,5 +1,6 @@
 package cyclone.otusspring.library.dao;
 
+import cyclone.otusspring.library.dto.BookDetails;
 import cyclone.otusspring.library.model.Book;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface BookDao {
     void delete(long id);
 
     void delete(Book book);
+
+    List<BookDetails> findAllWithDetails();
 }

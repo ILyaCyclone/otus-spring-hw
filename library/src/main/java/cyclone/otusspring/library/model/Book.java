@@ -2,8 +2,7 @@ package cyclone.otusspring.library.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Objects;
+import org.springframework.util.StringUtils;
 
 @Data
 @NoArgsConstructor
@@ -18,10 +17,12 @@ public class Book {
     public Book(long authorId, long genreId, String title, Integer year) {
         this(null, authorId, genreId, title, year);
     }
+
     public Book(Long bookId, long authorId, long genreId, String title, Integer year) {
-        Objects.requireNonNull(title, "book title must not be null");
-//        Objects.requireNonNull(authorId, "book authorId must not be null");
-//        Objects.requireNonNull(genreId, "book genreId must not be null");
+        if (StringUtils.isEmpty(title)) {
+            throw new IllegalArgumentException("book title must not be empty");
+        }
+
         this.bookId = bookId;
         this.authorId = authorId;
         this.genreId = genreId;

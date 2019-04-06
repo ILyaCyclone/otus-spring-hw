@@ -14,20 +14,12 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 
 import java.util.stream.Stream;
 
+import static cyclone.otusspring.library.dao.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @JdbcTest
 class GenreDaoJdbcTest {
-
-    private static final Genre GENRE1 = new Genre(1L, "Test Adventures");
-    private static final Genre GENRE2 = new Genre(2L, "Test Science fiction");
-    private static final Genre GENRE3 = new Genre(3L, "Test Novel");
-    private static final Genre GENRE4 = new Genre(4L, "Test Magic realism");
-    private static final long NO_SUCH_ID = 999;
-
-    private static final Genre NEW_GENRE = new Genre("New Genre");
-
 
     @Autowired
     NamedParameterJdbcOperations jdbcOperations;

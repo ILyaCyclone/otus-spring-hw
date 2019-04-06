@@ -1,5 +1,6 @@
 package cyclone.otusspring.library.dao;
 
+import cyclone.otusspring.library.dto.BookDetails;
 import cyclone.otusspring.library.model.Book;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,23 +13,15 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 
+import java.util.List;
 import java.util.stream.Stream;
 
+import static cyclone.otusspring.library.dao.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @JdbcTest
 class BookDaoJdbcTest {
-
-    private static final Book BOOK1 = new Book(1L, 1, 1, "Test Wheels", 1971);
-    private static final Book BOOK2 = new Book(2L, 1, 1, "Test Airport", 1968);
-    private static final Book BOOK3 = new Book(3L, 2, 2, "Test The End of Eternity", 1955);
-    private static final Book BOOK4 = new Book(4L, 2, 2, "Test Foundation", 1951);
-    private static final Book BOOK5 = new Book(5L, 3, 3, "Test 100 Years of Solitude", 1967);
-    private static final long NO_SUCH_ID = 999;
-
-    private static final Book NEW_BOOK = new Book(1, 1, "New Book", 2000);
-
 
     @Autowired
     NamedParameterJdbcOperations jdbcOperations;
@@ -114,5 +107,21 @@ class BookDaoJdbcTest {
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
         assertThatThrownBy(() -> bookDaoJdbc.delete(NO_SUCH_ID)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
+    }
+
+
+
+    @Test
+    void testFindWithDetails() {
+        List<BookDetails> booksWithDetails = bookDaoJdbc.findAllWithDetails();
+
+        assertThat(booksWithDetails).usingRecursiveFieldByFieldElementComparator()
+                .containsExactly(
+                        new BookDetails(BOOK5.getBookId(), BOOK5.getTitle(), BOOK5.getYear(), AUTHOR3, GENRE3)
+                        , new BookDetails(BOOK2.getBookId(), BOOK2.getTitle(), BOOK2.getYear(), AUTHOR1, GENRE1)
+                        , new BookDetails(BOOK4.getBookId(), BOOK4.getTitle(), BOOK4.getYear(), AUTHOR2, GENRE2)
+                        , new BookDetails(BOOK3.getBookId(), BOOK3.getTitle(), BOOK3.getYear(), AUTHOR2, GENRE2)
+                        , new BookDetails(BOOK1.getBookId(), BOOK1.getTitle(), BOOK1.getYear(), AUTHOR1, GENRE1)
+                );
     }
 }
