@@ -1,6 +1,6 @@
 package cyclone.otusspring.library.shell;
 
-import cyclone.otusspring.library.dto.BookDetails;
+import cyclone.otusspring.library.dto.BookDto;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Genre;
@@ -32,10 +32,10 @@ public class LibraryCommands {
 
     @ShellMethod(value = "List all books")
     public String listBooks() {
-        List<BookDetails> booksWithDetails = bookService.findAllWithDetails();
+        List<Book> books = bookService.findAll();
 
         StringJoiner joiner = new StringJoiner(";\n");
-        booksWithDetails.forEach(bookDetails ->
+        books.forEach(bookDetails ->
                 joiner.add(String.format("#%d \"%s\" by %s %s, %s", bookDetails.getBookId(), bookDetails.getTitle(), bookDetails.getAuthor()
                         .getFirstname(), bookDetails.getAuthor().getLastname(), bookDetails.getGenre().getName())
                         + (bookDetails.getYear() != null ? String.format(" (%d)", bookDetails.getYear()) : ""))
@@ -51,7 +51,9 @@ public class LibraryCommands {
             , @ShellOption long genreId) {
         logger.info("create book title: {}, year: {}, authorId: {}, genreId: {}", title, year, authorId, genreId);
 
-        Book createdBook = bookService.createBook(title, year, authorId, genreId);
+
+
+        Book createdBook = bookService.createBook(new BookDto(title, year, authorId, genreId));
         return "created book #" + createdBook.getBookId() + " \"" + createdBook.getTitle() + "\"";
     }
 

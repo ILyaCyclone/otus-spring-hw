@@ -1,9 +1,14 @@
 package cyclone.otusspring.library.service;
 
+import cyclone.otusspring.library.dao.AuthorDao;
 import cyclone.otusspring.library.dao.BookDao;
-import cyclone.otusspring.library.dto.BookDetails;
+import cyclone.otusspring.library.dao.GenreDao;
+import cyclone.otusspring.library.dto.BookDto;
+import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
+import cyclone.otusspring.library.model.Genre;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -11,9 +16,13 @@ import java.util.List;
 public class BookServiceImpl implements BookService {
 
     private final BookDao bookDao;
+    private final AuthorDao authorDao;
+    private final GenreDao genreDao;
 
-    public BookServiceImpl(BookDao bookDao) {
+    public BookServiceImpl(BookDao bookDao, AuthorDao authorDao, GenreDao genreDao) {
         this.bookDao = bookDao;
+        this.authorDao = authorDao;
+        this.genreDao = genreDao;
     }
 
     @Override
@@ -22,14 +31,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book createBook(String title, Integer year, long authorId, long genreId) {
-        Book newBook = new Book(authorId, genreId, title, year);
-        Book createdBook = bookDao.save(newBook);
-        return createdBook;
-    }
+    @Transactional
+    public Book createBook(BookDto bookDto) {
+        Author author = authorDao.findOne(bookDto.getAuthorId());
+        Genre genre = genreDao.findOne(bookDto.getGenreId());
 
-    @Override
-    public List<BookDetails> findAllWithDetails() {
-        return bookDao.findAllWithDetails();
+        Book newBook = new Book(bookDto.getTitle(), bookDto.getYear(), author, genre);
+        return bookDao.save(newBook);
     }
 }

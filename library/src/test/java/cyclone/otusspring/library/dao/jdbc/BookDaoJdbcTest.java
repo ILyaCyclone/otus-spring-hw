@@ -1,6 +1,5 @@
 package cyclone.otusspring.library.dao.jdbc;
 
-import cyclone.otusspring.library.dto.BookDetails;
 import cyclone.otusspring.library.model.Book;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import static cyclone.otusspring.library.TestData.*;
@@ -34,7 +32,8 @@ class BookDaoJdbcTest {
 
     @Test
     void findAll() {
-        assertThat(bookDaoJdbc.findAll()).containsExactly(BOOK5, BOOK2, BOOK4, BOOK3, BOOK1);
+        assertThat(bookDaoJdbc.findAll()).usingRecursiveFieldByFieldElementComparator()
+                .containsExactly(BOOK5, BOOK2, BOOK4, BOOK3, BOOK1);
     }
 
     @ParameterizedTest
@@ -75,7 +74,7 @@ class BookDaoJdbcTest {
 
     @Test
     void testUpdate() {
-        Book updatedBook2 = new Book(BOOK2.getBookId(), 1, 1, "Updated " + BOOK2.getTitle(), BOOK2.getYear() + 1);
+        Book updatedBook2 = new Book(BOOK2.getBookId(), "Updated " + BOOK2.getTitle(), BOOK2.getYear() + 1, AUTHOR1, GENRE1);
         bookDaoJdbc.save(updatedBook2);
 
         Book actual = bookDaoJdbc.findOne(updatedBook2.getBookId());
@@ -86,7 +85,7 @@ class BookDaoJdbcTest {
     @Test
     @DisplayName("updating non existent book throws exception")
     void testUpdateNonExistent() {
-        Book noSuchBook = new Book(NO_SUCH_ID, 1L, 1L, "No such", 2000);
+        Book noSuchBook = new Book(NO_SUCH_ID, "No such", 2000, AUTHOR1, GENRE1);
 
         assertThatThrownBy(() -> bookDaoJdbc.save(noSuchBook)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
     }
@@ -107,21 +106,5 @@ class BookDaoJdbcTest {
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
         assertThatThrownBy(() -> bookDaoJdbc.delete(NO_SUCH_ID)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
-    }
-
-
-
-    @Test
-    void testFindWithDetails() {
-        List<BookDetails> booksWithDetails = bookDaoJdbc.findAllWithDetails();
-
-        assertThat(booksWithDetails).usingRecursiveFieldByFieldElementComparator()
-                .containsExactly(
-                        new BookDetails(BOOK5.getBookId(), BOOK5.getTitle(), BOOK5.getYear(), AUTHOR3, GENRE3)
-                        , new BookDetails(BOOK2.getBookId(), BOOK2.getTitle(), BOOK2.getYear(), AUTHOR1, GENRE1)
-                        , new BookDetails(BOOK4.getBookId(), BOOK4.getTitle(), BOOK4.getYear(), AUTHOR2, GENRE2)
-                        , new BookDetails(BOOK3.getBookId(), BOOK3.getTitle(), BOOK3.getYear(), AUTHOR2, GENRE2)
-                        , new BookDetails(BOOK1.getBookId(), BOOK1.getTitle(), BOOK1.getYear(), AUTHOR1, GENRE1)
-                );
     }
 }
