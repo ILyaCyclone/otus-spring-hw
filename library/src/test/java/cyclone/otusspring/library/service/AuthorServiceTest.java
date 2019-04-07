@@ -18,5 +18,4 @@ class AuthorServiceTest {
         assertThat(authorService.findAll()).containsExactly(AUTHOR1, AUTHOR3, AUTHOR2);
 
     }
-
 }

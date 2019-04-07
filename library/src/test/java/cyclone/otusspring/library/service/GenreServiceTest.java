@@ -18,5 +18,4 @@ class GenreServiceTest {
         assertThat(genreService.findAll()).containsExactly(GENRE1, GENRE4, GENRE3, GENRE2);
 
     }
-
 }
