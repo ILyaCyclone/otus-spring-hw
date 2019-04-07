@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.table.Table;
 
 import java.util.List;
-import java.util.StringJoiner;
 
 @ShellComponent
 public class LibraryCommands {
@@ -31,16 +31,32 @@ public class LibraryCommands {
     }
 
     @ShellMethod(value = "List all books")
-    public String listBooks() {
+    public Table listBooks(
+            @ShellOption(defaultValue = "false", help = "output full info") boolean verbose
+    ) {
         List<Book> books = bookService.findAll();
 
-        StringJoiner joiner = new StringJoiner(";\n");
-        books.forEach(bookDetails ->
-                joiner.add(String.format("#%d \"%s\" by %s %s, %s", bookDetails.getBookId(), bookDetails.getTitle(), bookDetails.getAuthor()
-                        .getFirstname(), bookDetails.getAuthor().getLastname(), bookDetails.getGenre().getName())
-                        + (bookDetails.getYear() != null ? String.format(" (%d)", bookDetails.getYear()) : ""))
-        );
-        return joiner.toString();
+        SimpleTableBuilder tableBuilder = new SimpleTableBuilder()
+                .data(books)
+                .addHeader("bookId", "ID")
+                .addHeader("title", "Title")
+                .addHeader("year", "Year");
+        if (!verbose) {
+            return tableBuilder
+                    .addHeader("author.lastname", "Author")
+                    .addHeader("genre.name", "Genre")
+                    .build();
+        } else {
+            return tableBuilder
+                    .addHeader("author.authorId", "Author ID")
+                    .addHeader("author.firstname", "Author First Name")
+                    .addHeader("author.lastname", "Author Last Name")
+                    .addHeader("author.homeland", "Author Homeland")
+
+                    .addHeader("genre.genreId", "Genre ID")
+                    .addHeader("genre.name", "Genre Name")
+                    .build();
+        }
     }
 
     @ShellMethod(value = "Create book")
@@ -54,27 +70,30 @@ public class LibraryCommands {
 
 
         Book createdBook = bookService.createBook(new BookDto(title, year, authorId, genreId));
-        return "created book #" + createdBook.getBookId() + " \"" + createdBook.getTitle() + "\"";
+        return "New book \"" + createdBook.getTitle() + "\" created successfully with ID " + createdBook.getBookId();
     }
 
     @ShellMethod(value = "List all authors")
-    public String listAuthors() {
+    public Table listAuthors() {
         List<Author> authors = authorService.findAll();
 
-        StringJoiner joiner = new StringJoiner(";\n");
-        authors.forEach(author ->
-                joiner.add("#" + author.getAuthorId() + " " + author.getFirstname() + " " + author.getLastname()
-                        + (author.getHomeland() != null ? ", " + author.getHomeland() : ""))
-        );
-        return joiner.toString();
+        return new SimpleTableBuilder()
+                .data(authors)
+                .addHeader("authorId", "ID")
+                .addHeader("firstname", "First Name")
+                .addHeader("lastname", "Last Name")
+                .addHeader("homeland", "Homeland")
+                .build();
     }
 
     @ShellMethod(value = "List all genres")
-    public String listGenres() {
+    public Table listGenres() {
         List<Genre> genres = genreService.findAll();
 
-        StringJoiner joiner = new StringJoiner(";\n");
-        genres.forEach(genre -> joiner.add("#" + genre.getGenreId() + " " + genre.getName()));
-        return joiner.toString();
+        return new SimpleTableBuilder()
+                .data(genres)
+                .addHeader("genreId", "ID")
+                .addHeader("name", "Genre")
+                .build();
     }
 }
