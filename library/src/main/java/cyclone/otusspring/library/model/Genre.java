@@ -11,6 +11,10 @@ public class Genre {
     private Long genreId;
     private String name;
 
+    public Genre(long genreId) {
+        this.genreId = genreId;
+    }
+
     public Genre(String name) {
         this(null, name);
     }

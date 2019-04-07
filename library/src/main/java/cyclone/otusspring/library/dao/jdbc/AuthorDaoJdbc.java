@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Repository
-@Transactional
+@Transactional(readOnly = true)
 public class AuthorDaoJdbc implements AuthorDao {
 
     private static final BeanPropertyRowMapper<Author> AUTHOR_ROW_MAPPER = new BeanPropertyRowMapper(Author.class);
@@ -51,20 +51,21 @@ public class AuthorDaoJdbc implements AuthorDao {
     }
 
     @Override
+    @Transactional
     public Author save(Author author) {
         requireEntity(author);
 
         if (Objects.isNull(author.getAuthorId())) {
             return insert(author);
         } else {
-            update(author);
-            return author;
+            return update(author);
         }
     }
 
 
 
     @Override
+    @Transactional
     public void delete(Author author) {
         requireEntity(author);
 
@@ -72,6 +73,7 @@ public class AuthorDaoJdbc implements AuthorDao {
     }
 
     @Override
+    @Transactional
     public void delete(long id) {
         int affectedRows = jdbcOperations.
                 update("delete author where author_id = :id"
@@ -82,6 +84,17 @@ public class AuthorDaoJdbc implements AuthorDao {
     }
 
 
+
+    @Override
+    public boolean exists(long id) {
+        Integer count = jdbcOperations.queryForObject("select count(author_id) from author where author_id = :id"
+                , new MapSqlParameterSource("id", id)
+                , Integer.class);
+        return count > 0;
+    }
+
+
+
     private Author insert(Author author) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcOperations.update("insert into author(firstname, lastname, homeland) values(:firstname, :lastname, :homeland)"
@@ -90,10 +103,10 @@ public class AuthorDaoJdbc implements AuthorDao {
                         .addValue("homeland", author.getHomeland())
                 , keyHolder);
 
-        return new Author(keyHolder.getKey().longValue(), author.getFirstname(), author.getLastname(), author.getHomeland());
+        return findOne(keyHolder.getKey().longValue());
     }
 
-    private void update(Author author) {
+    private Author update(Author author) {
         int affectedRows = jdbcOperations.update("update author set firstname = :firstname, lastname = :lastname, homeland = :homeland where author_id = :id"
                 , new MapSqlParameterSource().addValue("firstname", author.getFirstname())
                         .addValue("lastname", author.getLastname())
@@ -102,6 +115,8 @@ public class AuthorDaoJdbc implements AuthorDao {
         if (affectedRows != 1) {
             throw new EmptyResultDataAccessException("Expected exactly 1 author with ID " + author.getAuthorId(), 1);
         }
+
+        return findOne(author.getAuthorId().longValue());
     }
 
 

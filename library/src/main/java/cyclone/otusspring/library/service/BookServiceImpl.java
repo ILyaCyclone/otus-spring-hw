@@ -33,8 +33,17 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public Book createBook(BookDto bookDto) {
-        Author author = authorDao.findOne(bookDto.getAuthorId());
-        Genre genre = genreDao.findOne(bookDto.getGenreId());
+        long authorId = bookDto.getAuthorId();
+        long genreId = bookDto.getGenreId();
+
+        if (!authorDao.exists(authorId)) {
+            throw new IllegalArgumentException("Could not create book: author #" + authorId + " not found");
+        }
+        if (!genreDao.exists(genreId)) {
+            throw new IllegalArgumentException("Could not create book: genre #" + genreId + " not found");
+        }
+        Author author = new Author(authorId);
+        Genre genre = new Genre(genreId);
 
         Book newBook = new Book(bookDto.getTitle(), bookDto.getYear(), author, genre);
         return bookDao.save(newBook);

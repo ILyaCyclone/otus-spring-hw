@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface GenreDao {
     List<Genre> findAll();
+
     List<Genre> findByName(String name);
+
     Genre findOne(long id);
 
     Genre save(Genre genre);
@@ -14,4 +16,6 @@ public interface GenreDao {
     void delete(long id);
 
     void delete(Genre genre);
+
+    boolean exists(long id);
 }

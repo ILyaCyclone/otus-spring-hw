@@ -13,9 +13,14 @@ public class Author {
     private String lastname;
     private String homeland;
 
+    public Author(long authorId) {
+        this.authorId = authorId;
+    }
+
     public Author(String firstname, String lastname, String homeland) {
         this(null, firstname, lastname, homeland);
     }
+
     public Author(Long id, String firstname, String lastname, String homeland) {
         Objects.requireNonNull(firstname, "author firstname must not be null");
         Objects.requireNonNull(lastname, "author lastname must not be null");

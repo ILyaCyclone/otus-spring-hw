@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Repository
-@Transactional
+@Transactional(readOnly = true)
 public class GenreDaoJdbc implements GenreDao {
 
     private static final BeanPropertyRowMapper<Genre> GENRE_ROW_MAPPER = new BeanPropertyRowMapper(Genre.class);
@@ -52,20 +52,21 @@ public class GenreDaoJdbc implements GenreDao {
 
 
     @Override
+    @Transactional
     public Genre save(Genre genre) {
         requireEntity(genre);
 
         if (Objects.isNull(genre.getGenreId())) {
             return insert(genre);
         } else {
-            update(genre);
-            return genre;
+            return update(genre);
         }
     }
 
 
 
     @Override
+    @Transactional
     public void delete(Genre genre) {
         requireEntity(genre);
         Objects.requireNonNull(genre.getGenreId(), "Genre ID must not be null");
@@ -74,6 +75,7 @@ public class GenreDaoJdbc implements GenreDao {
     }
 
     @Override
+    @Transactional
     public void delete(long id) {
         int affectedRows = jdbcOperations.
                 update("delete genre where genre_id = :id"
@@ -84,16 +86,26 @@ public class GenreDaoJdbc implements GenreDao {
     }
 
 
+
+    @Override
+    public boolean exists(long id) {
+        Integer count = jdbcOperations.queryForObject("select count(genre_id) from genre where genre_id = :id"
+                , new MapSqlParameterSource("id", id)
+                , Integer.class);
+        return count > 0;
+    }
+
+
     private Genre insert(Genre genre) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcOperations.update("insert into genre(name) values(:name)"
                 , new MapSqlParameterSource().addValue("name", genre.getName())
                 , keyHolder);
 
-        return new Genre(keyHolder.getKey().longValue(), genre.getName());
+        return findOne(keyHolder.getKey().longValue());
     }
 
-    private void update(Genre genre) {
+    private Genre update(Genre genre) {
         int affectedRows = jdbcOperations.update("update genre set name = :name " +
                         "where genre_id = :id"
                 , new MapSqlParameterSource().addValue("name", genre.getName())
@@ -101,6 +113,8 @@ public class GenreDaoJdbc implements GenreDao {
         if (affectedRows != 1) {
             throw new EmptyResultDataAccessException("Expected exactly 1 genre with ID " + genre.getGenreId(), 1);
         }
+
+        return findOne(genre.getGenreId());
     }
 
 

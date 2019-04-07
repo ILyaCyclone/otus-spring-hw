@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Repository
-@Transactional
+@Transactional(readOnly = true)
 public class BookDaoJdbc implements BookDao {
 
     private static final RowMapper<Book> BOOK_ROW_MAPPER = (rs, rowNum) -> new Book(rs.getLong("book_id"), rs.getString("title")
@@ -63,20 +63,21 @@ public class BookDaoJdbc implements BookDao {
 
 
     @Override
+    @Transactional
     public Book save(Book book) {
         requireEntity(book);
 
         if (Objects.isNull(book.getBookId())) {
             return insert(book);
         } else {
-            update(book);
-            return book;
+            return update(book);
         }
     }
 
 
 
     @Override
+    @Transactional
     public void delete(Book book) {
         requireEntity(book);
         Objects.requireNonNull(book.getBookId(), "Book ID must not be null");
@@ -85,6 +86,7 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
+    @Transactional
     public void delete(long id) {
         int affectedRows = jdbcOperations.
                 update("delete book where book_id = :id"
@@ -96,6 +98,15 @@ public class BookDaoJdbc implements BookDao {
 
 
 
+    @Override
+    public boolean exists(long id) {
+        Integer count = jdbcOperations.queryForObject("select count(book_id) from book where book_id = :id"
+                , new MapSqlParameterSource("id", id)
+                , Integer.class);
+        return count > 0;
+    }
+
+
     private Book insert(Book book) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcOperations.update("insert into book(author_id, genre_id, title, year) values(:author_id, :genre_id, :title, :year)"
@@ -105,10 +116,10 @@ public class BookDaoJdbc implements BookDao {
                         .addValue("year", book.getYear())
                 , keyHolder);
 
-        return new Book(keyHolder.getKey().longValue(), book.getTitle(), book.getYear(), book.getAuthor(), book.getGenre());
+        return findOne(keyHolder.getKey().longValue());
     }
 
-    private void update(Book book) {
+    private Book update(Book book) {
         int affectedRows = jdbcOperations.update("update book set author_id = :author_id, genre_id = :genre_id" +
                         ", title = :title, year = :year where book_id = :id"
                 , new MapSqlParameterSource().addValue("author_id", book.getAuthor().getAuthorId())
@@ -119,6 +130,8 @@ public class BookDaoJdbc implements BookDao {
         if (affectedRows != 1) {
             throw new EmptyResultDataAccessException("Expected exactly 1 book with ID " + book.getBookId(), 1);
         }
+
+        return findOne(book.getBookId());
     }
 
 
