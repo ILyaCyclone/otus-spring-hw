@@ -7,7 +7,6 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootConfiguration
 @ComponentScan({"cyclone.otusspring.library.dao", "cyclone.otusspring.library.service"})
 @EnableAutoConfiguration
-//@EnableConfigurationProperties
-//@AutoConfigureTestDatabase
+//@EnableConfigurationProperties (if needed)
 public class TestServiceConfiguration {
 }
