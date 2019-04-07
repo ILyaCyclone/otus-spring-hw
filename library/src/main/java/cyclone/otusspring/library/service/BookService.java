@@ -8,5 +8,7 @@ import java.util.List;
 public interface BookService {
     Book createBook(String title, Integer year, long authorId, long genreId);
 
+    List<Book> findAll();
+
     List<BookDetails> findAllWithDetails();
 }

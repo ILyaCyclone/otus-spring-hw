@@ -17,6 +17,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public List<Book> findAll() {
+        return bookDao.findAll();
+    }
+
+    @Override
     public Book createBook(String title, Integer year, long authorId, long genreId) {
         Book newBook = new Book(authorId, genreId, title, year);
         Book createdBook = bookDao.save(newBook);

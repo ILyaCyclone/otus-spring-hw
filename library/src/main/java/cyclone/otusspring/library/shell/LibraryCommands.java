@@ -46,11 +46,9 @@ public class LibraryCommands {
     @ShellMethod(value = "Create book")
     public String createBook(
             @ShellOption String title
-            , @ShellOption(defaultValue = ShellOption.NULL) Integer year
+            , @ShellOption(defaultValue = ShellOption.NULL, help = "publish year") Integer year
             , @ShellOption long authorId
-            , @ShellOption long genreId
-
-    ) {
+            , @ShellOption long genreId) {
         logger.info("create book title: {}, year: {}, authorId: {}, genreId: {}", title, year, authorId, genreId);
 
         Book createdBook = bookService.createBook(title, year, authorId, genreId);
