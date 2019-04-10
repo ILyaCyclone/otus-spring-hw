@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    initialization-mode: embedded
+  h2:
+    console:
+      enabled: true

@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    initialization-mode: embedded
+    data: onlytestdata.sql
+  shell:
+    interactive:
+      enabled: false
+  h2:
+    console:
+      enabled: false
