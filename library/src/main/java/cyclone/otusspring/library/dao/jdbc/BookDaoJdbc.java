@@ -1,9 +1,11 @@
 package cyclone.otusspring.library.dao.jdbc;
 
 import cyclone.otusspring.library.dao.BookDao;
+import cyclone.otusspring.library.dao.DataAccessProfiles;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Genre;
+import org.springframework.context.annotation.Profile;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Repository
+@Profile(DataAccessProfiles.JDBC)
 @Transactional(readOnly = true)
 public class BookDaoJdbc implements BookDao {
 
