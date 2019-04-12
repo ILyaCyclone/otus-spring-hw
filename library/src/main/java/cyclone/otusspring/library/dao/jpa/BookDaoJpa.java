@@ -61,11 +61,14 @@ public class BookDaoJpa implements BookDao {
     public Book save(Book book) {
         if (Objects.isNull(book.getBookId())) {
             // create new entity
-            em.persist(book);
-            em.flush(); // ID will be populated
+            em.persist(book); // ID will be populated
+//            return findOne(book.getBookId());
             return book;
         } else {
             // edit existing entity
+//            Book mergedBook = em.merge(book);
+//            return findOne(mergedBook.getBookId());
+
             return em.merge(book);
         }
     }

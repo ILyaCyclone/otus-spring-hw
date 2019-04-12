@@ -1,7 +1,9 @@
 package cyclone.otusspring.library.dao.jdbc;
 
+import cyclone.otusspring.library.dao.DataAccessProfiles;
 import cyclone.otusspring.library.dao.GenreDao;
 import cyclone.otusspring.library.model.Genre;
+import org.springframework.context.annotation.Profile;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Repository
+@Profile(DataAccessProfiles.JDBC)
 @Transactional(readOnly = true)
 public class GenreDaoJdbc implements GenreDao {
 
