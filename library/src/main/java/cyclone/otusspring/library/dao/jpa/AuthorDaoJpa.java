@@ -6,6 +6,7 @@ import cyclone.otusspring.library.model.Author;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,6 +15,7 @@ import java.util.Objects;
 
 @Repository
 @Profile(DataAccessProfiles.JPA)
+@Transactional(readOnly = true)
 public class AuthorDaoJpa implements AuthorDao {
 
     @PersistenceContext
@@ -44,6 +46,7 @@ public class AuthorDaoJpa implements AuthorDao {
     }
 
     @Override
+    @Transactional
     public Author save(Author author) {
         if (Objects.isNull(author.getAuthorId())) {
             // create new entity
@@ -57,11 +60,13 @@ public class AuthorDaoJpa implements AuthorDao {
     }
 
     @Override
+    @Transactional
     public void delete(long id) {
         delete(em.getReference(Author.class, id));
     }
 
     @Override
+    @Transactional
     public void delete(Author author) {
         em.remove(author);
     }
