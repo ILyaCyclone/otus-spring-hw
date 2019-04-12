@@ -10,10 +10,12 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.ActiveProfiles;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.stream.Stream;
 
 import static cyclone.otusspring.library.TestData.*;
@@ -27,6 +29,9 @@ class BookDaoJpaTest {
 
     @Autowired
     BookDao bookDao;
+
+    @Autowired
+    TestEntityManager tem;
 
     @Test
     void findAll() {
@@ -72,25 +77,21 @@ class BookDaoJpaTest {
 
     @Test
     void testUpdate() {
-        Book updatedBook2 = new Book(BOOK2.getBookId(), "Updated " + BOOK2.getTitle(), BOOK2.getYear() + 1, AUTHOR1, GENRE1);
-        bookDao.save(updatedBook2);
+        Book bookToUpdate = tem.find(Book.class, BOOK2.getBookId());
 
-        Book actual = bookDao.findOne(updatedBook2.getBookId());
+        bookToUpdate.setTitle("updated " + bookToUpdate.getTitle());
+        bookToUpdate.setYear(bookToUpdate.getYear() + 1);
 
-        assertThat(actual).isEqualToComparingFieldByField(updatedBook2);
-    }
+        Book updatedBook = bookDao.save(bookToUpdate);
 
-    @Test
-    @DisplayName("updating non existent book throws exception")
-    void testUpdateNonExistent() {
-        Book noSuchBook = new Book(NO_SUCH_ID, "No such", 2000, AUTHOR1, GENRE1);
-
-        assertThatThrownBy(() -> bookDao.save(noSuchBook)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
+        assertThat(updatedBook).isEqualToComparingFieldByField(bookToUpdate);
     }
 
     @Test
     void testDelete() {
-        bookDao.delete(BOOK2);
+        Book bookToDelete = tem.find(Book.class, BOOK2.getBookId());
+
+        bookDao.delete(bookToDelete);
         assertThat(bookDao.findAll()).containsExactly(BOOK5, BOOK4, BOOK3, BOOK1);
     }
 
@@ -103,6 +104,16 @@ class BookDaoJpaTest {
     @Test
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
-        assertThatThrownBy(() -> bookDao.delete(NO_SUCH_ID)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
+        assertThatThrownBy(() -> bookDao.delete(NO_SUCH_ID)).isInstanceOf(EntityNotFoundException.class);
+    }
+
+    @Test
+    void testExistTrue() {
+        assertThat(bookDao.exists(BOOK2.getBookId())).isTrue();
+    }
+
+    @Test
+    void testExistFalse() {
+        assertThat(bookDao.exists(NO_SUCH_ID)).isFalse();
     }
 }
