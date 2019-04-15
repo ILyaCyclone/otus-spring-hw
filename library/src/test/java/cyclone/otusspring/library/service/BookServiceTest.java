@@ -65,6 +65,7 @@ class BookServiceTest {
         List<Book> books = bookService.findAll();
 
         assertThat(books).usingRecursiveFieldByFieldElementComparator()
+                .usingElementComparatorIgnoringFields("comments")
                 .containsExactly(BOOK5, BOOK2, BOOK4, BOOK3, BOOK1);
     }
 }

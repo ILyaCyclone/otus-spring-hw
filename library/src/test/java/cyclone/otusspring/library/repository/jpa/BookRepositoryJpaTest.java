@@ -31,14 +31,16 @@ class BookRepositoryJpaTest {
 
     @Test
     void findAll() {
-        assertThat(bookRepository.findAll()).usingRecursiveFieldByFieldElementComparator()
+        assertThat(bookRepository.findAll()).usingElementComparatorIgnoringFields("comments")
                 .containsExactly(BOOK5, BOOK2, BOOK4, BOOK3, BOOK1);
     }
 
     @ParameterizedTest
     @MethodSource("findByTitleParameters")
     void findByTitle(String title, Book[] expected) {
-        assertThat(bookRepository.findByTitle(title)).containsExactly(expected);
+        assertThat(bookRepository.findByTitle(title))
+                .usingElementComparatorIgnoringFields("comments")
+                .containsExactly(expected);
     }
 
     private static Stream<Arguments> findByTitleParameters() {
@@ -56,7 +58,7 @@ class BookRepositoryJpaTest {
 
     @Test
     void findOne() {
-        assertThat(bookRepository.findOne(2)).isEqualTo(BOOK2);
+        assertThat(bookRepository.findOne(2)).isEqualToIgnoringGivenFields(BOOK2, "comments");
     }
 
 
@@ -88,13 +90,17 @@ class BookRepositoryJpaTest {
         Book bookToDelete = tem.find(Book.class, BOOK2.getBookId());
 
         bookRepository.delete(bookToDelete);
-        assertThat(bookRepository.findAll()).containsExactly(BOOK5, BOOK4, BOOK3, BOOK1);
+        assertThat(bookRepository.findAll())
+                .usingElementComparatorIgnoringFields("comments")
+                .doesNotContain(bookToDelete);
     }
 
     @Test
     void testDeleteById() {
         bookRepository.delete(BOOK1.getBookId());
-        assertThat(bookRepository.findAll()).containsExactly(BOOK5, BOOK2, BOOK4, BOOK3);
+        assertThat(bookRepository.findAll())
+                .usingElementComparatorIgnoringFields("comments")
+                .containsExactly(BOOK5, BOOK2, BOOK4, BOOK3);
     }
 
     @Test

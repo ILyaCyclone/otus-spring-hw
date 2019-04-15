@@ -86,13 +86,13 @@ class AuthorRepositoryJpaTest {
         Author bookToDelete = tem.find(Author.class, AUTHOR2.getAuthorId());
 
         authorRepository.delete(bookToDelete);
-        assertThat(authorRepository.findAll()).containsExactly(AUTHOR1, AUTHOR3);
+        assertThat(authorRepository.findAll()).doesNotContain(AUTHOR2);
     }
 
     @Test
     void testDeleteById() {
         authorRepository.delete(AUTHOR1.getAuthorId());
-        assertThat(authorRepository.findAll()).containsExactly(AUTHOR3, AUTHOR2);
+        assertThat(authorRepository.findAll()).doesNotContain(AUTHOR1);
     }
 
     @Test

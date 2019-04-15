@@ -86,13 +86,13 @@ class GenreRepositoryJpaTest {
         Genre bookToDelete = tem.find(Genre.class, GENRE2.getGenreId());
 
         genreRepository.delete(bookToDelete);
-        assertThat(genreRepository.findAll()).containsExactly(GENRE1, GENRE4, GENRE3);
+        assertThat(genreRepository.findAll()).doesNotContain(GENRE2);
     }
 
     @Test
     void testDeleteById() {
         genreRepository.delete(GENRE1.getGenreId());
-        assertThat(genreRepository.findAll()).containsExactly(GENRE4, GENRE3, GENRE2);
+        assertThat(genreRepository.findAll()).doesNotContain(GENRE1);
     }
 
     @Test

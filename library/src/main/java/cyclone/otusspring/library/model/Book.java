@@ -6,6 +6,9 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -26,6 +29,12 @@ public class Book {
     @ManyToOne
     @JoinColumn(name = "genre_id", nullable = false)
     private Genre genre;
+    @OneToMany(
+            mappedBy = "book",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Comment> comments = new ArrayList<>();
 
     public Book(String title, Integer year) {
         this.title = title;
@@ -46,5 +55,15 @@ public class Book {
         this.year = year;
         this.author = author;
         this.genre = genre;
+    }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+        comment.setBook(this);
+    }
+
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+        comment.setBook(null);
     }
 }

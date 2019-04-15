@@ -1,0 +1,5 @@
+commentator,book_id,date,text
+Commentator 1,1,2018-08-01T10:00:00,Nice one
+Commentator 1,2,2019-04-15T10:00:00,Too long didn't read
+Commentator 2,3,2019-04-15T10:00:00,My favourite
+Commentator 2,4,2019-04-15T10:00:00,Good book
