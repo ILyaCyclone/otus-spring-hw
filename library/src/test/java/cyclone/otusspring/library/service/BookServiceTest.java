@@ -35,7 +35,7 @@ class BookServiceTest {
         assertAll(() -> assertThat(createdBook.getTitle()).isEqualTo(bookDtoToCreate.getTitle())
                 , () -> assertThat(createdBook.getYear()).isEqualTo(bookDtoToCreate.getYear()));
         assertThat(bookService.findAll()).usingRecursiveFieldByFieldElementComparator()
-                .containsExactly(createdBook, BOOK5, BOOK2, BOOK4, BOOK3, BOOK1);
+                .contains(createdBook);
     }
 
     @Test

@@ -84,6 +84,13 @@ public class LibraryCommands {
                 + "\" created successfully with ID " + createdAuthor.getAuthorId();
     }
 
+    @ShellMethod(value = "Create author")
+    public String createGenre(
+            @ShellOption String name) {
+        Genre createdGenre = genreService.create(name);
+        return "Genre \"" + createdGenre.getName() + "\" created successfully with ID " + createdGenre.getGenreId();
+    }
+
     @ShellMethod(value = "List all authors")
     public Table listAuthors() {
         List<Author> authors = authorService.findAll();
