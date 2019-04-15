@@ -1,5 +1,6 @@
 package cyclone.otusspring.library.shell;
 
+import cyclone.otusspring.library.dto.AuthorDto;
 import cyclone.otusspring.library.dto.BookDto;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
@@ -69,8 +70,18 @@ public class LibraryCommands {
 
 
 
-        Book createdBook = bookService.createBook(new BookDto(title, year, authorId, genreId));
-        return "New book \"" + createdBook.getTitle() + "\" created successfully with ID " + createdBook.getBookId();
+        Book createdBook = bookService.create(new BookDto(title, year, authorId, genreId));
+        return "Book \"" + createdBook.getTitle() + "\" created successfully with ID " + createdBook.getBookId();
+    }
+
+    @ShellMethod(value = "Create author")
+    public String createAuthor(
+            @ShellOption String firstname
+            , @ShellOption String lastname
+            , @ShellOption(defaultValue = ShellOption.NULL) String homeland) {
+        Author createdAuthor = authorService.create(new AuthorDto(firstname, lastname, homeland));
+        return "Author \"" + createdAuthor.getFirstname() + " " + createdAuthor.getLastname()
+                + "\" created successfully with ID " + createdAuthor.getAuthorId();
     }
 
     @ShellMethod(value = "List all authors")

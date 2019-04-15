@@ -32,14 +32,14 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public Book createBook(BookDto bookDto) {
+    public Book create(BookDto bookDto) {
         long authorId = bookDto.getAuthorId();
         long genreId = bookDto.getGenreId();
 
         Author author = authorRepository.findOne(authorId);
         Genre genre = genreRepository.findOne(genreId);
 
-        Book newBook = new Book(bookDto.getTitle(), bookDto.getYear(), author, genre);
-        return bookRepository.save(newBook);
+        Book bookToCreate = new Book(bookDto.getTitle(), bookDto.getYear(), author, genre);
+        return bookRepository.save(bookToCreate);
     }
 }

@@ -34,6 +34,12 @@ class LibraryCommandsTest {
     }
 
     @Test
+    void createAuthor() {
+        String message = libraryCommands.createAuthor(NEW_AUTHOR.getFirstname(), NEW_AUTHOR.getLastname(), NEW_AUTHOR.getHomeland());
+        assertThat(message).contains("successfully");
+    }
+
+    @Test
     void listAuthors() {
         assertTableNotEmpty(libraryCommands.listAuthors());
     }
