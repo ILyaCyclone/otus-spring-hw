@@ -66,4 +66,15 @@ public class Book {
         comments.remove(comment);
         comment.setBook(null);
     }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "bookId=" + bookId +
+                ", title='" + title + '\'' +
+                ", year=" + year +
+                ", author=" + author +
+                ", genre=" + genre +
+                '}';
+    }
 }

@@ -1,0 +1,6 @@
+comment_id,commentator,book_id,date,text
+1,Test Commentator 1,1,2019-01-01T10:00:00,Test comment 1
+2,Test Commentator 1,2,2019-02-02T10:00:00,Test comment 2
+3,Test Commentator 2,1,2019-03-03T10:00:00,Test comment 3
+4,Test Commentator 2,2,2019-04-04T10:00:00,Test comment 4
+5,Test Commentator 3,3,2019-05-05T10:00:00,Test comment 5

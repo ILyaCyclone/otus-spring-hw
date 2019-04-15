@@ -5,13 +5,20 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  liquibase:
+    change-log: db/changelog/db.changelog-test.yaml
+    contexts: test
+
   datasource:
     url: jdbc:h2:mem:testdb
     initialization-mode: embedded
     data: onlytestdata.sql
+
   shell:
     interactive:
       enabled: false
+
   h2:
     console:
       enabled: false
