@@ -35,14 +35,7 @@ public class BookServiceImpl implements BookService {
     public Book createBook(BookDto bookDto) {
         long authorId = bookDto.getAuthorId();
         long genreId = bookDto.getGenreId();
-        // TODO think about getting rid of exists call and rely on findOne throwing exception
-        // TODO should throw IncorrectResultSizeDataAccessException or some custom exception then
-        if (!authorRepository.exists(authorId)) {
-            throw new IllegalArgumentException("Could not create book: author #" + authorId + " not found");
-        }
-        if (!genreRepository.exists(genreId)) {
-            throw new IllegalArgumentException("Could not create book: genre #" + genreId + " not found");
-        }
+
         Author author = authorRepository.findOne(authorId);
         Genre genre = genreRepository.findOne(genreId);
 

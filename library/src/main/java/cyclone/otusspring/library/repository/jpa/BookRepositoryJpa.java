@@ -3,11 +3,11 @@ package cyclone.otusspring.library.repository.jpa;
 
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.repository.BookRepository;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Objects;
@@ -33,24 +33,11 @@ public class BookRepositoryJpa implements BookRepository {
 
     @Override
     public Book findOne(long id) {
-        // method should throw an exception when no objects found
-        //TODO decide variant
-
-        // variant 1. em.find returns null if no objects found, process it
         Book book = em.find(Book.class, id);
         if (book == null) {
-            throw new IncorrectResultSizeDataAccessException("Book id " + id + " not found", 1, 0);
+            throw new EntityNotFoundException("Book id " + id + " not found");
         }
         return book;
-
-        // variant 2. em...getSingleResult throws NoResultException or NonUniqueResultException if result count is not 1
-//        return em.createQuery("select b from Book b where b.bookId = :id", Book.class)
-//                .setParameter("id", id)
-//                .getSingleResult();
-
-        // variant 3. Spring DataAccessUtils.singleResult throws IncorrectResultSizeDataAccessException if result count is not 1
-//        return DataAccessUtils.singleResult(em.createQuery("select b from Book b where b.bookId = :id", Book.class)
-//                .setParameter("id", id).getResultList());
     }
 
     @Override

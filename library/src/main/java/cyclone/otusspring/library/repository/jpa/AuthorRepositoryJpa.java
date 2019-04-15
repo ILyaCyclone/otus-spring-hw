@@ -2,11 +2,11 @@ package cyclone.otusspring.library.repository.jpa;
 
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.repository.AuthorRepository;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +37,7 @@ public class AuthorRepositoryJpa implements AuthorRepository {
     public Author findOne(long id) {
         Author author = em.find(Author.class, id);
         if (author == null) {
-            throw new IncorrectResultSizeDataAccessException("Author id " + id + " not found", 1, 0);
+            throw new EntityNotFoundException("Author id " + id + " not found");
         }
         return author;
     }

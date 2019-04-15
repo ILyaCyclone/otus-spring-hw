@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.stream.Stream;
@@ -57,7 +56,7 @@ class AuthorRepositoryJpaTest {
     @Test
     @DisplayName("finding non existent ID throws exception")
     void findOne_nonExistent() {
-        assertThatThrownBy(() -> authorRepository.findOne(NO_SUCH_ID)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
+        assertThatThrownBy(() -> authorRepository.findOne(NO_SUCH_ID)).isInstanceOf(EntityNotFoundException.class);
     }
 
 
