@@ -1,7 +1,7 @@
 package cyclone.otusspring.library.service;
 
-import cyclone.otusspring.library.dao.GenreDao;
 import cyclone.otusspring.library.model.Genre;
+import cyclone.otusspring.library.repository.GenreRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,14 +9,14 @@ import java.util.List;
 @Service
 public class GenreServiceImpl implements GenreService {
 
-    private final GenreDao genreDao;
+    private final GenreRepository genreRepository;
 
-    public GenreServiceImpl(GenreDao genreDao) {
-        this.genreDao = genreDao;
+    public GenreServiceImpl(GenreRepository genreRepository) {
+        this.genreRepository = genreRepository;
     }
 
     @Override
     public List<Genre> findAll() {
-        return genreDao.findAll();
+        return genreRepository.findAll();
     }
 }

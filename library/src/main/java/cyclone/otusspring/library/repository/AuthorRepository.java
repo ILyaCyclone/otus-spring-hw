@@ -1,10 +1,10 @@
-package cyclone.otusspring.library.dao;
+package cyclone.otusspring.library.repository;
 
 import cyclone.otusspring.library.model.Author;
 
 import java.util.List;
 
-public interface AuthorDao {
+public interface AuthorRepository {
     List<Author> findAll();
 
     List<Author> findByName(String name);

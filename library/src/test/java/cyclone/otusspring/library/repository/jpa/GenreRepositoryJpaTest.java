@@ -1,8 +1,7 @@
-package cyclone.otusspring.library.dao.jpa;
+package cyclone.otusspring.library.repository.jpa;
 
-import cyclone.otusspring.library.dao.DataAccessProfiles;
-import cyclone.otusspring.library.dao.GenreDao;
 import cyclone.otusspring.library.model.Genre;
+import cyclone.otusspring.library.repository.GenreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.test.context.ActiveProfiles;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.stream.Stream;
@@ -23,12 +21,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
-@ComponentScan("cyclone.otusspring.library.dao.jpa")
-@ActiveProfiles(DataAccessProfiles.JPA)
-class GenreDaoJpaTest {
+@ComponentScan("cyclone.otusspring.library.repository.jpa")
+class GenreRepositoryJpaTest {
 
     @Autowired
-    GenreDao genreDao;
+    GenreRepository genreRepository;
 
     @Autowired
     TestEntityManager tem;
@@ -36,13 +33,13 @@ class GenreDaoJpaTest {
 
     @Test
     void findAll() {
-        assertThat(genreDao.findAll()).containsExactly(GENRE1, GENRE4, GENRE3, GENRE2);
+        assertThat(genreRepository.findAll()).containsExactly(GENRE1, GENRE4, GENRE3, GENRE2);
     }
 
     @ParameterizedTest
     @MethodSource("findByNameParameters")
     void findByName(String nameQuery, Genre[] expected) {
-        assertThat(genreDao.findByName(nameQuery)).containsExactly(expected);
+        assertThat(genreRepository.findByName(nameQuery)).containsExactly(expected);
     }
 
     private static Stream<Arguments> findByNameParameters() {
@@ -54,22 +51,22 @@ class GenreDaoJpaTest {
 
     @Test
     void findOne() {
-        assertThat(genreDao.findOne(2)).isEqualTo(GENRE2);
+        assertThat(genreRepository.findOne(2)).isEqualTo(GENRE2);
     }
 
     @Test
     @DisplayName("finding non existent ID throws exception")
     void findOne_nonExistent() {
-        assertThatThrownBy(() -> genreDao.findOne(NO_SUCH_ID)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
+        assertThatThrownBy(() -> genreRepository.findOne(NO_SUCH_ID)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
     }
 
 
 
     @Test
     void testInsert() {
-        long savedId = genreDao.save(NEW_GENRE).getGenreId();
+        long savedId = genreRepository.save(NEW_GENRE).getGenreId();
 
-        Genre actual = genreDao.findOne(savedId);
+        Genre actual = genreRepository.findOne(savedId);
 
         assertThat(actual.getGenreId()).isNotNull();
         assertThat(actual).isEqualToIgnoringGivenFields(NEW_GENRE, "genreId");
@@ -78,9 +75,9 @@ class GenreDaoJpaTest {
     @Test
     void testUpdate() {
         Genre updatedGenre2 = new Genre(GENRE2.getGenreId(), "Updated " + GENRE2.getName());
-        genreDao.save(updatedGenre2);
+        genreRepository.save(updatedGenre2);
 
-        Genre actual = genreDao.findOne(updatedGenre2.getGenreId());
+        Genre actual = genreRepository.findOne(updatedGenre2.getGenreId());
 
         assertThat(actual).isEqualToComparingFieldByField(updatedGenre2);
     }
@@ -89,29 +86,29 @@ class GenreDaoJpaTest {
     void testDelete() {
         Genre bookToDelete = tem.find(Genre.class, GENRE2.getGenreId());
 
-        genreDao.delete(bookToDelete);
-        assertThat(genreDao.findAll()).containsExactly(GENRE1, GENRE4, GENRE3);
+        genreRepository.delete(bookToDelete);
+        assertThat(genreRepository.findAll()).containsExactly(GENRE1, GENRE4, GENRE3);
     }
 
     @Test
     void testDeleteById() {
-        genreDao.delete(GENRE1.getGenreId());
-        assertThat(genreDao.findAll()).containsExactly(GENRE4, GENRE3, GENRE2);
+        genreRepository.delete(GENRE1.getGenreId());
+        assertThat(genreRepository.findAll()).containsExactly(GENRE4, GENRE3, GENRE2);
     }
 
     @Test
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
-        assertThatThrownBy(() -> genreDao.delete(NO_SUCH_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> genreRepository.delete(NO_SUCH_ID)).isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
     void testExistTrue() {
-        assertThat(genreDao.exists(GENRE2.getGenreId())).isTrue();
+        assertThat(genreRepository.exists(GENRE2.getGenreId())).isTrue();
     }
 
     @Test
     void testExistFalse() {
-        assertThat(genreDao.exists(NO_SUCH_ID)).isFalse();
+        assertThat(genreRepository.exists(NO_SUCH_ID)).isFalse();
     }
 }

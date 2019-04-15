@@ -1,18 +1,15 @@
 package cyclone.otusspring.library.service;
 
-import cyclone.otusspring.library.dao.DataAccessProfiles;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
-@ActiveProfiles(DataAccessProfiles.JPA)
 class GenreServiceTest {
 
     @Autowired
@@ -21,6 +18,5 @@ class GenreServiceTest {
     @Test
     void testFindAll() {
         assertThat(genreService.findAll()).containsExactly(GENRE1, GENRE4, GENRE3, GENRE2);
-
     }
 }

@@ -1,8 +1,7 @@
-package cyclone.otusspring.library.dao.jpa;
+package cyclone.otusspring.library.repository.jpa;
 
-import cyclone.otusspring.library.dao.AuthorDao;
-import cyclone.otusspring.library.dao.DataAccessProfiles;
 import cyclone.otusspring.library.model.Author;
+import cyclone.otusspring.library.repository.AuthorRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.test.context.ActiveProfiles;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.stream.Stream;
@@ -23,12 +21,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
-@ComponentScan("cyclone.otusspring.library.dao.jpa")
-@ActiveProfiles(DataAccessProfiles.JPA)
-class AuthorDaoJpaTest {
+@ComponentScan("cyclone.otusspring.library.repository.jpa")
+class AuthorRepositoryJpaTest {
 
     @Autowired
-    AuthorDao authorDao;
+    AuthorRepository authorRepository;
 
     @Autowired
     TestEntityManager tem;
@@ -36,13 +33,13 @@ class AuthorDaoJpaTest {
 
     @Test
     void findAll() {
-        assertThat(authorDao.findAll()).containsExactly(AUTHOR1, AUTHOR3, AUTHOR2); // 1, 3, 2 because of ordering
+        assertThat(authorRepository.findAll()).containsExactly(AUTHOR1, AUTHOR3, AUTHOR2); // 1, 3, 2 because of ordering
     }
 
     @ParameterizedTest
     @MethodSource("findByNameParameters")
     void findByName(String nameQuery, Author[] expected) {
-        assertThat(authorDao.findByName(nameQuery)).containsExactly(expected);
+        assertThat(authorRepository.findByName(nameQuery)).containsExactly(expected);
     }
 
     private static Stream<Arguments> findByNameParameters() {
@@ -54,22 +51,22 @@ class AuthorDaoJpaTest {
 
     @Test
     void findOne() {
-        assertThat(authorDao.findOne(2)).isEqualTo(AUTHOR2);
+        assertThat(authorRepository.findOne(2)).isEqualTo(AUTHOR2);
     }
 
     @Test
     @DisplayName("finding non existent ID throws exception")
     void findOne_nonExistent() {
-        assertThatThrownBy(() -> authorDao.findOne(NO_SUCH_ID)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
+        assertThatThrownBy(() -> authorRepository.findOne(NO_SUCH_ID)).isInstanceOf(IncorrectResultSizeDataAccessException.class);
     }
 
 
 
     @Test
     void testInsert() {
-        long savedId = authorDao.save(NEW_AUTHOR).getAuthorId();
+        long savedId = authorRepository.save(NEW_AUTHOR).getAuthorId();
 
-        Author actual = authorDao.findOne(savedId);
+        Author actual = authorRepository.findOne(savedId);
 
         assertThat(actual.getAuthorId()).isNotNull();
         assertThat(actual).isEqualToIgnoringGivenFields(NEW_AUTHOR, "authorId");
@@ -78,9 +75,9 @@ class AuthorDaoJpaTest {
     @Test
     void testUpdate() {
         Author updatedAuthor2 = new Author(AUTHOR2.getAuthorId(), "Updated " + AUTHOR2.getFirstname(), "Updated " + AUTHOR2.getLastname(), "Updated " + AUTHOR2.getHomeland());
-        authorDao.save(updatedAuthor2);
+        authorRepository.save(updatedAuthor2);
 
-        Author actual = authorDao.findOne(updatedAuthor2.getAuthorId());
+        Author actual = authorRepository.findOne(updatedAuthor2.getAuthorId());
 
         assertThat(actual).isEqualToComparingFieldByField(updatedAuthor2);
     }
@@ -89,29 +86,29 @@ class AuthorDaoJpaTest {
     void testDelete() {
         Author bookToDelete = tem.find(Author.class, AUTHOR2.getAuthorId());
 
-        authorDao.delete(bookToDelete);
-        assertThat(authorDao.findAll()).containsExactly(AUTHOR1, AUTHOR3);
+        authorRepository.delete(bookToDelete);
+        assertThat(authorRepository.findAll()).containsExactly(AUTHOR1, AUTHOR3);
     }
 
     @Test
     void testDeleteById() {
-        authorDao.delete(AUTHOR1.getAuthorId());
-        assertThat(authorDao.findAll()).containsExactly(AUTHOR3, AUTHOR2);
+        authorRepository.delete(AUTHOR1.getAuthorId());
+        assertThat(authorRepository.findAll()).containsExactly(AUTHOR3, AUTHOR2);
     }
 
     @Test
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
-        assertThatThrownBy(() -> authorDao.delete(NO_SUCH_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> authorRepository.delete(NO_SUCH_ID)).isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
     void testExistTrue() {
-        assertThat(authorDao.exists(AUTHOR2.getAuthorId())).isTrue();
+        assertThat(authorRepository.exists(AUTHOR2.getAuthorId())).isTrue();
     }
 
     @Test
     void testExistFalse() {
-        assertThat(authorDao.exists(NO_SUCH_ID)).isFalse();
+        assertThat(authorRepository.exists(NO_SUCH_ID)).isFalse();
     }
 }

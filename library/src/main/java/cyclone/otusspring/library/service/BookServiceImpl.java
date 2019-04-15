@@ -1,12 +1,12 @@
 package cyclone.otusspring.library.service;
 
-import cyclone.otusspring.library.dao.AuthorDao;
-import cyclone.otusspring.library.dao.BookDao;
-import cyclone.otusspring.library.dao.GenreDao;
 import cyclone.otusspring.library.dto.BookDto;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Genre;
+import cyclone.otusspring.library.repository.AuthorRepository;
+import cyclone.otusspring.library.repository.BookRepository;
+import cyclone.otusspring.library.repository.GenreRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,19 +15,19 @@ import java.util.List;
 @Service
 public class BookServiceImpl implements BookService {
 
-    private final BookDao bookDao;
-    private final AuthorDao authorDao;
-    private final GenreDao genreDao;
+    private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
+    private final GenreRepository genreRepository;
 
-    public BookServiceImpl(BookDao bookDao, AuthorDao authorDao, GenreDao genreDao) {
-        this.bookDao = bookDao;
-        this.authorDao = authorDao;
-        this.genreDao = genreDao;
+    public BookServiceImpl(BookRepository bookRepository, AuthorRepository authorRepository, GenreRepository genreRepository) {
+        this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
+        this.genreRepository = genreRepository;
     }
 
     @Override
     public List<Book> findAll() {
-        return bookDao.findAll();
+        return bookRepository.findAll();
     }
 
     @Override
@@ -37,16 +37,16 @@ public class BookServiceImpl implements BookService {
         long genreId = bookDto.getGenreId();
         // TODO think about getting rid of exists call and rely on findOne throwing exception
         // TODO should throw IncorrectResultSizeDataAccessException or some custom exception then
-        if (!authorDao.exists(authorId)) {
+        if (!authorRepository.exists(authorId)) {
             throw new IllegalArgumentException("Could not create book: author #" + authorId + " not found");
         }
-        if (!genreDao.exists(genreId)) {
+        if (!genreRepository.exists(genreId)) {
             throw new IllegalArgumentException("Could not create book: genre #" + genreId + " not found");
         }
-        Author author = authorDao.findOne(authorId);
-        Genre genre = genreDao.findOne(genreId);
+        Author author = authorRepository.findOne(authorId);
+        Genre genre = genreRepository.findOne(genreId);
 
         Book newBook = new Book(bookDto.getTitle(), bookDto.getYear(), author, genre);
-        return bookDao.save(newBook);
+        return bookRepository.save(newBook);
     }
 }

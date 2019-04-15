@@ -1,7 +1,7 @@
 package cyclone.otusspring.library.service;
 
-import cyclone.otusspring.library.dao.AuthorDao;
 import cyclone.otusspring.library.model.Author;
+import cyclone.otusspring.library.repository.AuthorRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,14 +9,14 @@ import java.util.List;
 @Service
 public class AuthorServiceImpl implements AuthorService {
 
-    private final AuthorDao authorDao;
+    private final AuthorRepository authorRepository;
 
-    public AuthorServiceImpl(AuthorDao authorDao) {
-        this.authorDao = authorDao;
+    public AuthorServiceImpl(AuthorRepository authorRepository) {
+        this.authorRepository = authorRepository;
     }
 
     @Override
     public List<Author> findAll() {
-        return authorDao.findAll();
+        return authorRepository.findAll();
     }
 }

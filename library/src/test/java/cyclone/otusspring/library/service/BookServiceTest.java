@@ -1,6 +1,5 @@
 package cyclone.otusspring.library.service;
 
-import cyclone.otusspring.library.dao.DataAccessProfiles;
 import cyclone.otusspring.library.dto.BookDto;
 import cyclone.otusspring.library.model.Book;
 import org.junit.jupiter.api.DisplayName;
@@ -8,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
@@ -19,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
-@ActiveProfiles(DataAccessProfiles.JPA)
 class BookServiceTest {
 
     @Autowired

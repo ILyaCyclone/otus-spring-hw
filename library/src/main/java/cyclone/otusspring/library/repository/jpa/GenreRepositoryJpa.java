@@ -1,9 +1,7 @@
-package cyclone.otusspring.library.dao.jpa;
+package cyclone.otusspring.library.repository.jpa;
 
-import cyclone.otusspring.library.dao.DataAccessProfiles;
-import cyclone.otusspring.library.dao.GenreDao;
 import cyclone.otusspring.library.model.Genre;
-import org.springframework.context.annotation.Profile;
+import cyclone.otusspring.library.repository.GenreRepository;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +12,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Repository
-@Profile(DataAccessProfiles.JPA)
 @Transactional(readOnly = true)
-public class GenreDaoJpa implements GenreDao {
+public class GenreRepositoryJpa implements GenreRepository {
 
     @PersistenceContext
     private EntityManager em;

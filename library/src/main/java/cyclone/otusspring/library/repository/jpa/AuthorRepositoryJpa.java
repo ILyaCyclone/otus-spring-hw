@@ -1,9 +1,7 @@
-package cyclone.otusspring.library.dao.jpa;
+package cyclone.otusspring.library.repository.jpa;
 
-import cyclone.otusspring.library.dao.AuthorDao;
-import cyclone.otusspring.library.dao.DataAccessProfiles;
 import cyclone.otusspring.library.model.Author;
-import org.springframework.context.annotation.Profile;
+import cyclone.otusspring.library.repository.AuthorRepository;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +12,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Repository
-@Profile(DataAccessProfiles.JPA)
 @Transactional(readOnly = true)
-public class AuthorDaoJpa implements AuthorDao {
+public class AuthorRepositoryJpa implements AuthorRepository {
 
     @PersistenceContext
     private EntityManager em;

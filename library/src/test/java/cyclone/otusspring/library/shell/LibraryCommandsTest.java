@@ -1,6 +1,5 @@
 package cyclone.otusspring.library.shell;
 
-import cyclone.otusspring.library.dao.DataAccessProfiles;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,14 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.shell.table.Table;
-import org.springframework.test.context.ActiveProfiles;
 
 import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
-@ActiveProfiles(DataAccessProfiles.ACTIVE)
 class LibraryCommandsTest {
 
     @Autowired

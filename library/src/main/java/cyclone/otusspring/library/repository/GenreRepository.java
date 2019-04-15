@@ -1,10 +1,10 @@
-package cyclone.otusspring.library.dao;
+package cyclone.otusspring.library.repository;
 
 import cyclone.otusspring.library.model.Genre;
 
 import java.util.List;
 
-public interface GenreDao {
+public interface GenreRepository {
     List<Genre> findAll();
 
     List<Genre> findByName(String name);
