@@ -27,8 +27,8 @@ public class Comment {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-    public Comment(String author, String text, LocalDateTime date, Book book) {
-        this(null, author, text, date, book);
+    public Comment(String commentator, String text, LocalDateTime date, Book book) {
+        this(null, commentator, text, date, book);
     }
     public Comment(Long commentId, String commentator, String text, LocalDateTime date, Book book) {
         if (StringUtils.isEmpty(commentator)) {

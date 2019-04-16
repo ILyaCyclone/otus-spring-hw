@@ -50,6 +50,9 @@ public class TestData {
     public static final Comment COMMENT5 = new Comment(5L, "Test Commentator 3", "Test comment 5"
             , LocalDateTime.of(2019, 5, 5, 10, 00, 00), BOOK3);
 
+    public static final Comment NEW_COMMENT = new Comment("New Commentator", "test new comment"
+            , LocalDateTime.of(2015, 1, 1, 15, 00, 00), BOOK3);
+
 
 
     public static final long NO_SUCH_ID = 999;
