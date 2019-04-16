@@ -33,7 +33,7 @@ public class LibraryCommands {
 
     @ShellMethod(value = "List all books")
     public Table listBooks(
-            @ShellOption(defaultValue = "false", help = "output full info") boolean verbose
+            @ShellOption(help = "output full info") boolean verbose
     ) {
         List<Book> books = bookService.findAll();
 
@@ -114,4 +114,6 @@ public class LibraryCommands {
                 .addHeader("name", "Genre")
                 .build();
     }
+
+
 }
