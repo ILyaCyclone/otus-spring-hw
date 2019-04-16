@@ -2,6 +2,7 @@ package cyclone.otusspring.library.repository.jpa;
 
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
+import cyclone.otusspring.library.repository.CommentRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -16,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CommentRepositoryJpaTest {
 
     @Autowired
-    CommentRepositoryJpa commentRepository;
+    CommentRepository commentRepository;
 
     @Autowired
     TestEntityManager tem;

@@ -19,8 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
-@Transactional
-        // rollback after each @Test
+@Transactional // rollback after each @Test
 class BookServiceTest {
 
     @Autowired
