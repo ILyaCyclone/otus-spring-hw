@@ -56,7 +56,7 @@ public class CommentCommands {
     public Availability addCommentAvailability() {
         return StringUtils.hasText(currentUser)
                 ? Availability.available()
-                : Availability.unavailable("you need to sign in leave comments");
+                : Availability.unavailable("you need to sign in to leave comments");
     }
 
     @ShellMethod(value = "List book comments")
