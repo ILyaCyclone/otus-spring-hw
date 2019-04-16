@@ -18,7 +18,7 @@ class CommentsFormatter {
 
     private String formatCommentsHumanFriendly(List<Comment> comments) {
         return "Comments:\n" + comments.stream()
-                .map(comment -> comment.getCommentator()+" at "+comment.getDate()+" says: "+comment.getText())
+                .map(comment -> comment.getCommentator() + " at " + comment.getDate() + " says: " + comment.getText())
                 .collect(Collectors.joining("\n"));
     }
 

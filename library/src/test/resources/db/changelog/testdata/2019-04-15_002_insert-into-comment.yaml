@@ -3,7 +3,7 @@ databaseChangeLog:
       id: 2019-04-15_002_insert-into-comment
       author: ilyacyclone
       context: test # set in spring.liquibase.contexts property
-#      runOnChange: true
+      #      runOnChange: true
       loadUpdateData:
         primaryKey: comment_id
         tableName: comment

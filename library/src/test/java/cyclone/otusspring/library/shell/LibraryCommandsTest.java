@@ -38,7 +38,7 @@ class LibraryCommandsTest {
         String message = libraryCommands.createAuthor(NEW_AUTHOR.getFirstname(), NEW_AUTHOR.getLastname(), NEW_AUTHOR.getHomeland());
         assertThat(message).contains("successfully");
     }
-    
+
     @Test
     void createGenre() {
         String message = libraryCommands.createGenre(NEW_GENRE.getName());

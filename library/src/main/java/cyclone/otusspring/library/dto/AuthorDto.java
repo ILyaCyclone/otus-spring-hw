@@ -13,6 +13,7 @@ public class AuthorDto {
     public AuthorDto(String firstname, String lastname) {
         this(firstname, lastname, null);
     }
+
     public AuthorDto(String firstname, String lastname, String homeland) {
         Objects.requireNonNull(firstname, "author firstname must not be null");
         Objects.requireNonNull(lastname, "author lastname must not be null");

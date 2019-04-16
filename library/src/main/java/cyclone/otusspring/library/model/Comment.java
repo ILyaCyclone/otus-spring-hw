@@ -30,9 +30,11 @@ public class Comment {
     public Comment(String commentator, String text, Book book) {
         this(null, commentator, text, LocalDateTime.now(), book);
     }
+
     public Comment(String commentator, String text, LocalDateTime date, Book book) {
         this(null, commentator, text, date, book);
     }
+
     public Comment(Long commentId, String commentator, String text, LocalDateTime date, Book book) {
         if (StringUtils.isEmpty(commentator)) {
             throw new IllegalArgumentException("commentator must not be empty");

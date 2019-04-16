@@ -18,7 +18,7 @@ public class CommentRepositoryJpa implements CommentRepository {
 
     @PersistenceContext
     private EntityManager em;
-    
+
     @Override
     public Comment findOne(long id) {
         Comment comment = em.find(Comment.class, id);
@@ -30,21 +30,22 @@ public class CommentRepositoryJpa implements CommentRepository {
 
     @Override
     public List<Comment> findByBook(Book book) {
-        return em.createQuery("select c from Comment c where c.book = :book order by c.date")
+        return em.createQuery("select c from Comment c where c.book = :book order by c.date", Comment.class)
                 .setParameter("book", book)
                 .getResultList();
     }
 
     @Override
     public List<Comment> findByBookId(long bookId) {
-        return em.createQuery("select c from Comment c where c.book.bookId = :bookId order by c.date")
+        return em.createQuery("select c from Comment c where c.book.bookId = :bookId order by c.date", Comment.class)
                 .setParameter("bookId", bookId)
                 .getResultList();
     }
 
     @Override
     public List<Comment> findByCommentator(String commentator) {
-        return em.createQuery("select c from Comment c where lower(c.commentator) = lower(:commentator) order by c.date")
+        return em.createQuery("select c from Comment c where lower(c.commentator) = lower(:commentator) order by c.date"
+                , Comment.class)
                 .setParameter("commentator", commentator)
                 .getResultList();
     }

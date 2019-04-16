@@ -13,7 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
-@Transactional // rollback after each @Test
+@Transactional
+        // rollback after each @Test
 class AuthorServiceTest {
 
     @Autowired
