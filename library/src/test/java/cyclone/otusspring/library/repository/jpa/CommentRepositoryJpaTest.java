@@ -1,5 +1,6 @@
 package cyclone.otusspring.library.repository.jpa;
 
+import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,7 @@ class CommentRepositoryJpaTest {
     @Test
     void testUpdate() {
         Comment updatedComment2 = new Comment(COMMENT2.getCommentId(), "Updated " + COMMENT2.getCommentator()
-                , "Updated" + COMMENT2.getText(), COMMENT2.getDate().plus(1, ChronoUnit.DAYS), COMMENT2.getBook());
+                , "Updated" + COMMENT2.getText(), COMMENT2.getDate(), COMMENT2.getBook());
         commentRepository.save(updatedComment2);
 
         Comment actual = commentRepository.findOne(updatedComment2.getCommentId());
@@ -72,9 +73,19 @@ class CommentRepositoryJpaTest {
 //        assertThat(actual.getBook()).isEqualToIgnoringGivenFields(updatedComment2.getBook(), "comments");
 
 
-//        Book actualBook = actual.getBook();
-//        Book updatedComment2Book = updatedComment2.getBook();
-//        assertThat(actualBook).isEqualToIgnoringGivenFields(updatedComment2Book, "comments");
+        Book actualBook = actual.getBook();
+        Book updatedComment2Book = updatedComment2.getBook();
+
+        // this workaround works
+//        assertThat(actualBook)
+//                .isEqualToIgnoringGivenFields(updatedComment2Book, "comments"
+////            , "$$_hibernate_interceptor"
+//        );
+
+        assertThat(actualBook)
+                .isEqualToComparingOnlyGivenFields(updatedComment2Book
+                        , "bookId", "title", "year", "author", "genre");
+
 
     }
 
