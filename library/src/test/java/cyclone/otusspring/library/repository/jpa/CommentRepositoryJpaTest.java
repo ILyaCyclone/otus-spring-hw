@@ -68,24 +68,12 @@ class CommentRepositoryJpaTest {
         Comment actual = commentRepository.findOne(updatedComment2.getCommentId());
 
         assertThat(actual).isEqualToIgnoringGivenFields(updatedComment2, "book");
-        //TODO error Unable to obtain the value of the field <'$$_hibernate_interceptor'> on next assert
-//        assertThat(actual.getBook()).isEqualToIgnoringGivenFields(updatedComment2.getBook(), "comments");
-
 
         Book actualBook = actual.getBook();
         Book updatedComment2Book = updatedComment2.getBook();
-
-        // this workaround works
-//        assertThat(actualBook)
-//                .isEqualToIgnoringGivenFields(updatedComment2Book, "comments"
-////            , "$$_hibernate_interceptor"
-//        );
-
+        // ignore $$_hibernate_interceptor, which is added to proxy object
         assertThat(actualBook)
-                .isEqualToComparingOnlyGivenFields(updatedComment2Book
-                        , "bookId", "title", "year", "author", "genre");
-
-
+                .isEqualToIgnoringGivenFields(updatedComment2Book, "comments", "$$_hibernate_interceptor");
     }
 
     @Test
