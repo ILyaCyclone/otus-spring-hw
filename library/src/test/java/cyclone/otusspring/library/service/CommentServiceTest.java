@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +21,7 @@ class CommentServiceTest {
 
     @Autowired
     private CommentService commentService;
+
 
     @Test
     void findByBookId() {
@@ -38,7 +40,19 @@ class CommentServiceTest {
 
         CommentDto commentDtoToCreate = new CommentDto(bookId, username, text);
 
-        Comment createdComment = commentService.create(commentDtoToCreate);
+        // act
+        commentService.create(commentDtoToCreate);
+
+        // find saved comment for assertions
+        List<Comment> commentsByUsernameAndText = commentService.findByBookId(bookId).stream()
+                .filter(comment -> comment.getCommentator().equals(username))
+                .filter(comment -> comment.getText().equals(text))
+                .collect(Collectors.toList());
+
+        assertThat(commentsByUsernameAndText).as("only 1 comment saved")
+                .hasSize(1);
+
+        Comment createdComment = commentsByUsernameAndText.get(0);
 
         assertThat(createdComment.getCommentId()).isNotNull();
         assertThat(createdComment.getBook().getBookId()).isEqualTo(bookId);

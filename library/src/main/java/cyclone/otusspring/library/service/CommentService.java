@@ -9,7 +9,7 @@ public interface CommentService {
 
     List<Comment> findByBookId(long bookId);
 
-    Comment create(CommentDto commentDto);
+    void create(CommentDto commentDto);
 
     void delete(long commentId);
 }
