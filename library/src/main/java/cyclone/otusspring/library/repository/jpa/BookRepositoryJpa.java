@@ -71,6 +71,8 @@ public class BookRepositoryJpa implements BookRepository {
 
     @Override
     public boolean exists(long id) {
-        return em.find(Book.class, id) != null;
+        return em.createQuery("select case when count(b) > 0 then TRUE else FALSE end from Book b where b.bookId = :id", Boolean.class)
+                .setParameter("id", id)
+                .getSingleResult();
     }
 }

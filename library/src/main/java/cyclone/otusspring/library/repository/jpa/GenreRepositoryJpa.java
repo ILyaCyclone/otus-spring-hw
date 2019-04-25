@@ -66,6 +66,8 @@ public class GenreRepositoryJpa implements GenreRepository {
 
     @Override
     public boolean exists(long id) {
-        return em.find(Genre.class, id) != null;
+        return em.createQuery("select case when count(g) > 0 then TRUE else FALSE end from Genre g where g.genreId = :id", Boolean.class)
+                .setParameter("id", id)
+                .getSingleResult();
     }
 }

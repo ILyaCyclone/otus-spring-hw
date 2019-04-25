@@ -70,6 +70,8 @@ public class AuthorRepositoryJpa implements AuthorRepository {
 
     @Override
     public boolean exists(long id) {
-        return em.find(Author.class, id) != null;
+        return em.createQuery("select case when count(a) > 0 then TRUE else FALSE end from Author a where a.authorId = :id", Boolean.class)
+                .setParameter("id", id)
+                .getSingleResult();
     }
 }
