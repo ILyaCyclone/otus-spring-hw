@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceException;
 import java.util.stream.Stream;
 
 import static cyclone.otusspring.library.TestData.*;
@@ -117,5 +118,14 @@ class BookRepositoryJpaTest {
     @Test
     void testExistFalse() {
         assertThat(bookRepository.exists(NO_SUCH_ID)).isFalse();
+    }
+
+    @Test
+    @DisplayName("adding non unique records throws exception")
+    void uniqueViolationThrowsException() {
+        assertThatThrownBy(() -> {
+            bookRepository.save(new Book(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre()));
+            bookRepository.save(new Book(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre()));
+        }).isInstanceOf(PersistenceException.class);
     }
 }

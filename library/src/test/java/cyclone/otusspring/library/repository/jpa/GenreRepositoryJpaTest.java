@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceException;
 import java.util.stream.Stream;
 
 import static cyclone.otusspring.library.TestData.*;
@@ -109,5 +110,14 @@ class GenreRepositoryJpaTest {
     @Test
     void testExistFalse() {
         assertThat(genreRepository.exists(NO_SUCH_ID)).isFalse();
+    }
+
+    @Test
+    @DisplayName("adding non unique records throws exception")
+    void uniqueViolationThrowsException() {
+        assertThatThrownBy(() -> {
+            genreRepository.save(new Genre(NEW_GENRE.getName()));
+            genreRepository.save(new Genre(NEW_GENRE.getName()));
+        }).isInstanceOf(PersistenceException.class);
     }
 }
