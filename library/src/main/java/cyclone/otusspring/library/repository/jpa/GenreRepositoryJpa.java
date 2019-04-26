@@ -26,8 +26,8 @@ public class GenreRepositoryJpa implements GenreRepository {
     @Override
     public List<Genre> findByName(String name) {
         return em.createQuery("select g from Genre g  " +
-                "where lower(name) like '%'||lower(:name)||'%' " +
-                "order by name", Genre.class)
+                "where lower(g.name) like concat('%', concat(lower(:name), '%')) " +
+                "order by g.name", Genre.class)
                 .setParameter("name", name)
                 .getResultList();
     }

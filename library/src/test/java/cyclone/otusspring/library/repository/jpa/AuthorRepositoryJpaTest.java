@@ -45,8 +45,8 @@ class AuthorRepositoryJpaTest {
 
     private static Stream<Arguments> findByNameParameters() {
         return Stream.of(
-                Arguments.of("gabri", new Author[]{AUTHOR3}),
-                Arguments.of("ar", new Author[]{AUTHOR1, AUTHOR3})
+                Arguments.of("GabrI", new Author[]{AUTHOR3}),
+                Arguments.of("aR", new Author[]{AUTHOR1, AUTHOR3})
         );
     }
 

@@ -26,7 +26,7 @@ public class BookRepositoryJpa implements BookRepository {
 
     @Override
     public List<Book> findByTitle(String title) {
-        return em.createQuery("select b from Book b where lower(b.title) like lower('%'||:title||'%') order by b.title", Book.class)
+        return em.createQuery("select b from Book b where lower(b.title) like concat('%', concat(lower(:title), '%')) order by b.title", Book.class)
                 .setParameter("title", title)
                 .getResultList();
     }
