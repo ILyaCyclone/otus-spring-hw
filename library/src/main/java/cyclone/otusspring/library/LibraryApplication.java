@@ -10,7 +10,7 @@ public class LibraryApplication {
         SpringApplication.run(LibraryApplication.class, args);
 
         // H2 console web: http://localhost:8082
-//        Console.main(args);
+//        org.h2.tools.Console.main(args);
     }
 
 }

@@ -2,7 +2,10 @@ package cyclone.otusspring.library;
 
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
+import cyclone.otusspring.library.model.Comment;
 import cyclone.otusspring.library.model.Genre;
+
+import java.time.LocalDateTime;
 
 public class TestData {
     private TestData() {
@@ -33,6 +36,22 @@ public class TestData {
     public static final Book BOOK5 = new Book(5L, "Test 100 Years of Solitude", 1967, AUTHOR3, GENRE3);
 
     public static final Book NEW_BOOK = new Book("New Book", 2000, AUTHOR1, GENRE1);
+
+
+
+    public static final Comment COMMENT1 = new Comment(1L, "Test Commentator 1", "Test comment 1"
+            , LocalDateTime.of(2019, 1, 1, 10, 00, 00), BOOK1);
+    public static final Comment COMMENT2 = new Comment(2L, "Test Commentator 1", "Test comment 2"
+            , LocalDateTime.of(2019, 2, 2, 10, 00, 00), BOOK2);
+    public static final Comment COMMENT3 = new Comment(3L, "Test Commentator 2", "Test comment 3"
+            , LocalDateTime.of(2019, 3, 3, 10, 00, 00), BOOK1);
+    public static final Comment COMMENT4 = new Comment(4L, "Test Commentator 2", "Test comment 4"
+            , LocalDateTime.of(2019, 4, 4, 10, 00, 00), BOOK2);
+    public static final Comment COMMENT5 = new Comment(5L, "Test Commentator 3", "Test comment 5"
+            , LocalDateTime.of(2019, 5, 5, 10, 00, 00), BOOK3);
+
+    public static final Comment NEW_COMMENT = new Comment("New Commentator", "test new comment"
+            , LocalDateTime.of(2015, 1, 1, 15, 00, 00), BOOK3);
 
 
 

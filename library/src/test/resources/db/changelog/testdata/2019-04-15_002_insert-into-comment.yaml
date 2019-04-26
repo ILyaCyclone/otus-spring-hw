@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2019-04-15_002_insert-into-comment
+      author: ilyacyclone
+      context: test # set in spring.liquibase.contexts property
+      #      runOnChange: true
+      loadUpdateData:
+        primaryKey: comment_id
+        tableName: comment
+        file: 2019-04-15_002_data.csv
+        relativeToChangelogFile: true
+        encoding: UTF-8

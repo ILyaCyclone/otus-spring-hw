@@ -3,11 +3,21 @@ package cyclone.otusspring.library.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity
+@Table(name = "author")
 @Data
 @NoArgsConstructor
 public class Author {
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long authorId;
     private String firstname;
     private String lastname;

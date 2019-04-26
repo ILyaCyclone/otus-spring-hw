@@ -1,10 +1,10 @@
-package cyclone.otusspring.library.dao;
+package cyclone.otusspring.library.repository;
 
 import cyclone.otusspring.library.model.Book;
 
 import java.util.List;
 
-public interface BookDao {
+public interface BookRepository {
     List<Book> findAll();
 
     List<Book> findByTitle(String title);
