@@ -1,7 +1,9 @@
 package cyclone.otusspring.library.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
@@ -17,23 +19,33 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class Book {
     @Id
     @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "book_id")
     private Long bookId;
 
+    @Column(name = "title")
     private String title;
+
+    @Column(name = "year")
     private Integer year;
 
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
+
     @ManyToOne
     @JoinColumn(name = "genre_id", nullable = false)
     private Genre genre;
+
     @OneToMany(
             mappedBy = "book",
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
     )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private List<Comment> comments = new ArrayList<>();
+
 
     public Book(String title, Integer year) {
         this.title = title;
