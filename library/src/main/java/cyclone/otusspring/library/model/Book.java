@@ -10,13 +10,23 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cyclone.otusspring.library.model.Book.GRAPH_WITH_AUTHOR_GENRE;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "book")
+@NamedEntityGraph(
+        name = GRAPH_WITH_AUTHOR_GENRE,
+        attributeNodes = {
+                @NamedAttributeNode("author"),
+                @NamedAttributeNode("genre")
+        }
+)
 @Data
 @NoArgsConstructor
 public class Book {
+    public static final String GRAPH_WITH_AUTHOR_GENRE = "with-author-genre";
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "book_id")
