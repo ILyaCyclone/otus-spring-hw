@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 @ComponentScan("cyclone.otusspring.library.repository")
-class AuthorRepositoryJpaTest {
+class AuthorRepositoryImplTest {
 
     @Autowired
     AuthorRepository authorRepository;
