@@ -83,6 +83,7 @@ class BookRepositoryImplTest {
         bookToUpdate.setYear(bookToUpdate.getYear() + 1);
 
         Book updatedBook = bookRepository.save(bookToUpdate);
+        tem.flush();
 
         assertThat(updatedBook).isEqualToComparingFieldByField(bookToUpdate);
     }
@@ -112,12 +113,12 @@ class BookRepositoryImplTest {
     }
 
     @Test
-    void testExistTrue() {
+    void testExistsTrue() {
         assertThat(bookRepository.exists(BOOK2.getBookId())).isTrue();
     }
 
     @Test
-    void testExistFalse() {
+    void testExistsFalse() {
         assertThat(bookRepository.exists(NO_SUCH_ID)).isFalse();
     }
 

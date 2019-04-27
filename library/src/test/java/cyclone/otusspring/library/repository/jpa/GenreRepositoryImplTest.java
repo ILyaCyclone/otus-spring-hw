@@ -77,6 +77,7 @@ class GenreRepositoryImplTest {
     void testUpdate() {
         Genre updatedGenre2 = new Genre(GENRE2.getGenreId(), "Updated " + GENRE2.getName());
         genreRepository.save(updatedGenre2);
+        tem.flush();
 
         Genre actual = genreRepository.findOne(updatedGenre2.getGenreId());
 
@@ -104,12 +105,12 @@ class GenreRepositoryImplTest {
     }
 
     @Test
-    void testExistTrue() {
+    void testExistsTrue() {
         assertThat(genreRepository.exists(GENRE2.getGenreId())).isTrue();
     }
 
     @Test
-    void testExistFalse() {
+    void testExistsFalse() {
         assertThat(genreRepository.exists(NO_SUCH_ID)).isFalse();
     }
 

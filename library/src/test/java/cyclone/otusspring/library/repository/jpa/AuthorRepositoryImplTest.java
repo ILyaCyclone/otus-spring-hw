@@ -77,6 +77,7 @@ class AuthorRepositoryImplTest {
     void testUpdate() {
         Author updatedAuthor2 = new Author(AUTHOR2.getAuthorId(), "Updated " + AUTHOR2.getFirstname(), "Updated " + AUTHOR2.getLastname(), "Updated " + AUTHOR2.getHomeland());
         authorRepository.save(updatedAuthor2);
+        tem.flush(); // send update to database
 
         Author actual = authorRepository.findOne(updatedAuthor2.getAuthorId());
 
@@ -104,12 +105,12 @@ class AuthorRepositoryImplTest {
     }
 
     @Test
-    void testExistTrue() {
+    void testExistsTrue() {
         assertThat(authorRepository.exists(AUTHOR2.getAuthorId())).isTrue();
     }
 
     @Test
-    void testExistFalse() {
+    void testExistsFalse() {
         assertThat(authorRepository.exists(NO_SUCH_ID)).isFalse();
     }
 
