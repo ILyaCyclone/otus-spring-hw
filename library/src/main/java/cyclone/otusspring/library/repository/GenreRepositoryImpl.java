@@ -35,16 +35,19 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
+    @Transactional
     public Genre save(Genre genre) {
         return jpaRepository.save(genre);
     }
 
     @Override
+    @Transactional
     public void delete(long id) {
         jpaRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public void delete(Genre genre) {
         jpaRepository.delete(genre);
     }
