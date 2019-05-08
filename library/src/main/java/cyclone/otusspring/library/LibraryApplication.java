@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+// @EnableMongoRepositories("cyclone.otusspring.library.repository")
 public class LibraryApplication {
 
     public static void main(String[] args) throws Exception {

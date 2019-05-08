@@ -28,3 +28,8 @@ Homework for https://otus.ru/ Spring Developer course
 
 Билиотеку на Spring Data JPA  
 Реализовать весь функционал работы с БД в приложении книг с использованием spring-data-jpa репозиториев.
+
+## HW8. Spring Data для подключения к нереляционным БД
+
+Использовать MogoDB и spring-data для хранения информации о книгах  
+Тесты можно реализовать с помощью spring-boot-strter-embedded-mongodb 

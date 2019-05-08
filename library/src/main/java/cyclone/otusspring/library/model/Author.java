@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+//@Document
 @Entity
 @Table(name = "author")
 @Data
