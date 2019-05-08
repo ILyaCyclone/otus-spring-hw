@@ -1,7 +1,9 @@
 package cyclone.otusspring.library.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
@@ -17,15 +19,24 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class Comment {
     @Id
     @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "comment_id")
     private Long commentId;
 
+    @Column(name = "commentator")
     private String commentator;
+
+    @Column(name = "text")
     private String text;
+
+    @Column(name = "date")
     private LocalDateTime date;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Book book;
+
 
     public Comment(String commentator, String text, Book book) {
         this(null, commentator, text, LocalDateTime.now(), book);
@@ -49,38 +60,5 @@ public class Comment {
         this.text = text;
         this.date = date;
         this.book = book;
-    }
-
-    @Override
-    public String toString() {
-        return "Comment{" +
-                "commentId=" + commentId +
-                ", commentator='" + commentator + '\'' +
-                ", text='" + text + '\'' +
-                ", date=" + date +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Comment comment = (Comment) o;
-
-        if (commentId != null ? !commentId.equals(comment.commentId) : comment.commentId != null) return false;
-        if (commentator != null ? !commentator.equals(comment.commentator) : comment.commentator != null) return false;
-        if (text != null ? !text.equals(comment.text) : comment.text != null) return false;
-        return date != null ? date.equals(comment.date) : comment.date == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = commentId != null ? commentId.hashCode() : 0;
-        result = 31 * result + (commentator != null ? commentator.hashCode() : 0);
-        result = 31 * result + (text != null ? text.hashCode() : 0);
-        result = 31 * result + (date != null ? date.hashCode() : 0);
-        return result;
     }
 }

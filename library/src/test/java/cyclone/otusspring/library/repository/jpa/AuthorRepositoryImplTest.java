@@ -11,9 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceException;
 import java.util.stream.Stream;
 
 import static cyclone.otusspring.library.TestData.*;
@@ -21,8 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
-@ComponentScan("cyclone.otusspring.library.repository.jpa")
-class AuthorRepositoryJpaTest {
+@ComponentScan("cyclone.otusspring.library.repository")
+class AuthorRepositoryImplTest {
 
     @Autowired
     AuthorRepository authorRepository;
@@ -44,8 +45,8 @@ class AuthorRepositoryJpaTest {
 
     private static Stream<Arguments> findByNameParameters() {
         return Stream.of(
-                Arguments.of("gabri", new Author[]{AUTHOR3}),
-                Arguments.of("ar", new Author[]{AUTHOR1, AUTHOR3})
+                Arguments.of("GabrI", new Author[]{AUTHOR3}),
+                Arguments.of("aR", new Author[]{AUTHOR1, AUTHOR3})
         );
     }
 
@@ -76,6 +77,7 @@ class AuthorRepositoryJpaTest {
     void testUpdate() {
         Author updatedAuthor2 = new Author(AUTHOR2.getAuthorId(), "Updated " + AUTHOR2.getFirstname(), "Updated " + AUTHOR2.getLastname(), "Updated " + AUTHOR2.getHomeland());
         authorRepository.save(updatedAuthor2);
+        tem.flush(); // send update to database
 
         Author actual = authorRepository.findOne(updatedAuthor2.getAuthorId());
 
@@ -99,16 +101,16 @@ class AuthorRepositoryJpaTest {
     @Test
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
-        assertThatThrownBy(() -> authorRepository.delete(NO_SUCH_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> authorRepository.delete(NO_SUCH_ID)).isInstanceOf(EmptyResultDataAccessException.class);
     }
 
     @Test
-    void testExistTrue() {
+    void testExistsTrue() {
         assertThat(authorRepository.exists(AUTHOR2.getAuthorId())).isTrue();
     }
 
     @Test
-    void testExistFalse() {
+    void testExistsFalse() {
         assertThat(authorRepository.exists(NO_SUCH_ID)).isFalse();
     }
 
@@ -118,6 +120,6 @@ class AuthorRepositoryJpaTest {
         assertThatThrownBy(() -> {
             authorRepository.save(new Author(NEW_AUTHOR.getFirstname(), NEW_AUTHOR.getLastname(), NEW_AUTHOR.getHomeland()));
             authorRepository.save(new Author(NEW_AUTHOR.getFirstname(), NEW_AUTHOR.getLastname(), NEW_AUTHOR.getHomeland()));
-        }).isInstanceOf(PersistenceException.class);
+        }).isInstanceOf(DataIntegrityViolationException.class);
     }
 }

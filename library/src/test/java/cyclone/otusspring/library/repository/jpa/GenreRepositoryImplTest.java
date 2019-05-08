@@ -11,9 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceException;
 import java.util.stream.Stream;
 
 import static cyclone.otusspring.library.TestData.*;
@@ -21,8 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
-@ComponentScan("cyclone.otusspring.library.repository.jpa")
-class GenreRepositoryJpaTest {
+@ComponentScan("cyclone.otusspring.library.repository")
+class GenreRepositoryImplTest {
 
     @Autowired
     GenreRepository genreRepository;
@@ -76,6 +77,7 @@ class GenreRepositoryJpaTest {
     void testUpdate() {
         Genre updatedGenre2 = new Genre(GENRE2.getGenreId(), "Updated " + GENRE2.getName());
         genreRepository.save(updatedGenre2);
+        tem.flush();
 
         Genre actual = genreRepository.findOne(updatedGenre2.getGenreId());
 
@@ -99,16 +101,16 @@ class GenreRepositoryJpaTest {
     @Test
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
-        assertThatThrownBy(() -> genreRepository.delete(NO_SUCH_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> genreRepository.delete(NO_SUCH_ID)).isInstanceOf(EmptyResultDataAccessException.class);
     }
 
     @Test
-    void testExistTrue() {
+    void testExistsTrue() {
         assertThat(genreRepository.exists(GENRE2.getGenreId())).isTrue();
     }
 
     @Test
-    void testExistFalse() {
+    void testExistsFalse() {
         assertThat(genreRepository.exists(NO_SUCH_ID)).isFalse();
     }
 
@@ -118,6 +120,6 @@ class GenreRepositoryJpaTest {
         assertThatThrownBy(() -> {
             genreRepository.save(new Genre(NEW_GENRE.getName()));
             genreRepository.save(new Genre(NEW_GENRE.getName()));
-        }).isInstanceOf(PersistenceException.class);
+        }).isInstanceOf(DataIntegrityViolationException.class);
     }
 }

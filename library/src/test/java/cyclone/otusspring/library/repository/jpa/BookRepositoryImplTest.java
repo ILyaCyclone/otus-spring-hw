@@ -11,9 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceException;
 import java.util.stream.Stream;
 
 import static cyclone.otusspring.library.TestData.*;
@@ -21,8 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
-@ComponentScan("cyclone.otusspring.library.repository.jpa")
-class BookRepositoryJpaTest {
+@ComponentScan("cyclone.otusspring.library.repository")
+class BookRepositoryImplTest {
 
     @Autowired
     BookRepository bookRepository;
@@ -82,6 +83,7 @@ class BookRepositoryJpaTest {
         bookToUpdate.setYear(bookToUpdate.getYear() + 1);
 
         Book updatedBook = bookRepository.save(bookToUpdate);
+        tem.flush();
 
         assertThat(updatedBook).isEqualToComparingFieldByField(bookToUpdate);
     }
@@ -107,16 +109,16 @@ class BookRepositoryJpaTest {
     @Test
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
-        assertThatThrownBy(() -> bookRepository.delete(NO_SUCH_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> bookRepository.delete(NO_SUCH_ID)).isInstanceOf(EmptyResultDataAccessException.class);
     }
 
     @Test
-    void testExistTrue() {
+    void testExistsTrue() {
         assertThat(bookRepository.exists(BOOK2.getBookId())).isTrue();
     }
 
     @Test
-    void testExistFalse() {
+    void testExistsFalse() {
         assertThat(bookRepository.exists(NO_SUCH_ID)).isFalse();
     }
 
@@ -126,6 +128,6 @@ class BookRepositoryJpaTest {
         assertThatThrownBy(() -> {
             bookRepository.save(new Book(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre()));
             bookRepository.save(new Book(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre()));
-        }).isInstanceOf(PersistenceException.class);
+        }).isInstanceOf(DataIntegrityViolationException.class);
     }
 }

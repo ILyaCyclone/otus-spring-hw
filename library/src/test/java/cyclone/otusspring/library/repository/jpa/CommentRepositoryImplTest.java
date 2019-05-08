@@ -13,8 +13,8 @@ import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@ComponentScan("cyclone.otusspring.library.repository.jpa")
-class CommentRepositoryJpaTest {
+@ComponentScan("cyclone.otusspring.library.repository")
+class CommentRepositoryImplTest {
 
     @Autowired
     CommentRepository commentRepository;
@@ -64,6 +64,7 @@ class CommentRepositoryJpaTest {
         Comment updatedComment2 = new Comment(COMMENT2.getCommentId(), "Updated " + COMMENT2.getCommentator()
                 , "Updated" + COMMENT2.getText(), COMMENT2.getDate(), COMMENT2.getBook());
         commentRepository.save(updatedComment2);
+        tem.flush();
 
         Comment actual = commentRepository.findOne(updatedComment2.getCommentId());
 
