@@ -23,11 +23,11 @@ import java.util.List;
 //)
 @Data
 @NoArgsConstructor
-public class Book {
+public class MongoBook {
 //    public static final String GRAPH_WITH_AUTHOR_GENRE = "with-author-genre";
 
     @Id
-    private String id;
+    private String bookId;
 
     @Field("title")
     private String title;
@@ -39,7 +39,7 @@ public class Book {
     private MongoAuthor author;
 
     @DBRef
-    private Genre genre;
+    private MongoGenre genre;
 
     //    @OneToMany(
 //            mappedBy = "book",
@@ -49,48 +49,37 @@ public class Book {
 //    )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private List<Comment> comments = new ArrayList<>();
+    private List<MongoComment> comments = new ArrayList<>();
 
 
-    public Book(String title, Integer year) {
+    public MongoBook(String title, Integer year) {
         this.title = title;
         this.year = year;
     }
 
-    public Book(String title, Integer year, MongoAuthor author, Genre genre) {
+    public MongoBook(String title, Integer year, MongoAuthor author, MongoGenre genre) {
         this(null, title, year, author, genre);
     }
 
-    public Book(String id, String title, Integer year, MongoAuthor author, Genre genre) {
+    public MongoBook(String bookId, String title, Integer year, MongoAuthor author, MongoGenre genre) {
         if (StringUtils.isEmpty(title)) {
             throw new IllegalArgumentException("book title must not be empty");
         }
 
-        this.id = id;
+        this.bookId = bookId;
         this.title = title;
         this.year = year;
         this.author = author;
         this.genre = genre;
     }
 
-    public void addComment(Comment comment) {
+    public void addComment(MongoComment comment) {
         comments.add(comment);
         comment.setBook(this);
     }
 
-    public void removeComment(Comment comment) {
+    public void removeComment(MongoComment comment) {
         comments.remove(comment);
         comment.setBook(null);
-    }
-
-    @Override
-    public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", year=" + year +
-                ", author=" + author +
-                ", genre=" + genre +
-                '}';
     }
 }

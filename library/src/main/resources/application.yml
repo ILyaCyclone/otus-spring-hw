@@ -13,3 +13,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+  shell:
+    interactive:
+      enabled: false

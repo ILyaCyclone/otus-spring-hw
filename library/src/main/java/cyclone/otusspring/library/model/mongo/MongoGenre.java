@@ -11,18 +11,18 @@ import java.util.Objects;
 @Document("genres")
 @Data
 @NoArgsConstructor
-public class Genre {
+public class MongoGenre {
     @Id
     private String id;
 
     @Field("name")
     private String name;
 
-    public Genre(String name) {
+    public MongoGenre(String name) {
         this(null, name);
     }
 
-    public Genre(String id, String name) {
+    public MongoGenre(String id, String name) {
         Objects.requireNonNull(name, "genre name must not be null");
         this.id = id;
         this.name = name;

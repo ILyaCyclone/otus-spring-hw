@@ -11,12 +11,12 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-//@Document("comment")
+//@Document("comments")
 @Data
 @NoArgsConstructor
-public class Comment {
+public class MongoComment {
     @Id
-    private String id;
+    private String commentId;
 
     @Field("commentator")
     private String commentator;
@@ -31,18 +31,18 @@ public class Comment {
 //    @JoinColumn(name = "book_id", nullable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Book book;
+    private MongoBook book;
 
 
-    public Comment(String commentator, String text, Book book) {
+    public MongoComment(String commentator, String text, MongoBook book) {
         this(null, commentator, text, LocalDateTime.now(), book);
     }
 
-    public Comment(String commentator, String text, LocalDateTime date, Book book) {
+    public MongoComment(String commentator, String text, LocalDateTime date, MongoBook book) {
         this(null, commentator, text, date, book);
     }
 
-    public Comment(String id, String commentator, String text, LocalDateTime date, Book book) {
+    public MongoComment(String commentId, String commentator, String text, LocalDateTime date, MongoBook book) {
         if (StringUtils.isEmpty(commentator)) {
             throw new IllegalArgumentException("commentator must not be empty");
         }
@@ -51,7 +51,7 @@ public class Comment {
         }
         Objects.requireNonNull(book, "comment book must not be null");
 
-        this.id = id;
+        this.commentId = commentId;
         this.commentator = commentator;
         this.text = text;
         this.date = date;
