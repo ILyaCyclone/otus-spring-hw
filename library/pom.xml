@@ -25,6 +25,7 @@
 
     <spring-shell-starter.version>2.0.0.RELEASE</spring-shell-starter.version>
     <junit-jupiter.version>5.4.1</junit-jupiter.version>
+    <mongock-spring.version>2.0.0</mongock-spring.version>
   </properties>
 
   <dependencies>
@@ -36,6 +37,11 @@
     <dependency>
       <groupId>de.flapdoodle.embed</groupId>
       <artifactId>de.flapdoodle.embed.mongo</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.github.cloudyrock.mongock</groupId>
+      <artifactId>mongock-spring</artifactId>
+      <version>${mongock-spring.version}</version>
     </dependency>
       <dependency>
           <groupId>org.springframework.boot</groupId>
