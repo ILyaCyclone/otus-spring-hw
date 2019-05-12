@@ -26,7 +26,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book findOne(long bookId) {
+    public Book findOne(String bookId) {
         return bookRepository.findOne(bookId);
     }
 
@@ -39,8 +39,8 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public Book create(BookDto bookDto) {
-        long authorId = bookDto.getAuthorId();
-        long genreId = bookDto.getGenreId();
+        String authorId = bookDto.getAuthorId();
+        String genreId = bookDto.getGenreId();
 
         Author author = authorRepository.findOne(authorId);
         Genre genre = genreRepository.findOne(genreId);

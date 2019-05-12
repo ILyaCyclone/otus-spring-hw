@@ -22,7 +22,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> findByBookId(long bookId) {
+    public List<Comment> findByBookId(String bookId) {
         return commentRepository.findByBookId(bookId);
     }
 
@@ -38,7 +38,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void delete(long commentId) {
+    public void delete(String commentId) {
         commentRepository.delete(commentId);
     }
 }

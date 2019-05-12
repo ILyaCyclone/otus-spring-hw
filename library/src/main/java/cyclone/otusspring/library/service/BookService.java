@@ -6,7 +6,7 @@ import cyclone.otusspring.library.model.Book;
 import java.util.List;
 
 public interface BookService {
-    Book findOne(long bookId);
+    Book findOne(String bookId);
 
     Book create(BookDto bookDto);
 

@@ -9,13 +9,13 @@ public interface GenreRepository {
 
     List<Genre> findByName(String name);
 
-    Genre findOne(long id);
+    Genre findOne(String id);
 
     Genre save(Genre genre);
 
-    void delete(long id);
+    void delete(String id);
 
     void delete(Genre genre);
 
-    boolean exists(long id);
+    boolean exists(String id);
 }

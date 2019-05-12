@@ -29,7 +29,7 @@ class LibraryCommandsTest {
 
     @Test
     void createBook() {
-        String message = libraryCommands.createBook(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), AUTHOR1.getAuthorId(), GENRE1.getGenreId());
+        String message = libraryCommands.createBook(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), AUTHOR1.getId(), GENRE1.getId());
         assertThat(message).contains("successfully");
     }
 

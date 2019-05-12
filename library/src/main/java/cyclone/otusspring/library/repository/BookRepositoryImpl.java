@@ -1,21 +1,21 @@
 package cyclone.otusspring.library.repository;
 
 
+import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Book;
-import cyclone.otusspring.library.repository.datajpa.BookJpaRepository;
+import cyclone.otusspring.library.repository.mongo.MongoBookRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Repository
 @Transactional(readOnly = true)
 public class BookRepositoryImpl implements BookRepository {
 
-    private final BookJpaRepository jpaRepository;
+    private final MongoBookRepository jpaRepository;
 
-    public BookRepositoryImpl(BookJpaRepository jpaRepository) {
+    public BookRepositoryImpl(MongoBookRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
     }
 
@@ -30,8 +30,8 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    public Book findOne(long id) {
-        return jpaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Book ID " + id + " not found"));
+    public Book findOne(String id) {
+        return jpaRepository.findById(id).orElseThrow(() -> new NotFoundException("Book ID " + id + " not found"));
     }
 
     @Override
@@ -42,7 +42,7 @@ public class BookRepositoryImpl implements BookRepository {
 
     @Override
     @Transactional
-    public void delete(long id) {
+    public void delete(String id) {
         jpaRepository.deleteById(id);
     }
 
@@ -53,7 +53,7 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    public boolean exists(long id) {
+    public boolean exists(String id) {
         return jpaRepository.existsById(id);
     }
 }

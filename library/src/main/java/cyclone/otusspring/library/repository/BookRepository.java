@@ -9,13 +9,13 @@ public interface BookRepository {
 
     List<Book> findByTitle(String title);
 
-    Book findOne(long id);
+    Book findOne(String id);
 
     Book save(Book book);
 
-    void delete(long id);
+    void delete(String id);
 
     void delete(Book book);
 
-    boolean exists(long id);
+    boolean exists(String id);
 }

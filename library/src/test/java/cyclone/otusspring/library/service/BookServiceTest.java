@@ -27,11 +27,11 @@ class BookServiceTest {
 
     @Test
     void create() {
-        BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor().getAuthorId(), NEW_BOOK.getGenre().getGenreId());
+        BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor().getId(), NEW_BOOK.getGenre().getId());
 
         Book createdBook = bookService.create(bookDtoToCreate);
 
-        assertThat(createdBook.getBookId()).isNotNull();
+        assertThat(createdBook.getId()).isNotNull();
         assertAll(() -> assertThat(createdBook.getTitle()).isEqualTo(bookDtoToCreate.getTitle())
                 , () -> assertThat(createdBook.getYear()).isEqualTo(bookDtoToCreate.getYear()));
         assertThat(bookService.findAll()).usingRecursiveFieldByFieldElementComparator()
@@ -41,7 +41,7 @@ class BookServiceTest {
     @Test
     @DisplayName("creating a book with non existent author fails")
     void create_fail_nonExistentAuthor() {
-        BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NO_SUCH_ID, NEW_BOOK.getGenre().getGenreId());
+        BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NO_SUCH_ID, NEW_BOOK.getGenre().getId());
 
         assertThatThrownBy(() -> bookService.create(bookDtoToCreate))
                 .hasCauseInstanceOf(EntityNotFoundException.class)
@@ -52,7 +52,7 @@ class BookServiceTest {
     @Test
     @DisplayName("creating a book with non existent genre fails")
     void create_fail_nonExistentGenre() {
-        BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor().getAuthorId(), NO_SUCH_ID);
+        BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor().getId(), NO_SUCH_ID);
 
         assertThatThrownBy(() -> bookService.create(bookDtoToCreate))
                 .hasCauseInstanceOf(EntityNotFoundException.class)

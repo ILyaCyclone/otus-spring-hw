@@ -1,8 +1,8 @@
 package cyclone.otusspring.library;
 
-import cyclone.otusspring.library.model.mongo.MongoAuthor;
-import cyclone.otusspring.library.model.mongo.MongoBook;
-import cyclone.otusspring.library.model.mongo.MongoGenre;
+import cyclone.otusspring.library.model.Author;
+import cyclone.otusspring.library.model.Book;
+import cyclone.otusspring.library.model.Genre;
 import cyclone.otusspring.library.repository.mongo.MongoAuthorRepository;
 import cyclone.otusspring.library.repository.mongo.MongoBookRepository;
 import cyclone.otusspring.library.repository.mongo.MongoGenreRepository;
@@ -26,23 +26,23 @@ public class LibraryApplication {
         MongoBookRepository bookRepository = context.getBean(MongoBookRepository.class);
         MongoGenreRepository genreRepository = context.getBean(MongoGenreRepository.class);
 
-        authorRepository.save(new MongoAuthor("new mongo author", "lastname", "home"));
-        authorRepository.save(new MongoAuthor("new mongo author 2", "lastname 2", "home 2"));
+        authorRepository.save(new Author("new mongo author", "lastname", "home"));
+        authorRepository.save(new Author("new mongo author 2", "lastname 2", "home 2"));
 
         System.out.println("---------------------------------");
         authorRepository.findAll().forEach(System.out::println);
         System.out.println("---------------------------------");
 
-        genreRepository.save(new MongoGenre("mongo genre 1"));
-        genreRepository.save(new MongoGenre("mongo genre 2"));
+        genreRepository.save(new Genre("mongo genre 1"));
+        genreRepository.save(new Genre("mongo genre 2"));
 
 
         System.out.println("---------------------------------");
         genreRepository.findAll().forEach(System.out::println);
         System.out.println("---------------------------------");
 
-        bookRepository.save(new MongoBook("mongo book 1", 2000, authorRepository.findAll().get(0), genreRepository.findAll().get(0)));
-        bookRepository.save(new MongoBook("mongo book 2", 2001, authorRepository.findAll().get(1), genreRepository.findAll().get(1)));
+        bookRepository.save(new Book("mongo book 1", 2000, authorRepository.findAll().get(0), genreRepository.findAll().get(0)));
+        bookRepository.save(new Book("mongo book 2", 2001, authorRepository.findAll().get(1), genreRepository.findAll().get(1)));
 
         System.out.println("---------------------------------");
         bookRepository.findAll().forEach(System.out::println);

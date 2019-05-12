@@ -8,6 +8,6 @@ import lombok.Getter;
 public class BookDto {
     private String title;
     private Integer year;
-    private long authorId;
-    private long genreId;
+    private String authorId;
+    private String genreId;
 }

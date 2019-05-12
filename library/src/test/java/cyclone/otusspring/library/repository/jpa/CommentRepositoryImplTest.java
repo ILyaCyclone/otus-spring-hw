@@ -24,7 +24,7 @@ class CommentRepositoryImplTest {
 
     @Test
     void findOne() {
-        assertThat(commentRepository.findOne(COMMENT2.getCommentId()))
+        assertThat(commentRepository.findOne(COMMENT2.getId()))
                 .isEqualToIgnoringGivenFields(COMMENT2, "book");
     }
 
@@ -37,7 +37,7 @@ class CommentRepositoryImplTest {
 
     @Test
     void findByBookId() {
-        assertThat(commentRepository.findByBookId(BOOK2.getBookId()))
+        assertThat(commentRepository.findByBookId(BOOK2.getId()))
                 .usingElementComparatorIgnoringFields("book")
                 .containsExactly(COMMENT2, COMMENT4);
     }
@@ -51,22 +51,22 @@ class CommentRepositoryImplTest {
 
     @Test
     void testInsert() {
-        long savedId = commentRepository.save(NEW_COMMENT).getCommentId();
+        String savedId = commentRepository.save(NEW_COMMENT).getId();
 
         Comment actual = commentRepository.findOne(savedId);
 
-        assertThat(actual.getCommentId()).isNotNull();
-        assertThat(actual).isEqualToIgnoringGivenFields(NEW_COMMENT, "commentId");
+        assertThat(actual.getId()).isNotNull();
+        assertThat(actual).isEqualToIgnoringGivenFields(NEW_COMMENT, "id");
     }
 
     @Test
     void testUpdate() {
-        Comment updatedComment2 = new Comment(COMMENT2.getCommentId(), "Updated " + COMMENT2.getCommentator()
+        Comment updatedComment2 = new Comment(COMMENT2.getId(), "Updated " + COMMENT2.getCommentator()
                 , "Updated" + COMMENT2.getText(), COMMENT2.getDate(), COMMENT2.getBook());
         commentRepository.save(updatedComment2);
         tem.flush();
 
-        Comment actual = commentRepository.findOne(updatedComment2.getCommentId());
+        Comment actual = commentRepository.findOne(updatedComment2.getId());
 
         assertThat(actual).isEqualToIgnoringGivenFields(updatedComment2, "book");
 
@@ -79,7 +79,7 @@ class CommentRepositoryImplTest {
 
     @Test
     void delete() {
-        Comment commentToDelete = tem.find(Comment.class, COMMENT1.getCommentId());
+        Comment commentToDelete = tem.find(Comment.class, COMMENT1.getId());
         commentRepository.delete(commentToDelete);
 
         assertThat(commentRepository.findByBook(BOOK1))
@@ -90,7 +90,7 @@ class CommentRepositoryImplTest {
 
     @Test
     void deleteById() {
-        commentRepository.delete(COMMENT3.getCommentId());
+        commentRepository.delete(COMMENT3.getId());
 
         assertThat(commentRepository.findByBook(BOOK1))
                 .usingElementComparatorIgnoringFields("book")

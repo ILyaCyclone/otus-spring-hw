@@ -59,10 +59,10 @@ class CommentCommandsTest {
         final String commentText = "new comment";
         final String username = "somebody";
 
-        CommentDto commentDto = new CommentDto(BOOK1.getBookId(), username, commentText);
+        CommentDto commentDto = new CommentDto(BOOK1.getId(), username, commentText);
 
         commentCommands.signIn(username);
-        String message = commentCommands.addComment(BOOK1.getBookId(), commentText);
+        String message = commentCommands.addComment(BOOK1.getId(), commentText);
 
         assertThat(message).containsIgnoringCase("saved");
         verify(commentService).create(commentDto);
@@ -73,7 +73,7 @@ class CommentCommandsTest {
     @ValueSource(strings = {"true", "false"})
     void listComments(String verboseString) {
         final boolean verbose = Boolean.valueOf(verboseString);
-        final long bookId = BOOK1.getBookId();
+        final String bookId = BOOK1.getId();
         final List<Comment> comments = Arrays.asList(COMMENT1, COMMENT3);
 
         // act
@@ -90,7 +90,7 @@ class CommentCommandsTest {
 
     @Test
     void removeComment() {
-        final long commentId = COMMENT1.getCommentId();
+        final String commentId = COMMENT1.getId();
 
         String message = commentCommands.removeComment(commentId);
 

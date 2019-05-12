@@ -25,7 +25,7 @@ class CommentServiceTest {
 
     @Test
     void findByBookId() {
-        List<Comment> comments = commentService.findByBookId(BOOK1.getBookId());
+        List<Comment> comments = commentService.findByBookId(BOOK1.getId());
 
         assertThat(comments).usingRecursiveFieldByFieldElementComparator()
                 .usingElementComparatorIgnoringFields("book")
@@ -34,7 +34,7 @@ class CommentServiceTest {
 
     @Test
     void create() {
-        final long bookId = BOOK1.getBookId();
+        final String bookId = BOOK1.getId();
         final String username = "username";
         final String text = "comment text";
 
@@ -54,17 +54,17 @@ class CommentServiceTest {
 
         Comment createdComment = commentsByUsernameAndText.get(0);
 
-        assertThat(createdComment.getCommentId()).isNotNull();
-        assertThat(createdComment.getBook().getBookId()).isEqualTo(bookId);
+        assertThat(createdComment.getId()).isNotNull();
+        assertThat(createdComment.getBook().getId()).isEqualTo(bookId);
         assertThat(createdComment.getDate()).isNotNull();
         assertThat(createdComment).isEqualToIgnoringGivenFields(commentDtoToCreate, "commentId", "date", "book");
     }
 
     @Test
     void delete() {
-        commentService.delete(COMMENT4.getCommentId());
+        commentService.delete(COMMENT4.getId());
 
-        assertThat(commentService.findByBookId(BOOK2.getBookId()))
+        assertThat(commentService.findByBookId(BOOK2.getId()))
                 .hasSize(1)
                 .doesNotContain(COMMENT4);
     }

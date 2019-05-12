@@ -2,37 +2,29 @@ package cyclone.otusspring.library.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.*;
+import javax.persistence.Id;
 import java.util.Objects;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
-@Entity
-@Table(name = "genre")
+@Document("genres")
 @Data
 @NoArgsConstructor
 public class Genre {
     @Id
-    @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "genre_id")
-    private Long genreId;
+    private String id;
 
-    @Column(name = "name")
+    @Field("name")
     private String name;
-
-
-    public Genre(long genreId) {
-        this.genreId = genreId;
-    }
 
     public Genre(String name) {
         this(null, name);
     }
 
-    public Genre(Long id, String name) {
+    public Genre(String id, String name) {
         Objects.requireNonNull(name, "genre name must not be null");
-        this.genreId = id;
+        this.id = id;
         this.name = name;
     }
 }

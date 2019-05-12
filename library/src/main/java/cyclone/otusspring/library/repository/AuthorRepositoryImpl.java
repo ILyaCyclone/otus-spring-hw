@@ -1,21 +1,21 @@
 package cyclone.otusspring.library.repository;
 
+import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Author;
-import cyclone.otusspring.library.repository.datajpa.AuthorJpaRepository;
+import cyclone.otusspring.library.repository.mongo.MongoAuthorRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Repository
 @Transactional(readOnly = true)
 public class AuthorRepositoryImpl implements AuthorRepository {
 
-    private final AuthorJpaRepository jpaRepository;
+    private final MongoAuthorRepository jpaRepository;
 
-    public AuthorRepositoryImpl(AuthorJpaRepository jpaRepository) {
+    public AuthorRepositoryImpl(MongoAuthorRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
     }
 
@@ -31,8 +31,8 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     }
 
     @Override
-    public Author findOne(long id) {
-        return jpaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Author ID " + id + " not found"));
+    public Author findOne(String id) {
+        return jpaRepository.findById(id).orElseThrow(() -> new NotFoundException("Author ID " + id + " not found"));
     }
 
     @Override
@@ -41,7 +41,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(String id) {
         jpaRepository.deleteById(id);
     }
 
@@ -51,7 +51,8 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     }
 
     @Override
-    public boolean exists(long id) {
+    // TODO get rid of String.valueOf
+    public boolean exists(String id) {
         return jpaRepository.existsById(id);
     }
 }

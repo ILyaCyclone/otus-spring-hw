@@ -52,7 +52,7 @@ class GenreRepositoryImplTest {
 
     @Test
     void findOne() {
-        assertThat(genreRepository.findOne(2)).isEqualTo(GENRE2);
+        assertThat(genreRepository.findOne("2")).isEqualTo(GENRE2);
     }
 
     @Test
@@ -65,28 +65,28 @@ class GenreRepositoryImplTest {
 
     @Test
     void testInsert() {
-        long savedId = genreRepository.save(NEW_GENRE).getGenreId();
+        String savedId = genreRepository.save(NEW_GENRE).getId();
 
         Genre actual = genreRepository.findOne(savedId);
 
-        assertThat(actual.getGenreId()).isNotNull();
-        assertThat(actual).isEqualToIgnoringGivenFields(NEW_GENRE, "genreId");
+        assertThat(actual.getId()).isNotNull();
+        assertThat(actual).isEqualToIgnoringGivenFields(NEW_GENRE, "id");
     }
 
     @Test
     void testUpdate() {
-        Genre updatedGenre2 = new Genre(GENRE2.getGenreId(), "Updated " + GENRE2.getName());
+        Genre updatedGenre2 = new Genre(GENRE2.getId(), "Updated " + GENRE2.getName());
         genreRepository.save(updatedGenre2);
         tem.flush();
 
-        Genre actual = genreRepository.findOne(updatedGenre2.getGenreId());
+        Genre actual = genreRepository.findOne(updatedGenre2.getId());
 
         assertThat(actual).isEqualToComparingFieldByField(updatedGenre2);
     }
 
     @Test
     void testDelete() {
-        Genre bookToDelete = tem.find(Genre.class, GENRE2.getGenreId());
+        Genre bookToDelete = tem.find(Genre.class, GENRE2.getId());
 
         genreRepository.delete(bookToDelete);
         assertThat(genreRepository.findAll()).doesNotContain(GENRE2);
@@ -94,7 +94,7 @@ class GenreRepositoryImplTest {
 
     @Test
     void testDeleteById() {
-        genreRepository.delete(GENRE1.getGenreId());
+        genreRepository.delete(GENRE1.getId());
         assertThat(genreRepository.findAll()).doesNotContain(GENRE1);
     }
 
@@ -106,7 +106,7 @@ class GenreRepositoryImplTest {
 
     @Test
     void testExistsTrue() {
-        assertThat(genreRepository.exists(GENRE2.getGenreId())).isTrue();
+        assertThat(genreRepository.exists(GENRE2.getId())).isTrue();
     }
 
     @Test

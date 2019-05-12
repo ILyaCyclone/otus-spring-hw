@@ -52,7 +52,7 @@ class AuthorRepositoryImplTest {
 
     @Test
     void findOne() {
-        assertThat(authorRepository.findOne(2)).isEqualTo(AUTHOR2);
+        assertThat(authorRepository.findOne("2")).isEqualTo(AUTHOR2);
     }
 
     @Test
@@ -65,28 +65,28 @@ class AuthorRepositoryImplTest {
 
     @Test
     void testInsert() {
-        long savedId = authorRepository.save(NEW_AUTHOR).getAuthorId();
+        String savedId = authorRepository.save(NEW_AUTHOR).getId();
 
         Author actual = authorRepository.findOne(savedId);
 
-        assertThat(actual.getAuthorId()).isNotNull();
+        assertThat(actual.getId()).isNotNull();
         assertThat(actual).isEqualToIgnoringGivenFields(NEW_AUTHOR, "authorId");
     }
 
     @Test
     void testUpdate() {
-        Author updatedAuthor2 = new Author(AUTHOR2.getAuthorId(), "Updated " + AUTHOR2.getFirstname(), "Updated " + AUTHOR2.getLastname(), "Updated " + AUTHOR2.getHomeland());
+        Author updatedAuthor2 = new Author(AUTHOR2.getId(), "Updated " + AUTHOR2.getFirstname(), "Updated " + AUTHOR2.getLastname(), "Updated " + AUTHOR2.getHomeland());
         authorRepository.save(updatedAuthor2);
         tem.flush(); // send update to database
 
-        Author actual = authorRepository.findOne(updatedAuthor2.getAuthorId());
+        Author actual = authorRepository.findOne(updatedAuthor2.getId());
 
         assertThat(actual).isEqualToComparingFieldByField(updatedAuthor2);
     }
 
     @Test
     void testDelete() {
-        Author bookToDelete = tem.find(Author.class, AUTHOR2.getAuthorId());
+        Author bookToDelete = tem.find(Author.class, AUTHOR2.getId());
 
         authorRepository.delete(bookToDelete);
         assertThat(authorRepository.findAll()).doesNotContain(AUTHOR2);
@@ -94,7 +94,7 @@ class AuthorRepositoryImplTest {
 
     @Test
     void testDeleteById() {
-        authorRepository.delete(AUTHOR1.getAuthorId());
+        authorRepository.delete(AUTHOR1.getId());
         assertThat(authorRepository.findAll()).doesNotContain(AUTHOR1);
     }
 
@@ -106,7 +106,7 @@ class AuthorRepositoryImplTest {
 
     @Test
     void testExistsTrue() {
-        assertThat(authorRepository.exists(AUTHOR2.getAuthorId())).isTrue();
+        assertThat(authorRepository.exists(AUTHOR2.getId())).isTrue();
     }
 
     @Test

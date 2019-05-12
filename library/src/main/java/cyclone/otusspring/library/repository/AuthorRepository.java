@@ -9,13 +9,13 @@ public interface AuthorRepository {
 
     List<Author> findByName(String name);
 
-    Author findOne(long id);
+    Author findOne(String id);
 
     Author save(Author author);
 
-    void delete(long id);
+    void delete(String id);
 
     void delete(Author author);
 
-    boolean exists(long id);
+    boolean exists(String id);
 }

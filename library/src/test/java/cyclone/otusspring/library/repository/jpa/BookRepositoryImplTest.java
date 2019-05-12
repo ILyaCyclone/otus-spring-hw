@@ -60,24 +60,24 @@ class BookRepositoryImplTest {
 
     @Test
     void findOne() {
-        assertThat(bookRepository.findOne(2)).isEqualToIgnoringGivenFields(BOOK2, "comments");
+        assertThat(bookRepository.findOne("2")).isEqualToIgnoringGivenFields(BOOK2, "comments");
     }
 
 
 
     @Test
     void testInsert() {
-        long savedId = bookRepository.save(NEW_BOOK).getBookId();
+        String savedId = bookRepository.save(NEW_BOOK).getId();
 
         Book actual = bookRepository.findOne(savedId);
 
-        assertThat(actual.getBookId()).isNotNull();
-        assertThat(actual).isEqualToIgnoringGivenFields(NEW_BOOK, "bookId");
+        assertThat(actual.getId()).isNotNull();
+        assertThat(actual).isEqualToIgnoringGivenFields(NEW_BOOK, "id");
     }
 
     @Test
     void testUpdate() {
-        Book bookToUpdate = tem.find(Book.class, BOOK2.getBookId());
+        Book bookToUpdate = tem.find(Book.class, BOOK2.getId());
 
         bookToUpdate.setTitle("updated " + bookToUpdate.getTitle());
         bookToUpdate.setYear(bookToUpdate.getYear() + 1);
@@ -90,7 +90,7 @@ class BookRepositoryImplTest {
 
     @Test
     void testDelete() {
-        Book bookToDelete = tem.find(Book.class, BOOK2.getBookId());
+        Book bookToDelete = tem.find(Book.class, BOOK2.getId());
 
         bookRepository.delete(bookToDelete);
         assertThat(bookRepository.findAll())
@@ -100,7 +100,7 @@ class BookRepositoryImplTest {
 
     @Test
     void testDeleteById() {
-        bookRepository.delete(BOOK1.getBookId());
+        bookRepository.delete(BOOK1.getId());
         assertThat(bookRepository.findAll())
                 .usingElementComparatorIgnoringFields("comments")
                 .containsExactly(BOOK5, BOOK2, BOOK4, BOOK3);
@@ -114,7 +114,7 @@ class BookRepositoryImplTest {
 
     @Test
     void testExistsTrue() {
-        assertThat(bookRepository.exists(BOOK2.getBookId())).isTrue();
+        assertThat(bookRepository.exists(BOOK2.getId())).isTrue();
     }
 
     @Test

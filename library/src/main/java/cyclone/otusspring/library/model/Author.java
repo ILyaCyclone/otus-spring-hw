@@ -2,46 +2,42 @@ package cyclone.otusspring.library.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.*;
+import javax.persistence.Id;
 import java.util.Objects;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
-//@Document
-@Entity
-@Table(name = "author")
+@Document(collection = "authors")
 @Data
 @NoArgsConstructor
 public class Author {
     @Id
-    @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "author_id")
-    private Long authorId;
+    private String id;
 
-    @Column(name = "firstname")
+    @Field("firstname")
     private String firstname;
 
-    @Column(name = "lastname")
+    @Field("lastname")
     private String lastname;
 
-    @Column(name = "homeland")
+    @Field("homeland")
     private String homeland;
 
 
-    public Author(long authorId) {
-        this.authorId = authorId;
+    public Author(String id) {
+        this.id = id;
     }
 
     public Author(String firstname, String lastname, String homeland) {
         this(null, firstname, lastname, homeland);
     }
 
-    public Author(Long id, String firstname, String lastname, String homeland) {
+    public Author(String id, String firstname, String lastname, String homeland) {
         Objects.requireNonNull(firstname, "author firstname must not be null");
         Objects.requireNonNull(lastname, "author lastname must not be null");
 
-        this.authorId = id;
+        this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.homeland = homeland;

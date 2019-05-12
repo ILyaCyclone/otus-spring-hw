@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface CommentService {
 
-    List<Comment> findByBookId(long bookId);
+    List<Comment> findByBookId(String bookId);
 
     void create(CommentDto commentDto);
 
-    void delete(long commentId);
+    void delete(String commentId);
 }

@@ -24,7 +24,7 @@ class GenreServiceTest {
 
         Genre createdGenre = genreService.create(genreToCreate.getName());
 
-        assertThat(createdGenre).isEqualToIgnoringGivenFields(genreToCreate, "genreId");
+        assertThat(createdGenre).isEqualToIgnoringGivenFields(genreToCreate, "id");
         assertThat(genreService.findAll()).usingRecursiveFieldByFieldElementComparator()
                 .contains(createdGenre);
     }

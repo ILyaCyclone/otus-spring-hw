@@ -1,59 +1,59 @@
 package cyclone.otusspring.library.repository;
 
+import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
-import cyclone.otusspring.library.repository.datajpa.CommentJpaRepository;
+import cyclone.otusspring.library.repository.mongo.MongoCommentRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Repository
 @Transactional(readOnly = true)
 public class CommentRepositoryImpl implements CommentRepository {
 
-    private final CommentJpaRepository jpaRepository;
+    private final MongoCommentRepository repository;
 
-    public CommentRepositoryImpl(CommentJpaRepository jpaRepository) {
-        this.jpaRepository = jpaRepository;
+    public CommentRepositoryImpl(MongoCommentRepository repository) {
+        this.repository = repository;
     }
 
     @Override
-    public Comment findOne(long id) {
-        return jpaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Comment ID " + id + " not found"));
+    public Comment findOne(String id) {
+        return repository.findById(id).orElseThrow(() -> new NotFoundException("Comment ID " + id + " not found"));
     }
 
     @Override
     public List<Comment> findByBook(Book book) {
-        return jpaRepository.findByBookOrderByDate(book);
+        return repository.findByBookOrderByDate(book);
     }
 
     @Override
-    public List<Comment> findByBookId(long bookId) {
-        return jpaRepository.findByBookBookIdOrderByDate(bookId);
+    public List<Comment> findByBookId(String bookId) {
+        return repository.findByBookIdOrderByDate(bookId);
     }
 
     @Override
     public List<Comment> findByCommentator(String commentator) {
-        return jpaRepository.findByCommentatorOrderByDate(commentator);
+        return repository.findByCommentatorOrderByDate(commentator);
     }
 
     @Override
     @Transactional
     public Comment save(Comment comment) {
-        return jpaRepository.save(comment);
+        return repository.save(comment);
     }
 
     @Override
     @Transactional
-    public void delete(long id) {
-        jpaRepository.deleteById(id);
+    public void delete(String id) {
+        repository.deleteById(id);
     }
 
     @Override
     @Transactional
     public void delete(Comment comment) {
-        jpaRepository.delete(comment);
+        repository.delete(comment);
     }
 }

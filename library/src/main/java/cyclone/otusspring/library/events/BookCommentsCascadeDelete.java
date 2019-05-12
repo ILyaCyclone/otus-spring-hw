@@ -1,12 +1,12 @@
 package cyclone.otusspring.library.events;
 
-import cyclone.otusspring.library.model.mongo.MongoComment;
+import cyclone.otusspring.library.model.Comment;
 import cyclone.otusspring.library.repository.BookRepository;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BookCommentsCascadeDelete extends AbstractMongoEventListener<MongoComment> {
+public class BookCommentsCascadeDelete extends AbstractMongoEventListener<Comment> {
 
     private final BookRepository bookRepository;
 
