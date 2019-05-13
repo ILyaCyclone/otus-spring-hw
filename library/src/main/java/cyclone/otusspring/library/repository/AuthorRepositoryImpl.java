@@ -51,7 +51,6 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     }
 
     @Override
-    // TODO get rid of String.valueOf
     public boolean exists(String id) {
         return jpaRepository.existsById(id);
     }

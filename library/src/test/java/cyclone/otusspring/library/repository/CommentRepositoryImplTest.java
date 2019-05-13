@@ -1,8 +1,7 @@
-package cyclone.otusspring.library.repository.jpa;
+package cyclone.otusspring.library.repository;
 
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
-import cyclone.otusspring.library.repository.CommentRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

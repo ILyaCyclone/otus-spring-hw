@@ -1,7 +1,6 @@
-package cyclone.otusspring.library.repository.jpa;
+package cyclone.otusspring.library.repository;
 
 import cyclone.otusspring.library.model.Genre;
-import cyclone.otusspring.library.repository.GenreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

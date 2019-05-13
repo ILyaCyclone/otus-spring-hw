@@ -1,4 +1,9 @@
 spring:
+  data:
+    mongodb:
+      database: otus-library-test
+      host: localhost
+      port: 27017
   jpa:
     hibernate:
       ddl-auto: none
