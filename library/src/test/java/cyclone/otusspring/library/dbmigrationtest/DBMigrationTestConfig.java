@@ -1,4 +1,4 @@
-package cyclone.otusspring.library.testchangelogs;
+package cyclone.otusspring.library.dbmigrationtest;
 
 import com.github.cloudyrock.mongock.Mongock;
 import com.github.cloudyrock.mongock.SpringMongockBuilder;
@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class ChangelogsConfig {
-    private static final String CHANGELOGS_PACKAGE = "cyclone.otusspring.library.testchangelogs";
+public class DBMigrationTestConfig {
+    private static final String CHANGELOGS_PACKAGE = "cyclone.otusspring.library.dbmigrationtest";
 
     @Bean
     public Mongock mongock(MongoClient mongoClient) {

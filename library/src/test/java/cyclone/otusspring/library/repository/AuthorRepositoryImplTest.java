@@ -1,7 +1,7 @@
 package cyclone.otusspring.library.repository;
 
+import cyclone.otusspring.library.dbmigrationtest.DBMigrationTestConfig;
 import cyclone.otusspring.library.model.Author;
-import cyclone.otusspring.library.testchangelogs.ChangelogsConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,8 +24,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataMongoTest
 @ComponentScan("cyclone.otusspring.library.repository")
-@Import(ChangelogsConfig.class)
-//@ContextConfiguration(classes = {ChangelogsConfig.class})
+@Import(DBMigrationTestConfig.class)
+//@ContextConfiguration(classes = {DBMigrationTestConfig.class})
 class AuthorRepositoryImplTest {
 
     @Autowired

@@ -1,4 +1,4 @@
-package cyclone.otusspring.library.changelogs;
+package cyclone.otusspring.library.dbmigration;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;

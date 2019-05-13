@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class ChangelogsConfig {
-    private static final String CHANGELOGS_PACKAGE = "cyclone.otusspring.library.changelogs";
+public class DBMigrationConfig {
+    private static final String CHANGELOGS_PACKAGE = "cyclone.otusspring.library.dbmigration";
 
     @Bean
     public Mongock mongock(MongoProperties mongoProperties, MongoClient mongoClient) {
