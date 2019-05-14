@@ -1,7 +1,10 @@
 package cyclone.otusspring.library.repository;
 
+import com.github.cloudyrock.mongock.Mongock;
 import cyclone.otusspring.library.dbmigrationtest.DBMigrationTestConfig;
+import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Author;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,10 +15,8 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.stream.Stream;
 
 import static cyclone.otusspring.library.TestData.*;
@@ -25,15 +26,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DataMongoTest
 @ComponentScan("cyclone.otusspring.library.repository")
 @Import(DBMigrationTestConfig.class)
-//@ContextConfiguration(classes = {DBMigrationTestConfig.class})
 class AuthorRepositoryImplTest {
 
     @Autowired
     AuthorRepository authorRepository;
 
     @Autowired
-//    private MongodExecutable mongodExecutable;
-    private MongoTemplate mongoTemplate;
+    MongoTemplate mongoTemplate;
+
+    @Autowired
+    Mongock mongock;
+
+    @BeforeEach
+    void reInitDB() {
+        mongock.execute();
+    }
 
 
     @Test
@@ -62,22 +69,24 @@ class AuthorRepositoryImplTest {
     @Test
     @DisplayName("finding non existent ID throws exception")
     void findOne_nonExistent() {
-        assertThatThrownBy(() -> authorRepository.findOne(NO_SUCH_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> authorRepository.findOne(NO_SUCH_ID)).isInstanceOf(NotFoundException.class);
     }
 
 
 
     @Test
+//    @DirtiesContext
     void testInsert() {
         String savedId = authorRepository.save(NEW_AUTHOR).getId();
 
         Author actual = authorRepository.findOne(savedId);
 
         assertThat(actual.getId()).isNotNull();
-        assertThat(actual).isEqualToIgnoringGivenFields(NEW_AUTHOR, "authorId");
+        assertThat(actual).isEqualToIgnoringGivenFields(NEW_AUTHOR, "id");
     }
 
     @Test
+//    @DirtiesContext
     void testUpdate() {
         Author updatedAuthor2 = new Author(AUTHOR2.getId(), "Updated " + AUTHOR2.getFirstname(), "Updated " + AUTHOR2.getLastname(), "Updated " + AUTHOR2.getHomeland());
         authorRepository.save(updatedAuthor2);
@@ -88,15 +97,17 @@ class AuthorRepositoryImplTest {
         assertThat(actual).isEqualToComparingFieldByField(updatedAuthor2);
     }
 
-//    @Test
-//    void testDelete() {
-//        Author bookToDelete = mongoTemplate. tem.find(Author.class, AUTHOR2.getId());
-//
-//        authorRepository.delete(bookToDelete);
-//        assertThat(authorRepository.findAll()).doesNotContain(AUTHOR2);
-//    }
+    @Test
+//    @DirtiesContext
+    void testDelete() {
+        Author bookToDelete = mongoTemplate.findById(AUTHOR2.getId(), Author.class);
+
+        authorRepository.delete(bookToDelete);
+        assertThat(authorRepository.findAll()).doesNotContain(AUTHOR2);
+    }
 
     @Test
+//    @DirtiesContext
     void testDeleteById() {
         authorRepository.delete(AUTHOR1.getId());
         assertThat(authorRepository.findAll()).doesNotContain(AUTHOR1);
@@ -105,7 +116,7 @@ class AuthorRepositoryImplTest {
     @Test
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
-        assertThatThrownBy(() -> authorRepository.delete(NO_SUCH_ID)).isInstanceOf(EmptyResultDataAccessException.class);
+        assertThatThrownBy(() -> authorRepository.delete(NO_SUCH_ID)).isInstanceOf(NotFoundException.class);
     }
 
     @Test
@@ -120,6 +131,7 @@ class AuthorRepositoryImplTest {
 
     @Test
     @DisplayName("adding non unique records throws exception")
+//    @DirtiesContext
     void uniqueViolationThrowsException() {
         assertThatThrownBy(() -> {
             authorRepository.save(new Author(NEW_AUTHOR.getFirstname(), NEW_AUTHOR.getLastname(), NEW_AUTHOR.getHomeland()));

@@ -13,45 +13,46 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class AuthorRepositoryImpl implements AuthorRepository {
 
-    private final MongoAuthorRepository jpaRepository;
+    private final MongoAuthorRepository mongoRepository;
 
-    public AuthorRepositoryImpl(MongoAuthorRepository jpaRepository) {
-        this.jpaRepository = jpaRepository;
+    public AuthorRepositoryImpl(MongoAuthorRepository mongoRepository) {
+        this.mongoRepository = mongoRepository;
     }
 
 
     @Override
     public List<Author> findAll() {
-        return jpaRepository.findAll(Sort.by("firstname", "lastname"));
+        return mongoRepository.findAll(Sort.by("firstname", "lastname"));
     }
 
     @Override
     public List<Author> findByName(String name) {
-        return jpaRepository.findByName(name);
+        return mongoRepository.findByName(name);
     }
 
     @Override
     public Author findOne(String id) {
-        return jpaRepository.findById(id).orElseThrow(() -> new NotFoundException("Author ID " + id + " not found"));
+        return mongoRepository.findById(id).orElseThrow(() -> new NotFoundException("Author ID " + id + " not found"));
     }
 
     @Override
     public Author save(Author author) {
-        return jpaRepository.save(author);
+        return mongoRepository.save(author);
     }
 
     @Override
     public void delete(String id) {
-        jpaRepository.deleteById(id);
+        if (!mongoRepository.existsById(id)) throw new NotFoundException("Author ID " + id + " not found");
+        mongoRepository.deleteById(id);
     }
 
     @Override
     public void delete(Author author) {
-        jpaRepository.delete(author);
+        mongoRepository.delete(author);
     }
 
     @Override
     public boolean exists(String id) {
-        return jpaRepository.existsById(id);
+        return mongoRepository.existsById(id);
     }
 }

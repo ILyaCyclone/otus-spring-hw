@@ -6,12 +6,19 @@ import com.mongodb.client.MongoDatabase;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Genre;
+import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.CompoundIndexDefinition;
+
+import java.util.HashMap;
 
 import static cyclone.otusspring.library.TestData.*;
 
 @ChangeLog(order = "001")
 public class InitTestMongoDB {
+    private static final Logger logger = LoggerFactory.getLogger(InitTestMongoDB.class);
 
     private Author author1;
     private Author author2;
@@ -28,9 +35,29 @@ public class InitTestMongoDB {
 
     @ChangeSet(order = "001", id = "initAuthors", author = "cyclone", runAlways = true)
     public void initAuthors(MongoTemplate template) {
+//        logger.info("mongock initAuthors");
+//        template.dropCollection(Author.class);
+//        template.createCollection(Author.class);
+//        logger.info("mongock authors index info:");
+//        template.indexOps(Author.class).getIndexInfo().forEach(indexInfo ->
+//                logger.info("- "+indexInfo.toString()));
+//        logger.info("----- end of authors indexes");
+
         author1 = template.save(AUTHOR1);
         author2 = template.save(AUTHOR2);
         author3 = template.save(AUTHOR3);
+
+        //template::save or template::createCollection don't create "author_unique" index from Author @Document @CompoundIndex
+        //so recreate index manually
+        template.indexOps(Author.class).ensureIndex(new CompoundIndexDefinition(
+                new Document(new HashMap() {{
+                    put("firstname", 1);
+                    put("lastname", 1);
+                    put("homeland", 1);
+                }})
+        )
+                .named("mongock_author_unique")
+                .unique());
     }
 
     @ChangeSet(order = "002", id = "initGenres", author = "cyclone", runAlways = true)
