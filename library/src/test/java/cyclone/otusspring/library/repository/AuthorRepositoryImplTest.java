@@ -1,7 +1,7 @@
 package cyclone.otusspring.library.repository;
 
-import com.github.cloudyrock.mongock.Mongock;
-import cyclone.otusspring.library.dbmigrationtest.DBMigrationTestConfig;
+import cyclone.otusspring.library.dbteststate.MongoTestState;
+import cyclone.otusspring.library.dbteststate.MongoTestStateConfig;
 import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Author;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataMongoTest
 @ComponentScan("cyclone.otusspring.library.repository")
-@Import(DBMigrationTestConfig.class)
+@Import(MongoTestStateConfig.class)
 class AuthorRepositoryImplTest {
 
     @Autowired
@@ -35,13 +35,12 @@ class AuthorRepositoryImplTest {
     MongoTemplate mongoTemplate;
 
     @Autowired
-    Mongock mongock;
+    MongoTestState mongoTestState;
 
     @BeforeEach
     void reInitDB() {
-        mongock.execute();
+        mongoTestState.resetState();
     }
-
 
     @Test
     void findAll() {
