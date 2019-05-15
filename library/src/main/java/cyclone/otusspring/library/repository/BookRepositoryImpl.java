@@ -13,47 +13,48 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class BookRepositoryImpl implements BookRepository {
 
-    private final MongoBookRepository jpaRepository;
+    private final MongoBookRepository mongoRepository;
 
-    public BookRepositoryImpl(MongoBookRepository jpaRepository) {
-        this.jpaRepository = jpaRepository;
+    public BookRepositoryImpl(MongoBookRepository mongoRepository) {
+        this.mongoRepository = mongoRepository;
     }
 
     @Override
     public List<Book> findAll() {
-        return jpaRepository.findAllByOrderByTitle();
+        return mongoRepository.findAllByOrderByTitle();
     }
 
     @Override
     public List<Book> findByTitle(String title) {
-        return jpaRepository.findByTitleContainingIgnoreCaseOrderByTitle(title);
+        return mongoRepository.findByTitleContainingIgnoreCaseOrderByTitle(title);
     }
 
     @Override
     public Book findOne(String id) {
-        return jpaRepository.findById(id).orElseThrow(() -> new NotFoundException("Book ID " + id + " not found"));
+        return mongoRepository.findById(id).orElseThrow(() -> new NotFoundException("Book ID " + id + " not found"));
     }
 
     @Override
     @Transactional
     public Book save(Book book) {
-        return jpaRepository.save(book);
+        return mongoRepository.save(book);
     }
 
     @Override
     @Transactional
     public void delete(String id) {
-        jpaRepository.deleteById(id);
+        if (!mongoRepository.existsById(id)) throw new NotFoundException("Book ID " + id + " not found");
+        mongoRepository.deleteById(id);
     }
 
     @Override
     @Transactional
     public void delete(Book book) {
-        jpaRepository.delete(book);
+        mongoRepository.delete(book);
     }
 
     @Override
     public boolean exists(String id) {
-        return jpaRepository.existsById(id);
+        return mongoRepository.existsById(id);
     }
 }

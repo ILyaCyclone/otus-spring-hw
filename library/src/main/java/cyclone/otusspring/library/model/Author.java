@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import java.util.Objects;
 
 @Document(collection = "authors")
-@CompoundIndex(name = "author_unique"
+@CompoundIndex(name = "authors_unique"
         , def = "{'firstname' : 1, 'lastname' : 1, 'homeland' : 1}"
         , unique = true)
 @Data

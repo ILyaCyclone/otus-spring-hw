@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -15,13 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "books")
-//@NamedEntityGraph(
-//        name = GRAPH_WITH_AUTHOR_GENRE,
-//        attributeNodes = {
-//                @NamedAttributeNode("author"),
-//                @NamedAttributeNode("genre")
-//        }
-//)
+@CompoundIndex(name = "books_unique"
+        , def = "{'title' : 1, 'year' : 1, 'author': 1}"
+        , unique = true)
 @Data
 @NoArgsConstructor
 public class Book {
@@ -42,12 +39,6 @@ public class Book {
     @DBRef
     private Genre genre;
 
-    //    @OneToMany(
-//            mappedBy = "book",
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true,
-//            fetch = FetchType.LAZY
-//    )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     //TODO remove DBRef, should be nested collection

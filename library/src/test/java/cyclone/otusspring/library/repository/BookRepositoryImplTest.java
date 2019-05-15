@@ -1,34 +1,46 @@
 package cyclone.otusspring.library.repository;
 
+import cyclone.otusspring.library.dbteststate.MongoTestState;
+import cyclone.otusspring.library.dbteststate.MongoTestStateConfig;
+import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Book;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.stream.Stream;
 
 import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DataJpaTest
+@DataMongoTest
 @ComponentScan("cyclone.otusspring.library.repository")
+@Import(MongoTestStateConfig.class)
 class BookRepositoryImplTest {
 
     @Autowired
     BookRepository bookRepository;
 
     @Autowired
-    TestEntityManager tem;
+    MongoTemplate mongoTemplate;
+
+    @Autowired
+    MongoTestState mongoTestState;
+
+    @BeforeEach
+    void reInitDB() {
+        mongoTestState.resetState();
+    }
 
     @Test
     void findAll() {
@@ -54,7 +66,7 @@ class BookRepositoryImplTest {
     @Test
     @DisplayName("finding non existent ID throws exception")
     void findOne_nonExistent() {
-        assertThatThrownBy(() -> bookRepository.findOne(NO_SUCH_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> bookRepository.findOne(NO_SUCH_ID)).isInstanceOf(NotFoundException.class);
     }
 
     @Test
@@ -76,20 +88,19 @@ class BookRepositoryImplTest {
 
     @Test
     void testUpdate() {
-        Book bookToUpdate = tem.find(Book.class, BOOK2.getId());
+        Book bookToUpdate = mongoTemplate.findById(BOOK2.getId(), Book.class);
 
         bookToUpdate.setTitle("updated " + bookToUpdate.getTitle());
         bookToUpdate.setYear(bookToUpdate.getYear() + 1);
 
         Book updatedBook = bookRepository.save(bookToUpdate);
-        tem.flush();
 
         assertThat(updatedBook).isEqualToComparingFieldByField(bookToUpdate);
     }
 
     @Test
     void testDelete() {
-        Book bookToDelete = tem.find(Book.class, BOOK2.getId());
+        Book bookToDelete = mongoTemplate.findById(BOOK2.getId(), Book.class);
 
         bookRepository.delete(bookToDelete);
         assertThat(bookRepository.findAll())
@@ -108,7 +119,7 @@ class BookRepositoryImplTest {
     @Test
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
-        assertThatThrownBy(() -> bookRepository.delete(NO_SUCH_ID)).isInstanceOf(EmptyResultDataAccessException.class);
+        assertThatThrownBy(() -> bookRepository.delete(NO_SUCH_ID)).isInstanceOf(NotFoundException.class);
     }
 
     @Test
