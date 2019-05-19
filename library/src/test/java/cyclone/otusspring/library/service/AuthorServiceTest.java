@@ -1,23 +1,33 @@
 package cyclone.otusspring.library.service;
 
+import cyclone.otusspring.library.dbteststate.MongoTestState;
 import cyclone.otusspring.library.dto.AuthorDto;
 import cyclone.otusspring.library.model.Author;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
 import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@AutoConfigureTestDatabase
-@Transactional // rollback after each @Test
+@DataMongoTest
+//@Transactional
 class AuthorServiceTest {
 
     @Autowired
     private AuthorService authorService;
+
+    //    @Autowired
+//    MongoTemplate mongoTemplate;
+
+    @Autowired
+    MongoTestState mongoTestState;
+
+    @BeforeEach
+    void reInitDB() {
+        mongoTestState.resetState();
+    }
 
     @Test
     void create() {

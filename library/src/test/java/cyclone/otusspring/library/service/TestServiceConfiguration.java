@@ -1,17 +1,24 @@
 package cyclone.otusspring.library.service;
 
+import cyclone.otusspring.library.dbteststate.MongoTestStateConfig;
 import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+
+import javax.annotation.PostConstruct;
 
 @SpringBootConfiguration
-@EnableAutoConfiguration
-//@EnableConfigurationProperties (if needed)
-@ComponentScan({"cyclone.otusspring.library.repository"
-        , "cyclone.otusspring.library.service"})
-@EnableJpaRepositories(basePackages = "cyclone.otusspring.library.repository.datajpa")
-@EntityScan({"cyclone.otusspring.library.model"})
+@ComponentScan({
+        "cyclone.otusspring.library.repository",
+        "cyclone.otusspring.library.service"
+})
+//@AutoConfigureDataMongo
+@EnableMongoRepositories(basePackages = "cyclone.otusspring.library.repository.mongo")
+@Import(MongoTestStateConfig.class)
 public class TestServiceConfiguration {
+    @PostConstruct
+    void init() {
+        System.out.println("~~~ TestServiceConfiguration init ~~~");
+    }
 }

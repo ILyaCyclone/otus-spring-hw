@@ -1,17 +1,14 @@
 package cyclone.otusspring.library.dbteststate;
 
-import com.mongodb.client.model.Filters;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
 import cyclone.otusspring.library.model.Genre;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.stereotype.Component;
 
 import static cyclone.otusspring.library.TestData.*;
 
-@Component
 public class MongoTestState {
 
     @Autowired
@@ -54,14 +51,16 @@ public class MongoTestState {
      */
     private void clearCollection(Class entityClass) {
         // unlike MongoTemplate::dropCollection this will preserve indexes
-        template.getCollection(template.getCollectionName(entityClass)).deleteMany(Filters.exists("_id"));
+//        template.getCollection(template.getCollectionName(entityClass)).deleteMany(Filters.exists("_id"));
         // another variant
 //        template.remove(new Query(Criteria.where("_id").exists(true)), entityClass);
+        // another variant
+        template.findAll(entityClass).forEach(document -> template.remove(document));
     }
 
 
     //template::save or template::createCollection don't create "authors_unique" index from Author @Document @CompoundIndex
-        //so recreate index manually
+    //so recreate index manually
 //        template.indexOps(Author.class).ensureIndex(new CompoundIndexDefinition(
 //                new Document(new HashMap() {{
 //                    put("firstname", 1);

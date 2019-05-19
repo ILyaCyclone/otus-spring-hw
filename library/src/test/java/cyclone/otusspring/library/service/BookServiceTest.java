@@ -1,15 +1,13 @@
 package cyclone.otusspring.library.service;
 
 import cyclone.otusspring.library.dto.BookDto;
+import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Book;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 import static cyclone.otusspring.library.TestData.*;
@@ -17,9 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@SpringBootTest
-@AutoConfigureTestDatabase
-@Transactional // rollback after each @Test
+//import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+
+@DataMongoTest
+//@Transactional
 class BookServiceTest {
 
     @Autowired
@@ -44,7 +43,7 @@ class BookServiceTest {
         BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NO_SUCH_ID, NEW_BOOK.getGenre().getId());
 
         assertThatThrownBy(() -> bookService.create(bookDtoToCreate))
-                .hasCauseInstanceOf(EntityNotFoundException.class)
+                .hasCauseInstanceOf(NotFoundException.class)
                 .hasMessageStartingWith("Author")
                 .hasMessageEndingWith("not found");
     }
@@ -55,7 +54,7 @@ class BookServiceTest {
         BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor().getId(), NO_SUCH_ID);
 
         assertThatThrownBy(() -> bookService.create(bookDtoToCreate))
-                .hasCauseInstanceOf(EntityNotFoundException.class)
+                .hasCauseInstanceOf(NotFoundException.class)
                 .hasMessageStartingWith("Genre")
                 .hasMessageEndingWith("not found");
     }
