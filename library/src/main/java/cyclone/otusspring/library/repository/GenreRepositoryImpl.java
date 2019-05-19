@@ -12,48 +12,49 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class GenreRepositoryImpl implements GenreRepository {
 
-    private final MongoGenreRepository repository;
+    private final MongoGenreRepository mongoRepository;
 
-    public GenreRepositoryImpl(MongoGenreRepository repository) {
-        this.repository = repository;
+    public GenreRepositoryImpl(MongoGenreRepository mongoRepository) {
+        this.mongoRepository = mongoRepository;
     }
 
 
     @Override
     public List<Genre> findAll() {
-        return repository.findAllByOrderByName();
+        return mongoRepository.findAllByOrderByName();
     }
 
     @Override
     public List<Genre> findByName(String name) {
-        return repository.findByNameContainingIgnoreCaseOrderByName(name);
+        return mongoRepository.findByNameContainingIgnoreCaseOrderByName(name);
     }
 
     @Override
     public Genre findOne(String id) {
-        return repository.findById(id).orElseThrow(() -> new NotFoundException("Genre ID " + id + " not found"));
+        return mongoRepository.findById(id).orElseThrow(() -> new NotFoundException("Genre ID " + id + " not found"));
     }
 
     @Override
     @Transactional
     public Genre save(Genre genre) {
-        return repository.save(genre);
+        return mongoRepository.save(genre);
     }
 
     @Override
     @Transactional
     public void delete(String id) {
-        repository.deleteById(id);
+        if (!mongoRepository.existsById(id)) throw new NotFoundException("Genre ID " + id + " not found");
+        mongoRepository.deleteById(id);
     }
 
     @Override
     @Transactional
     public void delete(Genre genre) {
-        repository.delete(genre);
+        mongoRepository.delete(genre);
     }
 
     @Override
     public boolean exists(String id) {
-        return repository.existsById(id);
+        return mongoRepository.existsById(id);
     }
 }

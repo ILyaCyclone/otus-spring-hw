@@ -2,6 +2,7 @@ package cyclone.otusspring.library.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -9,6 +10,9 @@ import javax.persistence.Id;
 import java.util.Objects;
 
 @Document("genres")
+@CompoundIndex(name = "genres_unique"
+        , def = "{'name' : 1}"
+        , unique = true)
 @Data
 @NoArgsConstructor
 public class Genre {

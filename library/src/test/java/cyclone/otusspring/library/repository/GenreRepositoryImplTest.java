@@ -1,34 +1,46 @@
 package cyclone.otusspring.library.repository;
 
+import cyclone.otusspring.library.dbteststate.MongoTestState;
+import cyclone.otusspring.library.dbteststate.MongoTestStateConfig;
+import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Genre;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.stream.Stream;
 
 import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DataJpaTest
+@DataMongoTest
 @ComponentScan("cyclone.otusspring.library.repository")
+@Import(MongoTestStateConfig.class)
 class GenreRepositoryImplTest {
 
     @Autowired
     GenreRepository genreRepository;
 
     @Autowired
-    TestEntityManager tem;
+    MongoTemplate mongoTemplate;
+
+    @Autowired
+    MongoTestState mongoTestState;
+
+    @BeforeEach
+    void reInitDB() {
+        mongoTestState.resetState();
+    }
 
 
     @Test
@@ -57,7 +69,7 @@ class GenreRepositoryImplTest {
     @Test
     @DisplayName("finding non existent ID throws exception")
     void findOne_nonExistent() {
-        assertThatThrownBy(() -> genreRepository.findOne(NO_SUCH_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> genreRepository.findOne(NO_SUCH_ID)).isInstanceOf(NotFoundException.class);
     }
 
 
@@ -76,7 +88,6 @@ class GenreRepositoryImplTest {
     void testUpdate() {
         Genre updatedGenre2 = new Genre(GENRE2.getId(), "Updated " + GENRE2.getName());
         genreRepository.save(updatedGenre2);
-        tem.flush();
 
         Genre actual = genreRepository.findOne(updatedGenre2.getId());
 
@@ -85,7 +96,7 @@ class GenreRepositoryImplTest {
 
     @Test
     void testDelete() {
-        Genre bookToDelete = tem.find(Genre.class, GENRE2.getId());
+        Genre bookToDelete = mongoTemplate.findById(GENRE2.getId(), Genre.class);
 
         genreRepository.delete(bookToDelete);
         assertThat(genreRepository.findAll()).doesNotContain(GENRE2);
@@ -100,7 +111,7 @@ class GenreRepositoryImplTest {
     @Test
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
-        assertThatThrownBy(() -> genreRepository.delete(NO_SUCH_ID)).isInstanceOf(EmptyResultDataAccessException.class);
+        assertThatThrownBy(() -> genreRepository.delete(NO_SUCH_ID)).isInstanceOf(NotFoundException.class);
     }
 
     @Test
