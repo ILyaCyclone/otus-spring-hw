@@ -1,19 +1,17 @@
 package cyclone.otusspring.library.repository;
 
-import cyclone.otusspring.library.dbteststate.MongoTestState;
-import cyclone.otusspring.library.dbteststate.MongoTestStateConfig;
+import cyclone.otusspring.library.dbteststate.ResetStateExtension;
 import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Book;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -25,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataMongoTest
 @ComponentScan("cyclone.otusspring.library.repository")
-@Import(MongoTestStateConfig.class)
+@ExtendWith(ResetStateExtension.class)
 class BookRepositoryImplTest {
 
     @Autowired
@@ -33,14 +31,6 @@ class BookRepositoryImplTest {
 
     @Autowired
     MongoTemplate mongoTemplate;
-
-    @Autowired
-    MongoTestState mongoTestState;
-
-    @BeforeEach
-    void reInitDB() {
-        mongoTestState.resetState();
-    }
 
     @Test
     void findAll() {

@@ -1,10 +1,12 @@
 package cyclone.otusspring.library.service;
 
+import cyclone.otusspring.library.dbteststate.ResetStateExtension;
 import cyclone.otusspring.library.dto.BookDto;
 import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Book;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
@@ -18,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 //import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 
 @DataMongoTest
+@ExtendWith(ResetStateExtension.class)
 //@Transactional
 class BookServiceTest {
 

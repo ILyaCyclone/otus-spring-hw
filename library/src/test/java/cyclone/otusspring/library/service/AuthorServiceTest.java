@@ -1,10 +1,10 @@
 package cyclone.otusspring.library.service;
 
-import cyclone.otusspring.library.dbteststate.MongoTestState;
+import cyclone.otusspring.library.dbteststate.ResetStateExtension;
 import cyclone.otusspring.library.dto.AuthorDto;
 import cyclone.otusspring.library.model.Author;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
@@ -12,6 +12,7 @@ import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest
+@ExtendWith(ResetStateExtension.class)
 //@Transactional
 class AuthorServiceTest {
 
@@ -20,14 +21,6 @@ class AuthorServiceTest {
 
     //    @Autowired
 //    MongoTemplate mongoTemplate;
-
-    @Autowired
-    MongoTestState mongoTestState;
-
-    @BeforeEach
-    void reInitDB() {
-        mongoTestState.resetState();
-    }
 
     @Test
     void create() {

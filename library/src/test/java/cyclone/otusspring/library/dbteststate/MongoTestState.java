@@ -4,18 +4,20 @@ import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
 import cyclone.otusspring.library.model.Genre;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import static cyclone.otusspring.library.TestData.*;
 
 public class MongoTestState {
 
-    @Autowired
-    MongoTemplate template;
+    private final MongoTemplate mongoTemplate;
+
+    public MongoTestState(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
     public void resetState() {
-//        template.indexOps(Author.class).getIndexInfo().forEach(indexInfo ->
+//        mongoTemplate.indexOps(Author.class).getIndexInfo().forEach(indexInfo ->
 //                logger.info("- "+indexInfo.toString()));
 //        logger.info("----- end of authors indexes");
 
@@ -25,22 +27,22 @@ public class MongoTestState {
         clearCollection(Author.class);
 
 
-        Author author1 = template.save(AUTHOR1);
-        Author author2 = template.save(AUTHOR2);
-        Author author3 = template.save(AUTHOR3);
+        Author author1 = mongoTemplate.save(AUTHOR1);
+        Author author2 = mongoTemplate.save(AUTHOR2);
+        Author author3 = mongoTemplate.save(AUTHOR3);
 
 
-        Genre genre1 = template.save(GENRE1);
-        Genre genre2 = template.save(GENRE2);
-        Genre genre3 = template.save(GENRE3);
-        template.save(GENRE4);
+        Genre genre1 = mongoTemplate.save(GENRE1);
+        Genre genre2 = mongoTemplate.save(GENRE2);
+        Genre genre3 = mongoTemplate.save(GENRE3);
+        mongoTemplate.save(GENRE4);
 
 
-        template.save(new Book(BOOK1.getId(), BOOK1.getTitle(), BOOK1.getYear(), author1, genre1));
-        template.save(new Book(BOOK2.getId(), BOOK2.getTitle(), BOOK2.getYear(), author1, genre1));
-        template.save(new Book(BOOK3.getId(), BOOK3.getTitle(), BOOK3.getYear(), author2, genre2));
-        template.save(new Book(BOOK4.getId(), BOOK4.getTitle(), BOOK4.getYear(), author2, genre2));
-        template.save(new Book(BOOK5.getId(), BOOK5.getTitle(), BOOK5.getYear(), author3, genre3));
+        mongoTemplate.save(new Book(BOOK1.getId(), BOOK1.getTitle(), BOOK1.getYear(), author1, genre1));
+        mongoTemplate.save(new Book(BOOK2.getId(), BOOK2.getTitle(), BOOK2.getYear(), author1, genre1));
+        mongoTemplate.save(new Book(BOOK3.getId(), BOOK3.getTitle(), BOOK3.getYear(), author2, genre2));
+        mongoTemplate.save(new Book(BOOK4.getId(), BOOK4.getTitle(), BOOK4.getYear(), author2, genre2));
+        mongoTemplate.save(new Book(BOOK5.getId(), BOOK5.getTitle(), BOOK5.getYear(), author3, genre3));
 
 
         //TODO init test comments
@@ -51,17 +53,17 @@ public class MongoTestState {
      */
     private void clearCollection(Class entityClass) {
         // unlike MongoTemplate::dropCollection this will preserve indexes
-//        template.getCollection(template.getCollectionName(entityClass)).deleteMany(Filters.exists("_id"));
+//        mongoTemplate.getCollection(mongoTemplate.getCollectionName(entityClass)).deleteMany(Filters.exists("_id"));
         // another variant
-//        template.remove(new Query(Criteria.where("_id").exists(true)), entityClass);
+//        mongoTemplate.remove(new Query(Criteria.where("_id").exists(true)), entityClass);
         // another variant
-        template.findAll(entityClass).forEach(document -> template.remove(document));
+        mongoTemplate.findAll(entityClass).forEach(document -> mongoTemplate.remove(document));
     }
 
 
-    //template::save or template::createCollection don't create "authors_unique" index from Author @Document @CompoundIndex
+    //mongoTemplate::save or mongoTemplate::createCollection don't create "authors_unique" index from Author @Document @CompoundIndex
     //so recreate index manually
-//        template.indexOps(Author.class).ensureIndex(new CompoundIndexDefinition(
+//        mongoTemplate.indexOps(Author.class).ensureIndex(new CompoundIndexDefinition(
 //                new Document(new HashMap() {{
 //                    put("firstname", 1);
 //                    put("lastname", 1);
