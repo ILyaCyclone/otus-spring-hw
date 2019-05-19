@@ -11,5 +11,5 @@ public interface CommentService {
 
     void create(CommentDto commentDto);
 
-    void delete(String commentId);
+    void delete(String bookId, String commentId);
 }

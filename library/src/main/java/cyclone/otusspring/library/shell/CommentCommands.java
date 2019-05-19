@@ -78,8 +78,8 @@ public class CommentCommands {
     }
 
     @ShellMethod(value = "Remove comment")
-    String removeComment(String commentId) {
-        commentService.delete(commentId);
+    String removeComment(String bookId, String commentId) {
+        commentService.delete(bookId, commentId);
         return "Comment ID " + commentId + " removed";
     }
 }

@@ -1,18 +1,19 @@
 package cyclone.otusspring.library.events;
 
 import cyclone.otusspring.library.model.Book;
-import cyclone.otusspring.library.repository.CommentRepository;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.stereotype.Component;
+
+//import cyclone.otusspring.library.repository.CommentRepository;
 
 @Component
 public class BookCommentsCascadeSave extends AbstractMongoEventListener<Book> {
 
-    private final CommentRepository commentRepository;
+//    private final CommentRepository commentRepository;
 
-    public BookCommentsCascadeSave(CommentRepository commentRepository) {
-        this.commentRepository = commentRepository;
-    }
+//    public BookCommentsCascadeSave(CommentRepository commentRepository) {
+//        this.commentRepository = commentRepository;
+//    }
 
 
 //    @Override

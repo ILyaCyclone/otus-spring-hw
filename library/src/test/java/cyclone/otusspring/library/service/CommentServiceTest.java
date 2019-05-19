@@ -1,12 +1,12 @@
 package cyclone.otusspring.library.service;
 
+import cyclone.otusspring.library.dbteststate.ResetStateExtension;
 import cyclone.otusspring.library.dto.CommentDto;
 import cyclone.otusspring.library.model.Comment;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,10 +14,9 @@ import java.util.stream.Collectors;
 import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-//@AutoConfigureTestDatabase
-@Transactional
-@Disabled("not yet implemented")
+@DataMongoTest
+@ExtendWith(ResetStateExtension.class)
+//@Transactional
 class CommentServiceTest {
 
     @Autowired
@@ -56,14 +55,14 @@ class CommentServiceTest {
         Comment createdComment = commentsByUsernameAndText.get(0);
 
         assertThat(createdComment.getId()).isNotNull();
-        assertThat(createdComment.getBook().getId()).isEqualTo(bookId);
+//        assertThat(createdComment.getBook().getId()).isEqualTo(bookId);
         assertThat(createdComment.getDate()).isNotNull();
-        assertThat(createdComment).isEqualToIgnoringGivenFields(commentDtoToCreate, "commentId", "date", "book");
+        assertThat(createdComment).isEqualToIgnoringGivenFields(commentDtoToCreate, "id", "date");
     }
 
     @Test
     void delete() {
-        commentService.delete(COMMENT4.getId());
+        commentService.delete(BOOK2.getId(), COMMENT4.getId());
 
         assertThat(commentService.findByBookId(BOOK2.getId()))
                 .hasSize(1)

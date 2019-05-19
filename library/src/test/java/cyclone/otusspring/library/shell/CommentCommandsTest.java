@@ -94,13 +94,13 @@ class CommentCommandsTest {
     void removeComment() {
         final String commentId = COMMENT1.getId();
 
-        String message = commentCommands.removeComment(commentId);
+        String message = commentCommands.removeComment(BOOK1.getId(), commentId);
 
         assertThat(message)
                 .contains(String.valueOf(commentId))
                 .containsIgnoringCase("removed");
 
-        verify(commentService).delete(commentId);
+        verify(commentService).delete(BOOK1.getId(), commentId);
 
     }
 }

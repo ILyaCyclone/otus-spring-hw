@@ -40,18 +40,18 @@ public class TestData {
 
 
     public static final Comment COMMENT1 = new Comment("1", "Test Commentator 1", "Test comment 1"
-            , LocalDateTime.of(2019, 1, 1, 10, 00, 00), BOOK1);
+            , LocalDateTime.of(2019, 1, 1, 10, 00, 00));
     public static final Comment COMMENT2 = new Comment("2", "Test Commentator 1", "Test comment 2"
-            , LocalDateTime.of(2019, 2, 2, 10, 00, 00), BOOK2);
+            , LocalDateTime.of(2019, 2, 2, 10, 00, 00));
     public static final Comment COMMENT3 = new Comment("3", "Test Commentator 2", "Test comment 3"
-            , LocalDateTime.of(2019, 3, 3, 10, 00, 00), BOOK1);
+            , LocalDateTime.of(2019, 3, 3, 10, 00, 00));
     public static final Comment COMMENT4 = new Comment("4", "Test Commentator 2", "Test comment 4"
-            , LocalDateTime.of(2019, 4, 4, 10, 00, 00), BOOK2);
+            , LocalDateTime.of(2019, 4, 4, 10, 00, 00));
     public static final Comment COMMENT5 = new Comment("5", "Test Commentator 3", "Test comment 5"
-            , LocalDateTime.of(2019, 5, 5, 10, 00, 00), BOOK3);
+            , LocalDateTime.of(2019, 5, 5, 10, 00, 00));
 
     public static final Comment NEW_COMMENT = new Comment("New Commentator", "test new comment"
-            , LocalDateTime.of(2015, 1, 1, 15, 00, 00), BOOK3);
+            , LocalDateTime.of(2015, 1, 1, 15, 00, 00));
 
 
 

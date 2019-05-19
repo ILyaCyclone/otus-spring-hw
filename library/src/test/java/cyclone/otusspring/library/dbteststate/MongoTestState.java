@@ -38,14 +38,22 @@ public class MongoTestState {
         mongoTemplate.save(GENRE4);
 
 
-        mongoTemplate.save(new Book(BOOK1.getId(), BOOK1.getTitle(), BOOK1.getYear(), author1, genre1));
-        mongoTemplate.save(new Book(BOOK2.getId(), BOOK2.getTitle(), BOOK2.getYear(), author1, genre1));
-        mongoTemplate.save(new Book(BOOK3.getId(), BOOK3.getTitle(), BOOK3.getYear(), author2, genre2));
+        Book book1 = new Book(BOOK1.getId(), BOOK1.getTitle(), BOOK1.getYear(), author1, genre1);
+        book1.addComment(COMMENT1);
+        book1.addComment(COMMENT3);
+
+        Book book2 = new Book(BOOK2.getId(), BOOK2.getTitle(), BOOK2.getYear(), author1, genre1);
+        book2.addComment(COMMENT2);
+        book2.addComment(COMMENT4);
+
+        Book book3 = new Book(BOOK3.getId(), BOOK3.getTitle(), BOOK3.getYear(), author2, genre2);
+        book3.addComment(COMMENT5);
+
+        mongoTemplate.save(book1);
+        mongoTemplate.save(book2);
+        mongoTemplate.save(book3);
         mongoTemplate.save(new Book(BOOK4.getId(), BOOK4.getTitle(), BOOK4.getYear(), author2, genre2));
         mongoTemplate.save(new Book(BOOK5.getId(), BOOK5.getTitle(), BOOK5.getYear(), author3, genre3));
-
-
-        //TODO init test comments
     }
 
     /**

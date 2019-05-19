@@ -1,10 +1,9 @@
 package cyclone.otusspring.library.model;
 
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import cyclone.otusspring.library.exceptions.NotFoundException;
+import lombok.*;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -13,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Document(collection = "books")
@@ -34,15 +34,18 @@ public class Book {
     private Integer year;
 
     @DBRef
+    @Field("author")
     private Author author;
 
     @DBRef
+    @Field("genre")
     private Genre genre;
 
+    @Field("comments")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    //TODO remove DBRef, should be nested collection
-    @DBRef
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private List<Comment> comments = new ArrayList<>();
 
 
@@ -67,13 +70,22 @@ public class Book {
         this.genre = genre;
     }
 
-    public void addComment(Comment comment) {
-        comments.add(comment);
-        comment.setBook(this);
+    public List<Comment> getComments() {
+        return Collections.unmodifiableList(comments);
     }
 
-    public void removeComment(Comment comment) {
-        comments.remove(comment);
-        comment.setBook(null);
+    public void addComment(Comment comment) {
+        if (comment.getId() == null) {
+            comment.setId(ObjectId.get().toString());
+        }
+        comments.add(comment);
+    }
+
+    public void removeComment(String commentId) {
+        Comment commentToRemove = comments.stream()
+                .filter(comment -> comment.getId().equals(commentId))
+                .findAny()
+                .orElseThrow(() -> new NotFoundException("Comment " + commentId + " not found"));
+        comments.remove(commentToRemove);
     }
 }
