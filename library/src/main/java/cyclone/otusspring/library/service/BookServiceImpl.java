@@ -1,6 +1,7 @@
 package cyclone.otusspring.library.service;
 
 import cyclone.otusspring.library.dto.BookDto;
+import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Genre;
@@ -41,6 +42,13 @@ public class BookServiceImpl implements BookService {
     public Book create(BookDto bookDto) {
         String authorId = bookDto.getAuthorId();
         String genreId = bookDto.getGenreId();
+
+        if (!authorRepository.exists(authorId)) {
+            throw new RuntimeException("Could not create book", new NotFoundException("Author ID " + authorId + " not found"));
+        }
+        if (!genreRepository.exists(genreId)) {
+            throw new RuntimeException("Could not create book", new NotFoundException("Genre ID " + genreId + " not found"));
+        }
 
         Author author = authorRepository.findOne(authorId);
         Genre genre = genreRepository.findOne(genreId);

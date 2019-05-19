@@ -46,9 +46,8 @@ class BookServiceTest {
         BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NO_SUCH_ID, NEW_BOOK.getGenre().getId());
 
         assertThatThrownBy(() -> bookService.create(bookDtoToCreate))
-                .hasCauseInstanceOf(NotFoundException.class)
-                .hasMessageStartingWith("Author")
-                .hasMessageEndingWith("not found");
+                .hasMessage("Could not create book")
+                .hasCause(new NotFoundException("Author ID " + NO_SUCH_ID + " not found"));
     }
 
     @Test
@@ -57,9 +56,8 @@ class BookServiceTest {
         BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor().getId(), NO_SUCH_ID);
 
         assertThatThrownBy(() -> bookService.create(bookDtoToCreate))
-                .hasCauseInstanceOf(NotFoundException.class)
-                .hasMessageStartingWith("Genre")
-                .hasMessageEndingWith("not found");
+                .hasMessage("Could not create book")
+                .hasCause(new NotFoundException("Genre ID " + NO_SUCH_ID + " not found"));
     }
 
     @Test
