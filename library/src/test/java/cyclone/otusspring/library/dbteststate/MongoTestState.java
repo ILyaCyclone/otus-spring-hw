@@ -65,11 +65,12 @@ public class MongoTestState {
      * Remove all documents from collection, but preserve indexes
      */
     private void clearCollection(Class entityClass) {
-//        mongoTemplate.getCollection(mongoTemplate.getCollectionName(entityClass)).deleteMany(Filters.exists("_id"));
-        // another variant
-//        mongoTemplate.remove(new Query(Criteria.where("_id").exists(true)), entityClass);
-        // another variant
+        // unlike MongoTemplate::dropCollection, this method will preserve indexes
         mongoTemplate.findAll(entityClass).forEach(document -> mongoTemplate.remove(document));
+        // ugly variant 1
+//        mongoTemplate.getCollection(mongoTemplate.getCollectionName(entityClass)).deleteMany(Filters.exists("_id"));
+        // ugly variant 2
+//        mongoTemplate.remove(new Query(Criteria.where("_id").exists(true)), entityClass);
     }
 
 
