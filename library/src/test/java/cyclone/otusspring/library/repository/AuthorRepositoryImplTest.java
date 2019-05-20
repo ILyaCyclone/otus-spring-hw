@@ -34,7 +34,7 @@ class AuthorRepositoryImplTest {
 
     @Test
     void findAll() {
-        assertThat(authorRepository.findAll()).containsExactly(AUTHOR1, AUTHOR3, AUTHOR2); // 1, 3, 2 because of ordering
+        assertThat(authorRepository.findAll()).containsExactly(AUTHOR1, AUTHOR3, AUTHOR2, AUTHOR_WITHOUT_BOOKS); // 1, 3, 2, wo_books because of ordering and case
     }
 
     @ParameterizedTest
@@ -120,7 +120,6 @@ class AuthorRepositoryImplTest {
 
     @Test
     @DisplayName("adding non unique records throws exception")
-//    @DirtiesContext
     void uniqueViolationThrowsException() {
         assertThatThrownBy(() -> {
             authorRepository.save(new Author(NEW_AUTHOR.getFirstname(), NEW_AUTHOR.getLastname(), NEW_AUTHOR.getHomeland()));

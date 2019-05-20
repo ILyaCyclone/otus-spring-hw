@@ -21,8 +21,19 @@ public class AuthorServiceImpl implements AuthorService {
         return authorRepository.findAll();
     }
 
+    @Override
+    public Author findOne(String id) {
+        return authorRepository.findOne(id);
+    }
+
+    @Override
     public Author create(AuthorDto authorDto) {
         Author authorToCreate = new Author(authorDto.getFirstname(), authorDto.getLastname(), authorDto.getHomeland());
         return authorRepository.save(authorToCreate);
+    }
+
+    @Override
+    public void delete(String id) {
+        authorRepository.delete(id);
     }
 }

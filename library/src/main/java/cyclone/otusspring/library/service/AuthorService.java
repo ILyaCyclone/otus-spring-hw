@@ -9,4 +9,8 @@ public interface AuthorService {
     Author create(AuthorDto authorDto);
 
     List<Author> findAll();
+
+    Author findOne(String id);
+
+    void delete(String id);
 }

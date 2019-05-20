@@ -35,6 +35,7 @@ public class MongoTestState {
         Author author1 = mongoTemplate.save(AUTHOR1);
         Author author2 = mongoTemplate.save(AUTHOR2);
         Author author3 = mongoTemplate.save(AUTHOR3);
+        mongoTemplate.save(AUTHOR_WITHOUT_BOOKS);
 
 
         Genre genre1 = mongoTemplate.save(GENRE1);
@@ -66,7 +67,7 @@ public class MongoTestState {
      */
     private void clearCollection(Class entityClass) {
         // unlike MongoTemplate::dropCollection, this method will preserve indexes
-        mongoTemplate.findAll(entityClass).forEach(document -> mongoTemplate.remove(document));
+        mongoTemplate.findAll(entityClass).forEach(mongoTemplate::remove);
         // ugly variant 1
 //        mongoTemplate.getCollection(mongoTemplate.getCollectionName(entityClass)).deleteMany(Filters.exists("_id"));
         // ugly variant 2

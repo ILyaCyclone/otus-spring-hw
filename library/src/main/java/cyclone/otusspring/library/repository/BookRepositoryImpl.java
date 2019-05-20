@@ -2,7 +2,9 @@ package cyclone.otusspring.library.repository;
 
 
 import cyclone.otusspring.library.exceptions.NotFoundException;
+import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
+import cyclone.otusspring.library.model.Genre;
 import cyclone.otusspring.library.repository.mongo.MongoBookRepository;
 import org.springframework.stereotype.Repository;
 
@@ -25,6 +27,16 @@ public class BookRepositoryImpl implements BookRepository {
     @Override
     public List<Book> findByTitle(String title) {
         return mongoRepository.findByTitleContainingIgnoreCaseOrderByTitle(title);
+    }
+
+    @Override
+    public List<Book> findByAuthor(Author author) {
+        return mongoRepository.findByAuthorOrderByTitle(author);
+    }
+
+    @Override
+    public List<Book> findByGenre(Genre genre) {
+        return mongoRepository.findByGenreOrderByTitle(genre);
     }
 
     @Override

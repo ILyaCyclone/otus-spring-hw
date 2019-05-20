@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @Configuration
 @ComponentScan({
         "cyclone.otusspring.library.repository",
+        "cyclone.otusspring.library.events",
         "cyclone.otusspring.library.service"
 })
 @AutoConfigureDataMongo

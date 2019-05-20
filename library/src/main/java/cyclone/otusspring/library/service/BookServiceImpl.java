@@ -37,6 +37,16 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public List<Book> findByAuthor(Author author) {
+        return bookRepository.findByAuthor(author);
+    }
+
+    @Override
+    public List<Book> findByGenre(Genre genre) {
+        return bookRepository.findByGenre(genre);
+    }
+
+    @Override
     public Book create(BookDto bookDto) {
         String authorId = bookDto.getAuthorId();
         String genreId = bookDto.getGenreId();

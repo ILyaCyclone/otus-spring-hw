@@ -16,6 +16,8 @@ public class TestData {
     public static final Author AUTHOR2 = new Author("2", "Test Isaac", "Asimov", "Russia");
     public static final Author AUTHOR3 = new Author("3", "Test Gabriel", "Marquez", "Argentina");
 
+    public static final Author AUTHOR_WITHOUT_BOOKS = new Author("4", "Test author without books", "Lastname", "Homeland");
+
     public static final Author NEW_AUTHOR = new Author("New Author", "New Lastname", "New Homeland");
 
 
