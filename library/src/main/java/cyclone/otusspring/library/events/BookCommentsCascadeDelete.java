@@ -1,19 +1,21 @@
 package cyclone.otusspring.library.events;
 
 import cyclone.otusspring.library.model.Comment;
-import cyclone.otusspring.library.repository.BookRepository;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
-import org.springframework.stereotype.Component;
 
-@Component
+/**
+ * Mongo event listeners are not actually used in the application but may be used as example.
+ */
+@Deprecated
+//@Component
 public class BookCommentsCascadeDelete extends AbstractMongoEventListener<Comment> {
 
-    private final BookRepository bookRepository;
-
-    public BookCommentsCascadeDelete(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
-    }
-
+//    private final BookRepository bookRepository;
+//
+//    public BookCommentsCascadeDelete(BookRepository bookRepository) {
+//        this.bookRepository = bookRepository;
+//    }
+//
 //    @Override
 //    public void onAfterDelete(AfterDeleteEvent<MongoComment> event) {
 //        super.onAfterDelete(event);
