@@ -5,12 +5,10 @@ import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.repository.mongo.MongoAuthorRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Repository
-@Transactional(readOnly = true)
 public class AuthorRepositoryImpl implements AuthorRepository {
 
     private final MongoAuthorRepository mongoRepository;

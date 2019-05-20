@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest(classes = {ServiceTestConfiguration.class})
 @ExtendWith(ResetStateExtension.class)
-//@Transactional
 class BookServiceTest {
 
     @Autowired

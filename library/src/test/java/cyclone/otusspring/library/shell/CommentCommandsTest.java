@@ -22,7 +22,6 @@ import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @ExtendWith(ResetStateExtension.class)
-//@Transactional
 class CommentCommandsTest {
 
     @Autowired

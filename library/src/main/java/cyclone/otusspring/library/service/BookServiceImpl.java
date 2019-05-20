@@ -9,7 +9,6 @@ import cyclone.otusspring.library.repository.AuthorRepository;
 import cyclone.otusspring.library.repository.BookRepository;
 import cyclone.otusspring.library.repository.GenreRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -38,7 +37,6 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @Transactional
     public Book create(BookDto bookDto) {
         String authorId = bookDto.getAuthorId();
         String genreId = bookDto.getGenreId();

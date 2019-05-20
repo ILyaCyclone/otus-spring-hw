@@ -16,7 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {ServiceTestConfiguration.class})
 @ExtendWith(ResetStateExtension.class)
-//@Transactional
 class CommentServiceTest {
 
     @Autowired

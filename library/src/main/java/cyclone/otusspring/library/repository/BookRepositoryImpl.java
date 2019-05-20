@@ -5,12 +5,10 @@ import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.repository.mongo.MongoBookRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Repository
-@Transactional(readOnly = true)
 public class BookRepositoryImpl implements BookRepository {
 
     private final MongoBookRepository mongoRepository;
@@ -35,20 +33,17 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    @Transactional
     public Book save(Book book) {
         return mongoRepository.save(book);
     }
 
     @Override
-    @Transactional
     public void delete(String id) {
         if (!mongoRepository.existsById(id)) throw new NotFoundException("Book ID " + id + " not found");
         mongoRepository.deleteById(id);
     }
 
     @Override
-    @Transactional
     public void delete(Book book) {
         mongoRepository.delete(book);
     }

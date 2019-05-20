@@ -5,7 +5,6 @@ import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
 import cyclone.otusspring.library.repository.BookRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,7 +23,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @Transactional
     public void create(CommentDto commentDto) {
         Book book = bookRepository.findOne(commentDto.getBookId());
         Comment comment = new Comment(commentDto.getCommentator(), commentDto.getText());

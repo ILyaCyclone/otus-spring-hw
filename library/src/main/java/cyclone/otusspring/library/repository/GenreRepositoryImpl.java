@@ -4,12 +4,10 @@ import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Genre;
 import cyclone.otusspring.library.repository.mongo.MongoGenreRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Repository
-@Transactional(readOnly = true)
 public class GenreRepositoryImpl implements GenreRepository {
 
     private final MongoGenreRepository mongoRepository;
@@ -35,20 +33,17 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    @Transactional
     public Genre save(Genre genre) {
         return mongoRepository.save(genre);
     }
 
     @Override
-    @Transactional
     public void delete(String id) {
         if (!mongoRepository.existsById(id)) throw new NotFoundException("Genre ID " + id + " not found");
         mongoRepository.deleteById(id);
     }
 
     @Override
-    @Transactional
     public void delete(Genre genre) {
         mongoRepository.delete(genre);
     }

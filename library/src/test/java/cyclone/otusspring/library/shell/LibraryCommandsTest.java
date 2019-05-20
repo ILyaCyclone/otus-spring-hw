@@ -15,7 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ExtendWith(ResetStateExtension.class)
-//@Transactional
 class LibraryCommandsTest {
 
     @Autowired
