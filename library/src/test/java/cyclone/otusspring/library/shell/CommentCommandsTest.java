@@ -1,9 +1,8 @@
 package cyclone.otusspring.library.shell;
 
 import cyclone.otusspring.library.dbteststate.ResetStateExtension;
-import cyclone.otusspring.library.dto.CommentDto;
+import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
-import cyclone.otusspring.library.service.CommentService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,14 +10,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @ExtendWith(ResetStateExtension.class)
@@ -27,10 +25,8 @@ class CommentCommandsTest {
     @Autowired
     CommentCommands commentCommands;
 
-    @SpyBean
-    CommentService commentService;
-    @SpyBean
-    CommentsFormatter commentsFormatter;
+    @Autowired
+    MongoTemplate mongoTemplate;
 
 
     @Test
@@ -39,32 +35,33 @@ class CommentCommandsTest {
 
         String message = commentCommands.signIn(username);
 
+        assertThat(commentCommands.getCurrentUser()).isEqualTo(username);
         assertThat(message)
                 .containsIgnoringCase("signed in")
                 .contains(username);
-        assertThat(commentCommands.getCurrentUser()).isEqualTo(username);
     }
 
     @Test
     void signOut() {
         String message = commentCommands.signOut();
 
-        assertThat(message).containsIgnoringCase("signed out");
         assertThat(commentCommands.getCurrentUser()).isNull();
+        assertThat(message).containsIgnoringCase("signed out");
     }
 
     @Test
     void addComment() {
-        final String commentText = "new comment";
         final String username = "somebody";
-
-        CommentDto commentDto = new CommentDto(BOOK1.getId(), username, commentText);
+        final String commentText = "new comment";
 
         commentCommands.signIn(username);
+        //act
         String message = commentCommands.addComment(BOOK1.getId(), commentText);
 
+        List<Comment> actualComments = mongoTemplate.findById(BOOK1.getId(), Book.class).getComments();
+        assertThat(actualComments).usingElementComparatorIgnoringFields("id", "date")
+                .contains(new Comment(username, commentText));
         assertThat(message).containsIgnoringCase("saved");
-        verify(commentService).create(commentDto);
     }
 
     @ParameterizedTest
@@ -73,7 +70,6 @@ class CommentCommandsTest {
     void listComments(String verboseString) {
         final boolean verbose = Boolean.valueOf(verboseString);
         final String bookId = BOOK1.getId();
-        final List<Comment> comments = Arrays.asList(COMMENT1, COMMENT3);
 
         // act
         String message = commentCommands.listComments(bookId, verbose);
@@ -82,22 +78,21 @@ class CommentCommandsTest {
         assertThat(message)
                 .contains(COMMENT1.getCommentator()).contains(COMMENT1.getText())
                 .contains(COMMENT3.getCommentator()).contains(COMMENT3.getText());
-
-        verify(commentService).findByBookId(bookId);
-        verify(commentsFormatter).format(comments, verbose);
     }
 
     @Test
     void removeComment() {
         final String commentId = COMMENT1.getId();
 
+        //act
         String message = commentCommands.removeComment(BOOK1.getId(), commentId);
 
+        List<Comment> actualComments = mongoTemplate.findById(BOOK1.getId(), Book.class).getComments();
+        List<String> commentIds = actualComments.stream().map(Comment::getId).collect(Collectors.toList());
+
+        assertThat(commentIds).doesNotContain(commentId);
         assertThat(message)
                 .contains(String.valueOf(commentId))
                 .containsIgnoringCase("removed");
-
-        verify(commentService).delete(BOOK1.getId(), commentId);
-
     }
 }
