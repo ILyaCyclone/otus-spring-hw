@@ -3,7 +3,9 @@ package cyclone.otusspring.library.service;
 import cyclone.otusspring.library.dbteststate.ResetStateExtension;
 import cyclone.otusspring.library.dto.BookDto;
 import cyclone.otusspring.library.exceptions.NotFoundException;
+import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
+import cyclone.otusspring.library.model.Genre;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -64,5 +66,38 @@ class BookServiceTest {
         assertThat(books).usingRecursiveFieldByFieldElementComparator()
                 .usingElementComparatorIgnoringFields("comments")
                 .containsExactly(BOOK5, BOOK2, BOOK4, BOOK3, BOOK1);
+    }
+
+    @Test
+    void cascadeSaveAuthor() {
+        Book book = bookService.findOne(BOOK1.getId());
+        Author author = book.getAuthor();
+        final String updatedFirstname = "Cascade save " + author.getFirstname();
+        author.setFirstname(updatedFirstname);
+        book.setAuthor(author);
+
+        bookService.save(book);
+
+        Book bookAfterSave = bookService.findOne(BOOK1.getId());
+        assertThat(bookAfterSave.getAuthor().getFirstname())
+                .as("Author should be updated by cascade")
+                .isEqualTo(updatedFirstname);
+    }
+
+
+    @Test
+    void cascadeSaveGenre() {
+        Book book = bookService.findOne(BOOK1.getId());
+        Genre genre = book.getGenre();
+        final String updatedName = "Cascade save " + genre.getName();
+        genre.setName(updatedName);
+        book.setGenre(genre);
+
+        bookService.save(book);
+
+        Book bookAfterSave = bookService.findOne(BOOK1.getId());
+        assertThat(bookAfterSave.getGenre().getName())
+                .as("Genre should be updated by cascade")
+                .isEqualTo(updatedName);
     }
 }

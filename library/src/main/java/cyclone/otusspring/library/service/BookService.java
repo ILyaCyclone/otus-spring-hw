@@ -12,6 +12,8 @@ public interface BookService {
 
     Book create(BookDto bookDto);
 
+    Book save(Book book);
+
     List<Book> findAll();
 
     List<Book> findByAuthor(Author author);

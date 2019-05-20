@@ -33,6 +33,11 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    public Author save(Author author) {
+        return authorRepository.save(author);
+    }
+
+    @Override
     public void delete(String id) {
         authorRepository.delete(id);
     }
