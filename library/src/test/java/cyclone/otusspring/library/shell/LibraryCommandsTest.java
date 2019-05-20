@@ -1,8 +1,9 @@
 package cyclone.otusspring.library.shell;
 
-import org.junit.jupiter.api.Disabled;
+import cyclone.otusspring.library.dbteststate.ResetStateExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,9 @@ import org.springframework.shell.table.Table;
 import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Disabled("not yet implemented")
-
 @SpringBootTest
-//@AutoConfigureTestDatabase
+@ExtendWith(ResetStateExtension.class)
+//@Transactional
 class LibraryCommandsTest {
 
     @Autowired
@@ -60,6 +60,6 @@ class LibraryCommandsTest {
 
 
     private void assertTableNotEmpty(Table table) {
-        assertThat(table.getModel().getColumnCount() > 0).as("table should not be empty").isTrue();
+        assertThat(table.getModel().getColumnCount()).as("table should not be empty").isGreaterThan(0);
     }
 }

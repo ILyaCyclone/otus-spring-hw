@@ -6,10 +6,9 @@ import cyclone.otusspring.library.repository.mongo.MongoGenreRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
-@EnableMongoRepositories("cyclone.otusspring.library.repository.mongo")
+//@EnableMongoRepositories("cyclone.otusspring.library.repository.mongo")
 public class LibraryApplication {
 
     public static void main(String[] args) throws Exception {

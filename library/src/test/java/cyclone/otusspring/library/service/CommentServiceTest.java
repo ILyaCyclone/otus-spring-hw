@@ -6,7 +6,7 @@ import cyclone.otusspring.library.model.Comment;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataMongoTest
+@SpringBootTest(classes = {ServiceTestConfiguration.class})
 @ExtendWith(ResetStateExtension.class)
 //@Transactional
 class CommentServiceTest {

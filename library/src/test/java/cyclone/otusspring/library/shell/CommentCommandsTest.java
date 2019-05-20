@@ -1,17 +1,17 @@
 package cyclone.otusspring.library.shell;
 
+import cyclone.otusspring.library.dbteststate.ResetStateExtension;
 import cyclone.otusspring.library.dto.CommentDto;
 import cyclone.otusspring.library.model.Comment;
 import cyclone.otusspring.library.service.CommentService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,11 +20,9 @@ import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
-@Disabled("not yet implemented")
-
 @SpringBootTest
-//@AutoConfigureTestDatabase
-@Transactional
+@ExtendWith(ResetStateExtension.class)
+//@Transactional
 class CommentCommandsTest {
 
     @Autowired
