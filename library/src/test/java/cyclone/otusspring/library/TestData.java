@@ -27,6 +27,8 @@ public class TestData {
     public static final Genre GENRE3 = new Genre("3", "Test Novel");
     public static final Genre GENRE4 = new Genre("4", "Test Magic realism");
 
+    public static final Genre GENRE_WITHOUT_BOOKS = new Genre("5", "Test genre without books");
+
     public static final Genre NEW_GENRE = new Genre("New Genre");
 
 

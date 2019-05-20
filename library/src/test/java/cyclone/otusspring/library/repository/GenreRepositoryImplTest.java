@@ -34,7 +34,7 @@ class GenreRepositoryImplTest {
 
     @Test
     void findAll() {
-        assertThat(genreRepository.findAll()).containsExactly(GENRE1, GENRE4, GENRE3, GENRE2);
+        assertThat(genreRepository.findAll()).containsExactly(GENRE1, GENRE4, GENRE3, GENRE2, GENRE_WITHOUT_BOOKS);
     }
 
     @ParameterizedTest

@@ -42,6 +42,7 @@ public class MongoTestState {
         Genre genre2 = mongoTemplate.save(GENRE2);
         Genre genre3 = mongoTemplate.save(GENRE3);
         mongoTemplate.save(GENRE4);
+        mongoTemplate.save(GENRE_WITHOUT_BOOKS);
 
 
         Book book1 = new Book(BOOK1.getId(), BOOK1.getTitle(), BOOK1.getYear(), author1, genre1);
