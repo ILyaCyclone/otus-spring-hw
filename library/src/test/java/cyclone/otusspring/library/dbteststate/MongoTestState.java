@@ -16,17 +16,22 @@ public class MongoTestState {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public void resetState() {
-//        mongoTemplate.indexOps(Author.class).getIndexInfo().forEach(indexInfo ->
-//                logger.info("- "+indexInfo.toString()));
-//        logger.info("----- end of authors indexes");
 
+    public void resetState() {
+        clearState();
+        fillState();
+    }
+
+
+
+    private void clearState() {
         clearCollection(Comment.class);
         clearCollection(Book.class);
         clearCollection(Genre.class);
         clearCollection(Author.class);
+    }
 
-
+    private void fillState() {
         Author author1 = mongoTemplate.save(AUTHOR1);
         Author author2 = mongoTemplate.save(AUTHOR2);
         Author author3 = mongoTemplate.save(AUTHOR3);
@@ -60,7 +65,6 @@ public class MongoTestState {
      * Remove all documents from collection, but preserve indexes
      */
     private void clearCollection(Class entityClass) {
-        // unlike MongoTemplate::dropCollection this will preserve indexes
 //        mongoTemplate.getCollection(mongoTemplate.getCollectionName(entityClass)).deleteMany(Filters.exists("_id"));
         // another variant
 //        mongoTemplate.remove(new Query(Criteria.where("_id").exists(true)), entityClass);
