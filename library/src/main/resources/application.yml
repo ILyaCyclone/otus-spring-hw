@@ -4,15 +4,3 @@ spring:
       database: otus-library
       host: localhost
       port: 27017
-  datasource:
-    url: jdbc:h2:mem:testdb
-    initialization-mode: embedded
-  h2:
-    console:
-      enabled: true
-  jpa:
-    hibernate:
-      ddl-auto: none
-  shell:
-    interactive:
-      enabled: false
