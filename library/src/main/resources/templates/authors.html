@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Library</title>
+</head>
+<body>
+<header>
+    <h1>Library</h1>
+
+    <nav>
+        <ul>
+            <li><a href="/authors">Authors</a></li>
+            <li><a href="/genres">Genres</a></li>
+            <li><a href="/books">Books</a></li>
+        </ul>
+    </nav>
+
+    <h2>Genres</h2>
+</header>
+
+
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Homeland</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="author: ${authors}" th:object="${author}">
+        <td th:text="*{firstname} + ' ' + *{lastname}"></td>
+        <td th:text="*{homeland}"></td>
+        <td><a th:href="@{/authors/edit/{id}(id=*{id})}">Edit</a></td>
+        <td><a th:href="@{/authors/delete/{id}(id=*{id})}">Delete</a></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

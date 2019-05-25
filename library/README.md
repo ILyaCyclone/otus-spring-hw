@@ -33,3 +33,12 @@ Homework for https://otus.ru/ Spring Developer course
 
 Использовать MogoDB и spring-data для хранения информации о книгах  
 Тесты можно реализовать с помощью spring-boot-strter-embedded-mongodb 
+
+## HW9. Spring MVC View
+
+CRUD приложение с Web UI и хранением данных в БД  
+Создайте приложение с хранением сущностей в БД (можно взять DAOs из прошлых занятий)
+
+Использовать классический View, предусмотреть страницу отображения всех сущностей и создания/редактирования.
+
+View на Thymeleaf, classic Controllers.

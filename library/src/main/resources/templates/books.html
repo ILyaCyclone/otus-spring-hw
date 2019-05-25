@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Library</title>
+</head>
+<body>
+<header>
+    <h1>Library</h1>
+
+    <nav>
+        <ul>
+            <li><a href="/Authors">Authors</a></li>
+            <li><a href="/genres">Genres</a></li>
+            <li><a href="/books">Books</a></li>
+        </ul>
+    </nav>
+
+    <h2>Books</h2>
+</header>
+
+
+<table>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Year</th>
+        <th>Author</th>
+        <th>Genre</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book: ${books}" th:object="${book}">
+        <td th:text="*{title}"></td>
+        <td th:text="*{year}"></td>
+        <td th:text="*{author.lastname}"></td>
+        <td th:text="*{genre.name}"></td>
+        <td><a th:href="@{/books/edit/{id}(id=*{id})}">Edit</a></td>
+        <td><a th:href="@{/books/delete/{id}(id=*{id})}">Delete</a></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

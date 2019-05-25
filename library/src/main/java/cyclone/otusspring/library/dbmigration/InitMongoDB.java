@@ -44,7 +44,7 @@ public class InitMongoDB {
         template.save(new Book("1", "Wheels", 1971, author1, genre1));
         template.save(new Book("2", "Airport", 1968, author1, genre1));
         template.save(new Book("3", "The End of Eternity", 1955, author2, genre2));
-        template.save(new Book("4", "'Foundation'", 1951, author2, genre2));
+        template.save(new Book("4", "Foundation", 1951, author2, genre2));
         template.save(new Book("5", "100 Years of Solitude", 1967, author3, genre3));
     }
 }
