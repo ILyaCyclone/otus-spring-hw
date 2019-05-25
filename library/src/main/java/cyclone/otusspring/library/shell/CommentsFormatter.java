@@ -25,7 +25,7 @@ class CommentsFormatter {
     private String formatCommentsAsTable(List<Comment> comments) {
         return new SimpleTableBuilder()
                 .data(comments)
-                .addHeader("commentId", "ID")
+                .addHeader("id", "ID")
                 .addHeader("commentator", "Commentator")
                 .addHeader("date", "Date")
                 .addHeader("text", "Text")

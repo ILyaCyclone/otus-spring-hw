@@ -39,7 +39,7 @@ public class LibraryCommands {
 
         SimpleTableBuilder tableBuilder = new SimpleTableBuilder()
                 .data(books)
-                .addHeader("bookId", "ID")
+                .addHeader("id", "ID")
                 .addHeader("title", "Title")
                 .addHeader("year", "Year");
         if (!verbose) {
@@ -49,12 +49,12 @@ public class LibraryCommands {
                     .build();
         } else {
             return tableBuilder
-                    .addHeader("author.authorId", "Author ID")
+                    .addHeader("author.id", "Author ID")
                     .addHeader("author.firstname", "Author First Name")
                     .addHeader("author.lastname", "Author Last Name")
                     .addHeader("author.homeland", "Author Homeland")
 
-                    .addHeader("genre.genreId", "Genre ID")
+                    .addHeader("genre.id", "Genre ID")
                     .addHeader("genre.name", "Genre Name")
                     .build();
         }
@@ -64,14 +64,14 @@ public class LibraryCommands {
     public String createBook(
             @ShellOption String title
             , @ShellOption(defaultValue = ShellOption.NULL, help = "publish year") Integer year
-            , @ShellOption long authorId
-            , @ShellOption long genreId) {
+            , @ShellOption String authorId
+            , @ShellOption String genreId) {
         logger.info("create book title: {}, year: {}, authorId: {}, genreId: {}", title, year, authorId, genreId);
 
 
 
         Book createdBook = bookService.create(new BookDto(title, year, authorId, genreId));
-        return "Book \"" + createdBook.getTitle() + "\" created successfully with ID " + createdBook.getBookId();
+        return "Book \"" + createdBook.getTitle() + "\" created successfully with ID " + createdBook.getId();
     }
 
     @ShellMethod(value = "Create author")
@@ -81,14 +81,14 @@ public class LibraryCommands {
             , @ShellOption(defaultValue = ShellOption.NULL) String homeland) {
         Author createdAuthor = authorService.create(new AuthorDto(firstname, lastname, homeland));
         return "Author \"" + createdAuthor.getFirstname() + " " + createdAuthor.getLastname()
-                + "\" created successfully with ID " + createdAuthor.getAuthorId();
+                + "\" created successfully with ID " + createdAuthor.getId();
     }
 
     @ShellMethod(value = "Create author")
     public String createGenre(
             @ShellOption String name) {
         Genre createdGenre = genreService.create(name);
-        return "Genre \"" + createdGenre.getName() + "\" created successfully with ID " + createdGenre.getGenreId();
+        return "Genre \"" + createdGenre.getName() + "\" created successfully with ID " + createdGenre.getId();
     }
 
     @ShellMethod(value = "List all authors")
@@ -97,7 +97,7 @@ public class LibraryCommands {
 
         return new SimpleTableBuilder()
                 .data(authors)
-                .addHeader("authorId", "ID")
+                .addHeader("id", "ID")
                 .addHeader("firstname", "First Name")
                 .addHeader("lastname", "Last Name")
                 .addHeader("homeland", "Homeland")
@@ -110,7 +110,7 @@ public class LibraryCommands {
 
         return new SimpleTableBuilder()
                 .data(genres)
-                .addHeader("genreId", "ID")
+                .addHeader("id", "ID")
                 .addHeader("name", "Genre")
                 .build();
     }

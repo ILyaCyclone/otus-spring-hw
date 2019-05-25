@@ -1,59 +1,67 @@
 package cyclone.otusspring.library.repository;
 
 
+import cyclone.otusspring.library.exceptions.NotFoundException;
+import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
-import cyclone.otusspring.library.repository.datajpa.BookJpaRepository;
+import cyclone.otusspring.library.model.Genre;
+import cyclone.otusspring.library.repository.mongo.MongoBookRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Repository
-@Transactional(readOnly = true)
 public class BookRepositoryImpl implements BookRepository {
 
-    private final BookJpaRepository jpaRepository;
+    private final MongoBookRepository mongoRepository;
 
-    public BookRepositoryImpl(BookJpaRepository jpaRepository) {
-        this.jpaRepository = jpaRepository;
+    public BookRepositoryImpl(MongoBookRepository mongoRepository) {
+        this.mongoRepository = mongoRepository;
     }
 
     @Override
     public List<Book> findAll() {
-        return jpaRepository.findAllByOrderByTitle();
+        return mongoRepository.findAllByOrderByTitle();
     }
 
     @Override
     public List<Book> findByTitle(String title) {
-        return jpaRepository.findByTitleContainingIgnoreCaseOrderByTitle(title);
+        return mongoRepository.findByTitleContainingIgnoreCaseOrderByTitle(title);
     }
 
     @Override
-    public Book findOne(long id) {
-        return jpaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Book ID " + id + " not found"));
+    public List<Book> findByAuthor(Author author) {
+        return mongoRepository.findByAuthorOrderByTitle(author);
     }
 
     @Override
-    @Transactional
+    public List<Book> findByGenre(Genre genre) {
+        return mongoRepository.findByGenreOrderByTitle(genre);
+    }
+
+    @Override
+    public Book findOne(String id) {
+        return mongoRepository.findById(id).orElseThrow(() -> new NotFoundException("Book ID " + id + " not found"));
+    }
+
+    @Override
     public Book save(Book book) {
-        return jpaRepository.save(book);
+        return mongoRepository.save(book);
     }
 
     @Override
-    @Transactional
-    public void delete(long id) {
-        jpaRepository.deleteById(id);
+    public void delete(String id) {
+        if (!mongoRepository.existsById(id)) throw new NotFoundException("Book ID " + id + " not found");
+        mongoRepository.deleteById(id);
     }
 
     @Override
-    @Transactional
     public void delete(Book book) {
-        jpaRepository.delete(book);
+        mongoRepository.delete(book);
     }
 
     @Override
-    public boolean exists(long id) {
-        return jpaRepository.existsById(id);
+    public boolean exists(String id) {
+        return mongoRepository.existsById(id);
     }
 }

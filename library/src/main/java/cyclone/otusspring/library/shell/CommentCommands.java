@@ -47,7 +47,7 @@ public class CommentCommands {
     }
 
     @ShellMethod(value = "Add comment")
-    String addComment(long bookId, String text) {
+    String addComment(String bookId, String text) {
         CommentDto commentDto = new CommentDto(bookId, currentUser, text);
         commentService.create(commentDto);
         return "Your comment saved";
@@ -60,7 +60,7 @@ public class CommentCommands {
     }
 
     @ShellMethod(value = "List book comments")
-    String listComments(long bookId, boolean verbose) {
+    String listComments(String bookId, boolean verbose) {
         Book book = bookService.findOne(bookId);
         List<Comment> comments = commentService.findByBookId(bookId);
 
@@ -78,8 +78,8 @@ public class CommentCommands {
     }
 
     @ShellMethod(value = "Remove comment")
-    String removeComment(long commentId) {
-        commentService.delete(commentId);
+    String removeComment(String bookId, String commentId) {
+        commentService.delete(bookId, commentId);
         return "Comment ID " + commentId + " removed";
     }
 }

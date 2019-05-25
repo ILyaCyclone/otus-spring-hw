@@ -1,59 +1,55 @@
 package cyclone.otusspring.library.repository;
 
+import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Genre;
-import cyclone.otusspring.library.repository.datajpa.GenreJpaRepository;
+import cyclone.otusspring.library.repository.mongo.MongoGenreRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Repository
-@Transactional(readOnly = true)
 public class GenreRepositoryImpl implements GenreRepository {
 
-    private final GenreJpaRepository jpaRepository;
+    private final MongoGenreRepository mongoRepository;
 
-    public GenreRepositoryImpl(GenreJpaRepository jpaRepository) {
-        this.jpaRepository = jpaRepository;
+    public GenreRepositoryImpl(MongoGenreRepository mongoRepository) {
+        this.mongoRepository = mongoRepository;
     }
 
 
     @Override
     public List<Genre> findAll() {
-        return jpaRepository.findAllByOrderByName();
+        return mongoRepository.findAllByOrderByName();
     }
 
     @Override
     public List<Genre> findByName(String name) {
-        return jpaRepository.findByNameContainingIgnoreCaseOrderByName(name);
+        return mongoRepository.findByNameContainingIgnoreCaseOrderByName(name);
     }
 
     @Override
-    public Genre findOne(long id) {
-        return jpaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Genre ID " + id + " not found"));
+    public Genre findOne(String id) {
+        return mongoRepository.findById(id).orElseThrow(() -> new NotFoundException("Genre ID " + id + " not found"));
     }
 
     @Override
-    @Transactional
     public Genre save(Genre genre) {
-        return jpaRepository.save(genre);
+        return mongoRepository.save(genre);
     }
 
     @Override
-    @Transactional
-    public void delete(long id) {
-        jpaRepository.deleteById(id);
+    public void delete(String id) {
+        if (!mongoRepository.existsById(id)) throw new NotFoundException("Genre ID " + id + " not found");
+        mongoRepository.deleteById(id);
     }
 
     @Override
-    @Transactional
     public void delete(Genre genre) {
-        jpaRepository.delete(genre);
+        mongoRepository.delete(genre);
     }
 
     @Override
-    public boolean exists(long id) {
-        return jpaRepository.existsById(id);
+    public boolean exists(String id) {
+        return mongoRepository.existsById(id);
     }
 }

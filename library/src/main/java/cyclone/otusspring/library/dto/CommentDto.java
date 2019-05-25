@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @EqualsAndHashCode
 public class CommentDto {
-    private long bookId;
+    private String bookId;
     private String commentator;
     private String text;
 }

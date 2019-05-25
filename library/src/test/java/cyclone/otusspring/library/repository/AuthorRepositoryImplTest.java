@@ -1,40 +1,40 @@
-package cyclone.otusspring.library.repository.jpa;
+package cyclone.otusspring.library.repository;
 
+import cyclone.otusspring.library.dbteststate.ResetStateExtension;
+import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Author;
-import cyclone.otusspring.library.repository.AuthorRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.stream.Stream;
 
 import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DataJpaTest
+@DataMongoTest
 @ComponentScan("cyclone.otusspring.library.repository")
+@ExtendWith(ResetStateExtension.class)
 class AuthorRepositoryImplTest {
 
     @Autowired
     AuthorRepository authorRepository;
 
     @Autowired
-    TestEntityManager tem;
-
+    MongoTemplate mongoTemplate;
 
     @Test
     void findAll() {
-        assertThat(authorRepository.findAll()).containsExactly(AUTHOR1, AUTHOR3, AUTHOR2); // 1, 3, 2 because of ordering
+        assertThat(authorRepository.findAll()).containsExactly(AUTHOR1, AUTHOR3, AUTHOR2, AUTHOR_WITHOUT_BOOKS); // 1, 3, 2, wo_books because of ordering and case
     }
 
     @ParameterizedTest
@@ -52,61 +52,65 @@ class AuthorRepositoryImplTest {
 
     @Test
     void findOne() {
-        assertThat(authorRepository.findOne(2)).isEqualTo(AUTHOR2);
+        assertThat(authorRepository.findOne("2")).isEqualTo(AUTHOR2);
     }
 
     @Test
     @DisplayName("finding non existent ID throws exception")
     void findOne_nonExistent() {
-        assertThatThrownBy(() -> authorRepository.findOne(NO_SUCH_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> authorRepository.findOne(NO_SUCH_ID)).isInstanceOf(NotFoundException.class);
     }
 
 
 
     @Test
+//    @DirtiesContext
     void testInsert() {
-        long savedId = authorRepository.save(NEW_AUTHOR).getAuthorId();
+        String savedId = authorRepository.save(NEW_AUTHOR).getId();
 
         Author actual = authorRepository.findOne(savedId);
 
-        assertThat(actual.getAuthorId()).isNotNull();
-        assertThat(actual).isEqualToIgnoringGivenFields(NEW_AUTHOR, "authorId");
+        assertThat(actual.getId()).isNotNull();
+        assertThat(actual).isEqualToIgnoringGivenFields(NEW_AUTHOR, "id");
     }
 
     @Test
+//    @DirtiesContext
     void testUpdate() {
-        Author updatedAuthor2 = new Author(AUTHOR2.getAuthorId(), "Updated " + AUTHOR2.getFirstname(), "Updated " + AUTHOR2.getLastname(), "Updated " + AUTHOR2.getHomeland());
+        Author updatedAuthor2 = new Author(AUTHOR2.getId(), "Updated " + AUTHOR2.getFirstname(), "Updated " + AUTHOR2.getLastname(), "Updated " + AUTHOR2.getHomeland());
         authorRepository.save(updatedAuthor2);
-        tem.flush(); // send update to database
+//        tem.flush(); // send update to database
 
-        Author actual = authorRepository.findOne(updatedAuthor2.getAuthorId());
+        Author actual = authorRepository.findOne(updatedAuthor2.getId());
 
         assertThat(actual).isEqualToComparingFieldByField(updatedAuthor2);
     }
 
     @Test
+//    @DirtiesContext
     void testDelete() {
-        Author bookToDelete = tem.find(Author.class, AUTHOR2.getAuthorId());
+        Author bookToDelete = mongoTemplate.findById(AUTHOR2.getId(), Author.class);
 
         authorRepository.delete(bookToDelete);
         assertThat(authorRepository.findAll()).doesNotContain(AUTHOR2);
     }
 
     @Test
+//    @DirtiesContext
     void testDeleteById() {
-        authorRepository.delete(AUTHOR1.getAuthorId());
+        authorRepository.delete(AUTHOR1.getId());
         assertThat(authorRepository.findAll()).doesNotContain(AUTHOR1);
     }
 
     @Test
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
-        assertThatThrownBy(() -> authorRepository.delete(NO_SUCH_ID)).isInstanceOf(EmptyResultDataAccessException.class);
+        assertThatThrownBy(() -> authorRepository.delete(NO_SUCH_ID)).isInstanceOf(NotFoundException.class);
     }
 
     @Test
     void testExistsTrue() {
-        assertThat(authorRepository.exists(AUTHOR2.getAuthorId())).isTrue();
+        assertThat(authorRepository.exists(AUTHOR2.getId())).isTrue();
     }
 
     @Test

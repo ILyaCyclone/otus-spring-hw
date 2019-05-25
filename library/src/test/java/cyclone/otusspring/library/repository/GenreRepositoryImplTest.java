@@ -1,40 +1,40 @@
-package cyclone.otusspring.library.repository.jpa;
+package cyclone.otusspring.library.repository;
 
+import cyclone.otusspring.library.dbteststate.ResetStateExtension;
+import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Genre;
-import cyclone.otusspring.library.repository.GenreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.stream.Stream;
 
 import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DataJpaTest
+@DataMongoTest
 @ComponentScan("cyclone.otusspring.library.repository")
+@ExtendWith(ResetStateExtension.class)
 class GenreRepositoryImplTest {
 
     @Autowired
     GenreRepository genreRepository;
 
     @Autowired
-    TestEntityManager tem;
-
+    MongoTemplate mongoTemplate;
 
     @Test
     void findAll() {
-        assertThat(genreRepository.findAll()).containsExactly(GENRE1, GENRE4, GENRE3, GENRE2);
+        assertThat(genreRepository.findAll()).containsExactly(GENRE1, GENRE4, GENRE3, GENRE2, GENRE_WITHOUT_BOOKS);
     }
 
     @ParameterizedTest
@@ -52,41 +52,40 @@ class GenreRepositoryImplTest {
 
     @Test
     void findOne() {
-        assertThat(genreRepository.findOne(2)).isEqualTo(GENRE2);
+        assertThat(genreRepository.findOne("2")).isEqualTo(GENRE2);
     }
 
     @Test
     @DisplayName("finding non existent ID throws exception")
     void findOne_nonExistent() {
-        assertThatThrownBy(() -> genreRepository.findOne(NO_SUCH_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> genreRepository.findOne(NO_SUCH_ID)).isInstanceOf(NotFoundException.class);
     }
 
 
 
     @Test
     void testInsert() {
-        long savedId = genreRepository.save(NEW_GENRE).getGenreId();
+        String savedId = genreRepository.save(NEW_GENRE).getId();
 
         Genre actual = genreRepository.findOne(savedId);
 
-        assertThat(actual.getGenreId()).isNotNull();
-        assertThat(actual).isEqualToIgnoringGivenFields(NEW_GENRE, "genreId");
+        assertThat(actual.getId()).isNotNull();
+        assertThat(actual).isEqualToIgnoringGivenFields(NEW_GENRE, "id");
     }
 
     @Test
     void testUpdate() {
-        Genre updatedGenre2 = new Genre(GENRE2.getGenreId(), "Updated " + GENRE2.getName());
+        Genre updatedGenre2 = new Genre(GENRE2.getId(), "Updated " + GENRE2.getName());
         genreRepository.save(updatedGenre2);
-        tem.flush();
 
-        Genre actual = genreRepository.findOne(updatedGenre2.getGenreId());
+        Genre actual = genreRepository.findOne(updatedGenre2.getId());
 
         assertThat(actual).isEqualToComparingFieldByField(updatedGenre2);
     }
 
     @Test
     void testDelete() {
-        Genre bookToDelete = tem.find(Genre.class, GENRE2.getGenreId());
+        Genre bookToDelete = mongoTemplate.findById(GENRE2.getId(), Genre.class);
 
         genreRepository.delete(bookToDelete);
         assertThat(genreRepository.findAll()).doesNotContain(GENRE2);
@@ -94,19 +93,19 @@ class GenreRepositoryImplTest {
 
     @Test
     void testDeleteById() {
-        genreRepository.delete(GENRE1.getGenreId());
+        genreRepository.delete(GENRE1.getId());
         assertThat(genreRepository.findAll()).doesNotContain(GENRE1);
     }
 
     @Test
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
-        assertThatThrownBy(() -> genreRepository.delete(NO_SUCH_ID)).isInstanceOf(EmptyResultDataAccessException.class);
+        assertThatThrownBy(() -> genreRepository.delete(NO_SUCH_ID)).isInstanceOf(NotFoundException.class);
     }
 
     @Test
     void testExistsTrue() {
-        assertThat(genreRepository.exists(GENRE2.getGenreId())).isTrue();
+        assertThat(genreRepository.exists(GENRE2.getId())).isTrue();
     }
 
     @Test

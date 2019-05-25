@@ -1,57 +1,56 @@
 package cyclone.otusspring.library.repository;
 
+import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Author;
-import cyclone.otusspring.library.repository.datajpa.AuthorJpaRepository;
+import cyclone.otusspring.library.repository.mongo.MongoAuthorRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Repository
-@Transactional(readOnly = true)
 public class AuthorRepositoryImpl implements AuthorRepository {
 
-    private final AuthorJpaRepository jpaRepository;
+    private final MongoAuthorRepository mongoRepository;
 
-    public AuthorRepositoryImpl(AuthorJpaRepository jpaRepository) {
-        this.jpaRepository = jpaRepository;
+    public AuthorRepositoryImpl(MongoAuthorRepository mongoRepository) {
+        this.mongoRepository = mongoRepository;
     }
 
 
     @Override
     public List<Author> findAll() {
-        return jpaRepository.findAll(Sort.by("firstname", "lastname"));
+        return mongoRepository.findAll(Sort.by("firstname", "lastname"));
     }
 
     @Override
     public List<Author> findByName(String name) {
-        return jpaRepository.findByName(name);
+        return mongoRepository.findByName(name);
     }
 
     @Override
-    public Author findOne(long id) {
-        return jpaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Author ID " + id + " not found"));
+    public Author findOne(String id) {
+        return mongoRepository.findById(id).orElseThrow(() -> new NotFoundException("Author ID " + id + " not found"));
     }
 
     @Override
     public Author save(Author author) {
-        return jpaRepository.save(author);
+        return mongoRepository.save(author);
     }
 
     @Override
-    public void delete(long id) {
-        jpaRepository.deleteById(id);
+    public void delete(String id) {
+        if (!mongoRepository.existsById(id)) throw new NotFoundException("Author ID " + id + " not found");
+        mongoRepository.deleteById(id);
     }
 
     @Override
     public void delete(Author author) {
-        jpaRepository.delete(author);
+        mongoRepository.delete(author);
     }
 
     @Override
-    public boolean exists(long id) {
-        return jpaRepository.existsById(id);
+    public boolean exists(String id) {
+        return mongoRepository.existsById(id);
     }
 }

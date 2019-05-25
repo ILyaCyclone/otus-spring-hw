@@ -4,7 +4,6 @@ import cyclone.otusspring.library.dto.AuthorDto;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.repository.AuthorRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,9 +21,24 @@ public class AuthorServiceImpl implements AuthorService {
         return authorRepository.findAll();
     }
 
-    @Transactional
+    @Override
+    public Author findOne(String id) {
+        return authorRepository.findOne(id);
+    }
+
+    @Override
     public Author create(AuthorDto authorDto) {
         Author authorToCreate = new Author(authorDto.getFirstname(), authorDto.getLastname(), authorDto.getHomeland());
         return authorRepository.save(authorToCreate);
+    }
+
+    @Override
+    public Author save(Author author) {
+        return authorRepository.save(author);
+    }
+
+    @Override
+    public void delete(String id) {
+        authorRepository.delete(id);
     }
 }

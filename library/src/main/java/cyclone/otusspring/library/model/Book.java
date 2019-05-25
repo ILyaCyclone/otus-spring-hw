@@ -1,59 +1,51 @@
 package cyclone.otusspring.library.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+
+import cyclone.otusspring.library.exceptions.NotFoundException;
+import lombok.*;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static cyclone.otusspring.library.model.Book.GRAPH_WITH_AUTHOR_GENRE;
-import static javax.persistence.GenerationType.IDENTITY;
-
-@Entity
-@Table(name = "book")
-@NamedEntityGraph(
-        name = GRAPH_WITH_AUTHOR_GENRE,
-        attributeNodes = {
-                @NamedAttributeNode("author"),
-                @NamedAttributeNode("genre")
-        }
-)
+@Document(collection = "books")
+@CompoundIndex(name = "books_unique"
+        , def = "{'title' : 1, 'year' : 1, 'author': 1}"
+        , unique = true)
 @Data
 @NoArgsConstructor
 public class Book {
-    public static final String GRAPH_WITH_AUTHOR_GENRE = "with-author-genre";
+//    public static final String GRAPH_WITH_AUTHOR_GENRE = "with-author-genre";
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "book_id")
-    private Long bookId;
+    private String id;
 
-    @Column(name = "title")
+    @Field("title")
     private String title;
 
-    @Column(name = "year")
+    @Field("year")
     private Integer year;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
+    @DBRef
+    @Field("author")
     private Author author;
 
-    @ManyToOne
-    @JoinColumn(name = "genre_id", nullable = false)
+    @DBRef
+    @Field("genre")
     private Genre genre;
 
-    @OneToMany(
-            mappedBy = "book",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.LAZY
-    )
+    @Field("comments")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private List<Comment> comments = new ArrayList<>();
 
 
@@ -66,36 +58,34 @@ public class Book {
         this(null, title, year, author, genre);
     }
 
-    public Book(Long bookId, String title, Integer year, Author author, Genre genre) {
+    public Book(String id, String title, Integer year, Author author, Genre genre) {
         if (StringUtils.isEmpty(title)) {
             throw new IllegalArgumentException("book title must not be empty");
         }
 
-        this.bookId = bookId;
+        this.id = id;
         this.title = title;
         this.year = year;
         this.author = author;
         this.genre = genre;
     }
 
+    public List<Comment> getComments() {
+        return Collections.unmodifiableList(comments);
+    }
+
     public void addComment(Comment comment) {
+        if (comment.getId() == null) {
+            comment.setId(ObjectId.get().toString());
+        }
         comments.add(comment);
-        comment.setBook(this);
     }
 
-    public void removeComment(Comment comment) {
-        comments.remove(comment);
-        comment.setBook(null);
-    }
-
-    @Override
-    public String toString() {
-        return "Book{" +
-                "bookId=" + bookId +
-                ", title='" + title + '\'' +
-                ", year=" + year +
-                ", author=" + author +
-                ", genre=" + genre +
-                '}';
+    public void removeComment(String commentId) {
+        Comment commentToRemove = comments.stream()
+                .filter(comment -> comment.getId().equals(commentId))
+                .findAny()
+                .orElseThrow(() -> new NotFoundException("Comment " + commentId + " not found"));
+        comments.remove(commentToRemove);
     }
 }

@@ -1,6 +1,8 @@
 package cyclone.otusspring.library.repository;
 
+import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
+import cyclone.otusspring.library.model.Genre;
 
 import java.util.List;
 
@@ -9,13 +11,17 @@ public interface BookRepository {
 
     List<Book> findByTitle(String title);
 
-    Book findOne(long id);
+    List<Book> findByAuthor(Author author);
+
+    List<Book> findByGenre(Genre genre);
+
+    Book findOne(String id);
 
     Book save(Book book);
 
-    void delete(long id);
+    void delete(String id);
 
     void delete(Book book);
 
-    boolean exists(long id);
+    boolean exists(String id);
 }
