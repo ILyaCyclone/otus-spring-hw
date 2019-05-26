@@ -27,6 +27,7 @@ class AuthorServiceTest {
 
         Author createdAuthor = authorService.create(authorDtoToCreate);
 
+        assertThat(createdAuthor.getId()).isNotNull();
         assertThat(createdAuthor).isEqualToIgnoringGivenFields(authorDtoToCreate, "id");
         assertThat(authorService.findAll()).usingRecursiveFieldByFieldElementComparator()
                 .contains(createdAuthor);

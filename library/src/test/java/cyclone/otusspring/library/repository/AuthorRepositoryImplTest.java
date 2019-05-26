@@ -64,7 +64,6 @@ class AuthorRepositoryImplTest {
 
 
     @Test
-//    @DirtiesContext
     void testInsert() {
         String savedId = authorRepository.save(NEW_AUTHOR).getId();
 
@@ -75,11 +74,9 @@ class AuthorRepositoryImplTest {
     }
 
     @Test
-//    @DirtiesContext
     void testUpdate() {
         Author updatedAuthor2 = new Author(AUTHOR2.getId(), "Updated " + AUTHOR2.getFirstname(), "Updated " + AUTHOR2.getLastname(), "Updated " + AUTHOR2.getHomeland());
         authorRepository.save(updatedAuthor2);
-//        tem.flush(); // send update to database
 
         Author actual = authorRepository.findOne(updatedAuthor2.getId());
 
@@ -87,7 +84,6 @@ class AuthorRepositoryImplTest {
     }
 
     @Test
-//    @DirtiesContext
     void testDelete() {
         Author bookToDelete = mongoTemplate.findById(AUTHOR2.getId(), Author.class);
 
@@ -96,7 +92,6 @@ class AuthorRepositoryImplTest {
     }
 
     @Test
-//    @DirtiesContext
     void testDeleteById() {
         authorRepository.delete(AUTHOR1.getId());
         assertThat(authorRepository.findAll()).doesNotContain(AUTHOR1);

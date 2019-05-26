@@ -5,18 +5,12 @@
     <title>Library</title>
 </head>
 <body>
-<header>
-    <h1>Library</h1>
+<header th:replace="fragments/header :: header (headerText='Books')">
+    <h1>App Name</h1>
 
-    <nav>
-        <ul>
-            <li><a href="/Authors">Authors</a></li>
-            <li><a href="/genres">Genres</a></li>
-            <li><a href="/books">Books</a></li>
-        </ul>
-    </nav>
+    Navigation goes here
 
-    <h2>Books</h2>
+    <h2>Page Title</h2>
 </header>
 
 
@@ -33,12 +27,11 @@
     </thead>
     <tbody>
     <tr th:each="book: ${books}" th:object="${book}">
-        <td th:text="*{title}"></td>
-        <td th:text="*{year}"></td>
-        <td th:text="*{author.lastname}"></td>
-        <td th:text="*{genre.name}"></td>
+        <td th:text="*{title}">Title</td>
+        <td th:text="*{year}">Year</td>
+        <td th:text="*{author.firstname} + ' ' + *{author.lastname}">Author</td>
+        <td th:text="*{genre.name}">Genre</td>
         <td><a th:href="@{/books/edit/{id}(id=*{id})}">Edit</a></td>
-        <td><a th:href="@{/books/delete/{id}(id=*{id})}">Delete</a></td>
     </tr>
     </tbody>
 </table>

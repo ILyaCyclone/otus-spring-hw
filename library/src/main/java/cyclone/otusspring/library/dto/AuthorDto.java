@@ -1,23 +1,30 @@
 package cyclone.otusspring.library.dto;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
 @Getter
+@Setter
 public class AuthorDto {
-    private final String firstname;
-    private final String lastname;
-    private final String homeland;
+    private String id;
+    private String firstname;
+    private String lastname;
+    private String homeland;
 
-    public AuthorDto(String firstname, String lastname) {
-        this(firstname, lastname, null);
+    public AuthorDto() {
     }
 
     public AuthorDto(String firstname, String lastname, String homeland) {
+        this(null, firstname, lastname, homeland);
+    }
+
+    public AuthorDto(String id, String firstname, String lastname, String homeland) {
         Objects.requireNonNull(firstname, "author firstname must not be null");
         Objects.requireNonNull(lastname, "author lastname must not be null");
 
+        this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.homeland = homeland;
