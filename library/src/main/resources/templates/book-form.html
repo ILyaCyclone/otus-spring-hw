@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Library</title>
+</head>
+<body>
+<header th:replace="fragments/header :: header (headerText='Book')">
+    <h1>App Name</h1>
+
+    Navigation goes here
+
+    <h2>Page Title</h2>
+</header>
+
+<form th:action="@{/books/save}" method="post" th:object="${bookDto}">
+    <input type="hidden" name="id" th:value="*{id}">
+
+    <label>Title:
+        <input type="text" required name="title" th:value="*{title}">
+    </label>
+
+    <label>Year:
+        <input type="text" required name="year" th:value="*{year}">
+    </label>
+
+    <label>Author:
+        <select name="authorId" required>
+            <option th:each="authorOption : ${authors}" th:value="${authorOption.id}"
+                    th:text="${authorOption.firstname} + ' ' + ${authorOption.lastname}"
+                    th:selected="${authorOption.id == bookDto.authorId}"></option>
+        </select>
+    </label>
+
+    <label>Genre:
+        <select name="genreId" required>
+            <option th:each="genreOption : ${genres}" th:value="${genreOption.id}" th:text="${genreOption.name}"
+                    th:selected="${genreOption.id == bookDto.genreId}"></option>
+        </select>
+    </label>
+
+    <input type="submit" value="Submit">
+</form>
+
+<form th:action="@{/books/delete/{id}(id=${bookDto.id})}" method="post">
+    <input type="submit" value="Delete">
+</form>
+
+</body>
+</html>

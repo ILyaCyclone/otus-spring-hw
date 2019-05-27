@@ -27,14 +27,16 @@
     </thead>
     <tbody>
     <tr th:each="book: ${books}" th:object="${book}">
-        <td th:text="*{title}">Title</td>
+        <td><a th:href="@{/books/edit/{id}(id=*{id})}" th:text="*{title}">Title</a></td>
         <td th:text="*{year}">Year</td>
         <td th:text="*{author.firstname} + ' ' + *{author.lastname}">Author</td>
         <td th:text="*{genre.name}">Genre</td>
-        <td><a th:href="@{/books/edit/{id}(id=*{id})}">Edit</a></td>
+        <td></td>
     </tr>
     </tbody>
 </table>
+
+<a href="/book-form.html" th:href="@{/books/new}">Create new book</a>
 
 </body>
 </html>
