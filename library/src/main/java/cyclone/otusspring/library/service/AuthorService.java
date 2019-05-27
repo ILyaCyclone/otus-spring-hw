@@ -10,7 +10,7 @@ public interface AuthorService {
 
     Author findOne(String id);
 
-    Author create(AuthorDto authorDto);
+    Author save(AuthorDto authorDto);
 
     Author save(Author author);
 

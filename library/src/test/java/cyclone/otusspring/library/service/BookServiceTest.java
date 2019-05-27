@@ -30,7 +30,7 @@ class BookServiceTest {
     void create() {
         BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor().getId(), NEW_BOOK.getGenre().getId());
 
-        Book createdBook = bookService.create(bookDtoToCreate);
+        Book createdBook = bookService.save(bookDtoToCreate);
 
         assertThat(createdBook.getId()).isNotNull();
         assertAll(() -> assertThat(createdBook.getTitle()).isEqualTo(bookDtoToCreate.getTitle())
@@ -44,8 +44,8 @@ class BookServiceTest {
     void create_fail_nonExistentAuthor() {
         BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NO_SUCH_ID, NEW_BOOK.getGenre().getId());
 
-        assertThatThrownBy(() -> bookService.create(bookDtoToCreate))
-                .hasMessage("Could not create book")
+        assertThatThrownBy(() -> bookService.save(bookDtoToCreate))
+                .hasMessage("Could not save book")
                 .hasCause(new NotFoundException("Author ID " + NO_SUCH_ID + " not found"));
     }
 
@@ -54,8 +54,8 @@ class BookServiceTest {
     void create_fail_nonExistentGenre() {
         BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor().getId(), NO_SUCH_ID);
 
-        assertThatThrownBy(() -> bookService.create(bookDtoToCreate))
-                .hasMessage("Could not create book")
+        assertThatThrownBy(() -> bookService.save(bookDtoToCreate))
+                .hasMessage("Could not save book")
                 .hasCause(new NotFoundException("Genre ID " + NO_SUCH_ID + " not found"));
     }
 

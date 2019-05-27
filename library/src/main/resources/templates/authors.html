@@ -19,14 +19,13 @@
     <tr>
         <th>Name</th>
         <th>Homeland</th>
-        <th>Edit</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="author: ${authors}" th:object="${author}">
-        <td th:text="*{firstname} + ' ' + *{lastname}">Firstname Lastname</td>
+        <td><a th:href="@{/authors/edit/{id}(id=*{id})}" th:text="*{firstname} + ' ' + *{lastname}">Firstname
+            Lastname</a></td>
         <td th:text="*{homeland}">Homeland</td>
-        <td><a th:href="@{/authors/edit/{id}(id=*{id})}">Edit</a></td>
     </tr>
     </tbody>
 </table>

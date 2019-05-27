@@ -1,29 +1,22 @@
 package cyclone.otusspring.library.service;
 
 import cyclone.otusspring.library.dto.BookDto;
-import cyclone.otusspring.library.exceptions.NotFoundException;
+import cyclone.otusspring.library.mapper.BookMapper;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Genre;
-import cyclone.otusspring.library.repository.AuthorRepository;
 import cyclone.otusspring.library.repository.BookRepository;
-import cyclone.otusspring.library.repository.GenreRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
-    private final AuthorRepository authorRepository;
-    private final GenreRepository genreRepository;
-
-    public BookServiceImpl(BookRepository bookRepository, AuthorRepository authorRepository, GenreRepository genreRepository) {
-        this.bookRepository = bookRepository;
-        this.authorRepository = authorRepository;
-        this.genreRepository = genreRepository;
-    }
+    private final BookMapper bookMapper;
 
     @Override
     public Book findOne(String bookId) {
@@ -47,26 +40,21 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book create(BookDto bookDto) {
-        String authorId = bookDto.getAuthorId();
-        String genreId = bookDto.getGenreId();
-
-        if (!authorRepository.exists(authorId)) {
-            throw new RuntimeException("Could not create book", new NotFoundException("Author ID " + authorId + " not found"));
-        }
-        if (!genreRepository.exists(genreId)) {
-            throw new RuntimeException("Could not create book", new NotFoundException("Genre ID " + genreId + " not found"));
-        }
-
-        Author author = authorRepository.findOne(authorId);
-        Genre genre = genreRepository.findOne(genreId);
-
-        Book bookToCreate = new Book(bookDto.getTitle(), bookDto.getYear(), author, genre);
-        return bookRepository.save(bookToCreate);
+    public Book save(Book book) {
+        return bookRepository.save(book);
     }
 
     @Override
-    public Book save(Book book) {
-        return bookRepository.save(book);
+    public Book save(BookDto bookDto) {
+        try {
+            return bookRepository.save(bookMapper.toBook(bookDto));
+        } catch (Exception e) {
+            throw new RuntimeException("Could not save book", e);
+        }
+    }
+
+    @Override
+    public void delete(String id) {
+        bookRepository.delete(id);
     }
 }

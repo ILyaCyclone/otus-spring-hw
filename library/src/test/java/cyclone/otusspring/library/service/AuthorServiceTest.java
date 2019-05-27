@@ -25,7 +25,7 @@ class AuthorServiceTest {
     void create() {
         AuthorDto authorDtoToCreate = new AuthorDto(NEW_AUTHOR.getFirstname(), NEW_AUTHOR.getLastname(), NEW_AUTHOR.getHomeland());
 
-        Author createdAuthor = authorService.create(authorDtoToCreate);
+        Author createdAuthor = authorService.save(authorDtoToCreate);
 
         assertThat(createdAuthor.getId()).isNotNull();
         assertThat(createdAuthor).isEqualToIgnoringGivenFields(authorDtoToCreate, "id");

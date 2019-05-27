@@ -1,9 +1,9 @@
 package cyclone.otusspring.library.controller;
 
 import cyclone.otusspring.library.dto.AuthorDto;
-import cyclone.otusspring.library.dto.AuthorMapper;
-import cyclone.otusspring.library.model.Author;
+import cyclone.otusspring.library.mapper.AuthorMapper;
 import cyclone.otusspring.library.service.AuthorService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/authors")
 public class AuthorController {
@@ -19,10 +20,6 @@ public class AuthorController {
     private final AuthorService authorService;
     private final AuthorMapper authorMapper;
 
-    public AuthorController(AuthorService authorService, AuthorMapper authorMapper) {
-        this.authorService = authorService;
-        this.authorMapper = authorMapper;
-    }
 
     @GetMapping
     public String authors(Model model) {
@@ -32,13 +29,13 @@ public class AuthorController {
 
     @GetMapping("/new")
     public String create(Model model) {
-        model.addAttribute("author", new AuthorDto());
+        model.addAttribute("authorDto", new AuthorDto());
         return "author-form";
     }
 
     @GetMapping("/edit/{id}")
     public String edit(Model model, @PathVariable(name = "id") String id) {
-        model.addAttribute("author", authorService.findOne(id));
+        model.addAttribute("authorDto", authorMapper.toAuthorDto(authorService.findOne(id)));
         return "author-form";
     }
 
@@ -47,13 +44,9 @@ public class AuthorController {
         if (authorDto.getId() != null && authorDto.getId().length() == 0) {
             authorDto.setId(null);
         }
-        if (authorDto.getId() == null) {
-            Author createdAuthor = authorService.create(authorDto);
-            redirectAttributes.addFlashAttribute("message", "Author created with ID " + createdAuthor.getId());
-        } else {
-            authorService.save(authorMapper.toAuthor(authorDto));
-            redirectAttributes.addFlashAttribute("message", "Author saved");
-        }
+        authorService.save(authorDto);
+        redirectAttributes.addFlashAttribute("message", "Author saved");
+
         return "redirect:/authors";
     }
 

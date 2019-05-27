@@ -13,7 +13,7 @@
     <h2>Page Title</h2>
 </header>
 
-<form th:action="@{/authors/save}" method="post" th:object="${author}">
+<form th:action="@{/authors/save}" method="post" th:object="${authorDto}">
     <input type="hidden" name="id" th:value="*{id}">
 
     <label>Firstname:
@@ -31,7 +31,7 @@
     <input type="submit" value="Submit">
 </form>
 
-<form th:action="@{/authors/delete/{id}(id=${author.id})}" method="post">
+<form th:action="@{/authors/delete/{id}(id=${authorDto.id})}" method="post">
     <input type="submit" value="Delete">
 </form>
 

@@ -70,7 +70,7 @@ public class LibraryCommands {
 
 
 
-        Book createdBook = bookService.create(new BookDto(title, year, authorId, genreId));
+        Book createdBook = bookService.save(new BookDto(title, year, authorId, genreId));
         return "Book \"" + createdBook.getTitle() + "\" created successfully with ID " + createdBook.getId();
     }
 
@@ -79,7 +79,7 @@ public class LibraryCommands {
             @ShellOption String firstname
             , @ShellOption String lastname
             , @ShellOption(defaultValue = ShellOption.NULL) String homeland) {
-        Author createdAuthor = authorService.create(new AuthorDto(firstname, lastname, homeland));
+        Author createdAuthor = authorService.save(new AuthorDto(firstname, lastname, homeland));
         return "Author \"" + createdAuthor.getFirstname() + " " + createdAuthor.getLastname()
                 + "\" created successfully with ID " + createdAuthor.getId();
     }

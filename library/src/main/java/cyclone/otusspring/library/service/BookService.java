@@ -10,11 +10,13 @@ import java.util.List;
 public interface BookService {
     Book findOne(String bookId);
 
-    Book create(BookDto bookDto);
+    List<Book> findAll();
+
+    Book save(BookDto bookDto);
 
     Book save(Book book);
 
-    List<Book> findAll();
+    void delete(String id);
 
     List<Book> findByAuthor(Author author);
 

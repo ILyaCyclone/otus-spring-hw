@@ -1,5 +1,6 @@
-package cyclone.otusspring.library.dto;
+package cyclone.otusspring.library.mapper;
 
+import cyclone.otusspring.library.dto.AuthorDto;
 import cyclone.otusspring.library.model.Author;
 import org.springframework.stereotype.Component;
 
