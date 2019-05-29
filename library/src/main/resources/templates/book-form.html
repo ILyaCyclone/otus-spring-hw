@@ -5,7 +5,7 @@
     <title>Library</title>
 </head>
 <body>
-<header th:replace="fragments/header :: header (headerText='Book')">
+<header th:replace="fragments/header :: header (headerText=${bookDto.id == null ? 'Create book' : 'Book'})">
     <h1>App Name</h1>
 
     Navigation goes here
@@ -26,7 +26,7 @@
 
     <label>Author:
         <select name="authorId" required>
-            <option th:each="authorOption : ${authors}" th:value="${authorOption.id}"
+            <option th:each="authorOption : ${allAuthors}" th:value="${authorOption.id}"
                     th:text="${authorOption.firstname} + ' ' + ${authorOption.lastname}"
                     th:selected="${authorOption.id == bookDto.authorId}"></option>
         </select>
@@ -34,7 +34,7 @@
 
     <label>Genre:
         <select name="genreId" required>
-            <option th:each="genreOption : ${genres}" th:value="${genreOption.id}" th:text="${genreOption.name}"
+            <option th:each="genreOption : ${allGenres}" th:object="${genreOption}" th:value="*{id}" th:text="*{name}"
                     th:selected="${genreOption.id == bookDto.genreId}"></option>
         </select>
     </label>
@@ -42,9 +42,33 @@
     <input type="submit" value="Submit">
 </form>
 
-<form th:action="@{/books/delete/{id}(id=${bookDto.id})}" method="post">
-    <input type="submit" value="Delete">
-</form>
+<section th:if="${bookDto.id != null}">
+    <form th:action="@{/books/{id}/delete(id=${bookDto.id})}" method="post">
+        <input type="submit" value="Delete">
+    </form>
+</section>
+
+<section class="comments" th:if="${bookDto.id != null}">
+    <ul>
+        <li th:each="comment : ${comments}" th:object="${comment}">
+            <span th:text="*{commentator}">Commentator</span>:
+            <span th:text="*{text}">Comment text</span>
+        </li>
+    </ul>
+
+
+    <form th:action="@{/books/{id}/comments/save(id=${bookDto.id})}" method="post">
+        <p2>Leave a comment:</p2>
+        <input type="text" name="commentator" required placeholder="Your name...">
+
+        <textarea name="text" required placeholder="Type a comment..."></textarea>
+
+        <input type="submit" value="Submit">
+    </form>
+
+
+</section>
+
 
 </body>
 </html>

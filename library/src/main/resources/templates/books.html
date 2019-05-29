@@ -27,7 +27,7 @@
     </thead>
     <tbody>
     <tr th:each="book: ${books}" th:object="${book}">
-        <td><a th:href="@{/books/edit/{id}(id=*{id})}" th:text="*{title}">Title</a></td>
+        <td><a th:href="@{/books/{id}(id=*{id})}" th:text="*{title}">Title</a></td>
         <td th:text="*{year}">Year</td>
         <td th:text="*{author.firstname} + ' ' + *{author.lastname}">Author</td>
         <td th:text="*{genre.name}">Genre</td>
