@@ -1,25 +1,37 @@
 package cyclone.otusspring.library.controller;
 
 import cyclone.otusspring.library.dto.AuthorDto;
+import cyclone.otusspring.library.dto.Message;
 import cyclone.otusspring.library.mapper.AuthorMapper;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.service.AuthorService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/authors")
 public class AuthorController {
+    private static final Logger logger = LoggerFactory.getLogger(AuthorController.class);
 
     private final AuthorService authorService;
     private final AuthorMapper authorMapper;
+
+    @ExceptionHandler(Exception.class)
+    public String handleError(HttpServletRequest req, Exception ex, RedirectAttributes redirectAttributes) {
+        logger.error("Request: " + req.getRequestURL() + " raised " + ex);
+
+        redirectAttributes.addFlashAttribute("message", new Message(ex.getMessage(), Message.Type.ERROR));
+        return getRedirectToAuthors();
+    }
+
 
 
     @GetMapping
@@ -46,7 +58,7 @@ public class AuthorController {
             authorDto.setId(null);
         }
         Author savedAuthor = authorService.save(authorDto);
-        redirectAttributes.addFlashAttribute("message", "Author saved");
+        redirectAttributes.addFlashAttribute("message", new Message("Author saved"));
 
         return "redirect:/authors/" + savedAuthor.getId();
     }
@@ -54,8 +66,13 @@ public class AuthorController {
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable(name = "id") String id, RedirectAttributes redirectAttributes) {
         authorService.delete(id);
-        redirectAttributes.addFlashAttribute("message", "Author ID " + id + " deleted");
-        return "redirect:/authors";
+        redirectAttributes.addFlashAttribute("message", new Message("Author ID " + id + " deleted"));
+        return getRedirectToAuthors();
     }
 
+
+
+    private String getRedirectToAuthors() {
+        return "redirect:/authors";
+    }
 }

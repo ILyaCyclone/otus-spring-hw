@@ -1,23 +1,35 @@
 package cyclone.otusspring.library.controller;
 
 import cyclone.otusspring.library.dto.GenreDto;
+import cyclone.otusspring.library.dto.Message;
 import cyclone.otusspring.library.mapper.GenreMapper;
 import cyclone.otusspring.library.model.Genre;
 import cyclone.otusspring.library.service.GenreService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/genres")
 public class GenreController {
+    private static final Logger logger = LoggerFactory.getLogger(GenreController.class);
 
     private final GenreService genreService;
     private final GenreMapper genreMapper;
+
+    @ExceptionHandler(Exception.class)
+    public String handleError(HttpServletRequest req, Exception ex, RedirectAttributes redirectAttributes) {
+        logger.error("Request: " + req.getRequestURL() + " raised " + ex);
+
+        redirectAttributes.addFlashAttribute("message", new Message(ex.getMessage(), Message.Type.ERROR));
+        return getRedirectToGenres();
+    }
+
 
     public GenreController(GenreService genreService, GenreMapper genreMapper) {
         this.genreService = genreService;
@@ -48,15 +60,25 @@ public class GenreController {
             genreDto.setId(null);
         }
         Genre savedGenre = genreService.save(genreDto);
-        redirectAttributes.addFlashAttribute("message", "Genre saved");
+        redirectAttributes.addFlashAttribute("message", new Message("Genre saved"));
 
-        return "redirect:/genres/" + savedGenre.getId();
+        return getRedirectToGenre(savedGenre.getId());
     }
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable(name = "id") String id, RedirectAttributes redirectAttributes) {
         genreService.delete(id);
-        redirectAttributes.addFlashAttribute("message", "Genre ID " + id + " deleted");
+        redirectAttributes.addFlashAttribute("message", new Message("Genre ID " + id + " deleted"));
+        return getRedirectToGenres();
+    }
+
+
+
+    private String getRedirectToGenre(String genreId) {
+        return "redirect:/genres/" + genreId;
+    }
+
+    private String getRedirectToGenres() {
         return "redirect:/genres";
     }
 

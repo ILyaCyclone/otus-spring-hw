@@ -7,8 +7,9 @@
 </head>
 <body>
 
-<div th:fragment="message" th:if="${message != null}">
-    <p style="font-weight: bold" th:text="${message}">Message text</p>
+<div th:fragment="message" th:if="${message != null}" th:object="${message}">
+    <p style="font-weight: bold"><span th:if="*{type.name() == 'ERROR'}">Error: </span><span th:text="*{text}">Message text</span>
+    </p>
 </div>
 
 </body>

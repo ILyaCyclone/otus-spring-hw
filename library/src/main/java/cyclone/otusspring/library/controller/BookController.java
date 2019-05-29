@@ -2,6 +2,7 @@ package cyclone.otusspring.library.controller;
 
 import cyclone.otusspring.library.dto.BookDto;
 import cyclone.otusspring.library.dto.CommentDto;
+import cyclone.otusspring.library.dto.Message;
 import cyclone.otusspring.library.mapper.BookMapper;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
@@ -9,25 +10,36 @@ import cyclone.otusspring.library.service.AuthorService;
 import cyclone.otusspring.library.service.BookService;
 import cyclone.otusspring.library.service.GenreService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/books")
 public class BookController {
+    private static final Logger logger = LoggerFactory.getLogger(BookController.class);
 
     private final BookService bookService;
     private final AuthorService authorService;
     private final GenreService genreService;
     private final BookMapper bookMapper;
+
+    @ExceptionHandler(Exception.class)
+    public String handleError(HttpServletRequest req, Exception ex, RedirectAttributes redirectAttributes) {
+        logger.error("Request: " + req.getRequestURL() + " raised " + ex);
+
+        redirectAttributes.addFlashAttribute("message", new Message(ex.getMessage(), Message.Type.ERROR));
+        return getRedirectToBooks();
+    }
+
+
 
     @GetMapping
     public String books(Model model) {
@@ -62,15 +74,15 @@ public class BookController {
             bookDto.setId(null);
         }
         Book savedBook = bookService.save(bookDto);
-        redirectAttributes.addFlashAttribute("message", "Book saved");
+        redirectAttributes.addFlashAttribute("message", new Message("Book saved"));
         return getRedirectToBook(savedBook.getId());
     }
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable(name = "id") String id, RedirectAttributes redirectAttributes) {
         bookService.delete(id);
-        redirectAttributes.addFlashAttribute("message", "Book ID " + id + " deleted");
-        return "redirect:/books";
+        redirectAttributes.addFlashAttribute("message", new Message("Book ID " + id + " deleted"));
+        return getRedirectToBooks();
     }
 
 
@@ -81,7 +93,7 @@ public class BookController {
         book.addComment(сomment);
         bookService.save(book);
 
-        redirectAttributes.addFlashAttribute("message", "Comment saved");
+        redirectAttributes.addFlashAttribute("message", new Message("Comment saved"));
         return getRedirectToBook(bookId);
     }
 
@@ -94,5 +106,9 @@ public class BookController {
 
     private String getRedirectToBook(String bookId) {
         return "redirect:/books/" + bookId;
+    }
+
+    private String getRedirectToBooks() {
+        return "redirect:/books";
     }
 }
