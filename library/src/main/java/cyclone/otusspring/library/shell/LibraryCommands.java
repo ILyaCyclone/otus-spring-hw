@@ -2,6 +2,7 @@ package cyclone.otusspring.library.shell;
 
 import cyclone.otusspring.library.dto.AuthorDto;
 import cyclone.otusspring.library.dto.BookDto;
+import cyclone.otusspring.library.dto.GenreDto;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Genre;
@@ -85,9 +86,8 @@ public class LibraryCommands {
     }
 
     @ShellMethod(value = "Create author")
-    public String createGenre(
-            @ShellOption String name) {
-        Genre createdGenre = genreService.create(name);
+    public String createGenre(@ShellOption String name) {
+        Genre createdGenre = genreService.save(new GenreDto(name));
         return "Genre \"" + createdGenre.getName() + "\" created successfully with ID " + createdGenre.getId();
     }
 

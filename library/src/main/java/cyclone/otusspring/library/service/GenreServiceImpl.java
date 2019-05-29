@@ -1,5 +1,7 @@
 package cyclone.otusspring.library.service;
 
+import cyclone.otusspring.library.dto.GenreDto;
+import cyclone.otusspring.library.mapper.GenreMapper;
 import cyclone.otusspring.library.model.Genre;
 import cyclone.otusspring.library.repository.GenreRepository;
 import org.springframework.stereotype.Service;
@@ -10,9 +12,11 @@ import java.util.List;
 public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;
+    private final GenreMapper genreMapper;
 
-    public GenreServiceImpl(GenreRepository genreRepository) {
+    public GenreServiceImpl(GenreRepository genreRepository, GenreMapper genreMapper) {
         this.genreRepository = genreRepository;
+        this.genreMapper = genreMapper;
     }
 
     @Override
@@ -21,8 +25,8 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public Genre create(String name) {
-        return genreRepository.save(new Genre(name));
+    public Genre save(GenreDto genreDto) {
+        return genreRepository.save(genreMapper.toGenre(genreDto));
     }
 
     @Override

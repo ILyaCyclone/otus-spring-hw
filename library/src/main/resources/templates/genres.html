@@ -18,17 +18,17 @@
     <thead>
     <tr>
         <th>Name</th>
-        <th>Edit</th>
-        <th>Delete</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="genre: ${genres}" th:object="${genre}">
-        <td th:text="*{name}"></td>
-        <td><a th:href="@{/authors/edit/{id}(id=*{id})}">Edit</a></td>
+        <td><a th:href="@{/genres/{id}(id=*{id})}" th:text="*{name}">Genre name</a></td>
     </tr>
     </tbody>
 </table>
+
+<a href="/genre-form.html" th:href="@{/genres/new}">Create new genre</a>
+
 
 </body>
 </html>

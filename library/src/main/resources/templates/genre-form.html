@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Library</title>
+</head>
+<body>
+<header th:replace="fragments/header :: header (headerText=${genreDto.id == null ? 'Create genre' : 'Genre'})">
+    <h1>App Name</h1>
+
+    Navigation goes here
+
+    <h2>Page Title</h2>
+</header>
+
+<form th:action="@{/genres/save}" method="post" th:object="${genreDto}">
+    <input type="hidden" name="id" th:value="*{id}">
+
+    <label>Name:
+        <input type="text" name="name" th:value="*{name}">
+    </label>
+
+    <input type="submit" value="Submit">
+</form>
+
+<section th:if="${genreDto.id != null}">
+    <form th:action="@{/genres/{id}/delete(id=${genreDto.id})}" method="post">
+        <input type="submit" value="Delete">
+    </form>
+</section>
+
+</body>
+</html>

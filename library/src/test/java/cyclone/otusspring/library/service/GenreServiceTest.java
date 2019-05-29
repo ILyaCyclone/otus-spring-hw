@@ -21,10 +21,10 @@ class GenreServiceTest {
     private GenreService genreService;
 
     @Test
-    void create() {
+    void save() {
         Genre genreToCreate = new Genre(NEW_GENRE.getName());
 
-        Genre createdGenre = genreService.create(genreToCreate.getName());
+        Genre createdGenre = genreService.save(genreToCreate);
 
         assertThat(createdGenre).isEqualToIgnoringGivenFields(genreToCreate, "id");
         assertThat(genreService.findAll()).usingRecursiveFieldByFieldElementComparator()
