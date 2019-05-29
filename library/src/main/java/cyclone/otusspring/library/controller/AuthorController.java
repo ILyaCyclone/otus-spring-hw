@@ -54,7 +54,7 @@ public class AuthorController {
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable(name = "id") String id, RedirectAttributes redirectAttributes) {
         authorService.delete(id);
-        redirectAttributes.addFlashAttribute("message", "Author ID " + id + "deleted");
+        redirectAttributes.addFlashAttribute("message", "Author ID " + id + " deleted");
         return "redirect:/authors";
     }
 

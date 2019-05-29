@@ -56,7 +56,7 @@ public class GenreController {
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable(name = "id") String id, RedirectAttributes redirectAttributes) {
         genreService.delete(id);
-        redirectAttributes.addFlashAttribute("message", "Genre ID " + id + "deleted");
+        redirectAttributes.addFlashAttribute("message", "Genre ID " + id + " deleted");
         return "redirect:/genres";
     }
 

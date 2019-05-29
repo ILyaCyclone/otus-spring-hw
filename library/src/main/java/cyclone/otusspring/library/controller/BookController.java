@@ -69,7 +69,7 @@ public class BookController {
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable(name = "id") String id, RedirectAttributes redirectAttributes) {
         bookService.delete(id);
-        redirectAttributes.addFlashAttribute("message", "Book ID " + id + "deleted");
+        redirectAttributes.addFlashAttribute("message", "Book ID " + id + " deleted");
         return "redirect:/books";
     }
 

@@ -13,6 +13,7 @@
     <h2>Page Title</h2>
 </header>
 
+<div th:replace="fragments/message :: message (headerText=${message})">Message text</div>
 
 <table>
     <thead>

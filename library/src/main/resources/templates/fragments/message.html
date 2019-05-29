@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div th:fragment="message" th:if="${message != null}">
+    <p style="font-weight: bold" th:text="${message}">Message text</p>
+</div>
+
+</body>
+</html>
