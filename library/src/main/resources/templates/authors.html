@@ -23,7 +23,7 @@
     </thead>
     <tbody>
     <tr th:each="author: ${authors}" th:object="${author}">
-        <td><a th:href="@{/authors/edit/{id}(id=*{id})}" th:text="*{firstname} + ' ' + *{lastname}">Firstname
+        <td><a th:href="@{/authors/{id}(id=*{id})}" th:text="*{firstname} + ' ' + *{lastname}">Firstname
             Lastname</a></td>
         <td th:text="*{homeland}">Homeland</td>
     </tr>

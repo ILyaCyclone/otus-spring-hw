@@ -2,6 +2,7 @@ package cyclone.otusspring.library.controller;
 
 import cyclone.otusspring.library.dto.AuthorDto;
 import cyclone.otusspring.library.mapper.AuthorMapper;
+import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -33,7 +34,7 @@ public class AuthorController {
         return "author-form";
     }
 
-    @GetMapping("/edit/{id}")
+    @GetMapping("/{id}")
     public String edit(Model model, @PathVariable(name = "id") String id) {
         model.addAttribute("authorDto", authorMapper.toAuthorDto(authorService.findOne(id)));
         return "author-form";
@@ -44,13 +45,13 @@ public class AuthorController {
         if (authorDto.getId() != null && authorDto.getId().length() == 0) {
             authorDto.setId(null);
         }
-        authorService.save(authorDto);
+        Author savedAuthor = authorService.save(authorDto);
         redirectAttributes.addFlashAttribute("message", "Author saved");
 
-        return "redirect:/authors";
+        return "redirect:/authors/" + savedAuthor.getId();
     }
 
-    @PostMapping("/delete/{id}")
+    @PostMapping("/{id}/delete")
     public String delete(@PathVariable(name = "id") String id, RedirectAttributes redirectAttributes) {
         authorService.delete(id);
         redirectAttributes.addFlashAttribute("message", "Author ID " + id + "deleted");

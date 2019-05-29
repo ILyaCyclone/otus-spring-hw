@@ -5,7 +5,7 @@
     <title>Library</title>
 </head>
 <body>
-<header th:replace="fragments/header :: header (headerText='Author')">
+<header th:replace="fragments/header :: header (headerText=${authorDto.id == null ? 'Create author' : 'Author'})">
     <h1>App Name</h1>
 
     Navigation goes here
@@ -31,9 +31,11 @@
     <input type="submit" value="Submit">
 </form>
 
-<form th:action="@{/authors/delete/{id}(id=${authorDto.id})}" method="post">
-    <input type="submit" value="Delete">
-</form>
+<section th:if="${authorDto.id != null}">
+    <form th:action="@{/authors/{id}/delete(id=${authorDto.id})}" method="post">
+        <input type="submit" value="Delete">
+    </form>
+</section>
 
 </body>
 </html>
