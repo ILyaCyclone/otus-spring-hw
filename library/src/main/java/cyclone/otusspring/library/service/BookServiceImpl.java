@@ -7,6 +7,8 @@ import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Genre;
 import cyclone.otusspring.library.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
+    private static final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
 
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
@@ -49,6 +52,7 @@ public class BookServiceImpl implements BookService {
         try {
             return bookRepository.save(bookMapper.toBook(bookDto));
         } catch (Exception e) {
+            logger.error("Could not save book", e);
             throw new RuntimeException("Could not save book", e);
         }
     }

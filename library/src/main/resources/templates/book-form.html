@@ -23,7 +23,7 @@
     </label>
 
     <label>Year:
-        <input type="text" required name="year" th:value="*{year}">
+        <input type="number" required name="year" th:value="*{year}">
     </label>
 
     <label>Author:
@@ -52,7 +52,7 @@
 
 <section class="comments" th:if="${bookDto.id != null}">
     <ul>
-        <li th:each="comment : ${comments}" th:object="${comment}">
+        <li th:each="comment : ${bookDto.commentDtoList}" th:object="${comment}">
             <span th:text="*{commentator}">Commentator</span>:
             <span th:text="*{text}">Comment text</span>
         </li>

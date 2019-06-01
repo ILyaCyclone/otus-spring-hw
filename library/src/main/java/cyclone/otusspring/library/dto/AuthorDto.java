@@ -1,12 +1,10 @@
 package cyclone.otusspring.library.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.Objects;
 
-@Getter
-@Setter
+@Data
 public class AuthorDto {
     private String id;
     private String firstname;

@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -79,6 +80,10 @@ public class Book {
             comment.setId(ObjectId.get().toString());
         }
         comments.add(comment);
+    }
+
+    public void addComments(Collection<Comment> comments) {
+        comments.forEach(this::addComment);
     }
 
     public void removeComment(String commentId) {

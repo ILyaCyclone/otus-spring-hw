@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 @EqualsAndHashCode
 public class CommentDto {
+    private String id;
     private String bookId;
     private String commentator;
     private String text;
@@ -25,6 +26,14 @@ public class CommentDto {
     }
 
     public CommentDto(String bookId, String commentator, String text, LocalDateTime date) {
+        this.bookId = bookId;
+        this.commentator = commentator;
+        this.text = text;
+        this.date = date;
+    }
+
+    public CommentDto(String id, String bookId, String commentator, String text, LocalDateTime date) {
+        this.id = id;
         this.bookId = bookId;
         this.commentator = commentator;
         this.text = text;

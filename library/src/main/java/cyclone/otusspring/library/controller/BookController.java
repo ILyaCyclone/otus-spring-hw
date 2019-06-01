@@ -4,6 +4,7 @@ import cyclone.otusspring.library.dto.BookDto;
 import cyclone.otusspring.library.dto.CommentDto;
 import cyclone.otusspring.library.dto.Message;
 import cyclone.otusspring.library.mapper.BookMapper;
+import cyclone.otusspring.library.mapper.CommentMapper;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
 import cyclone.otusspring.library.service.AuthorService;
@@ -30,6 +31,7 @@ public class BookController {
     private final AuthorService authorService;
     private final GenreService genreService;
     private final BookMapper bookMapper;
+    private final CommentMapper commentMapper;
 
     @ExceptionHandler(Exception.class)
     public String handleError(HttpServletRequest req, Exception ex, RedirectAttributes redirectAttributes) {
@@ -51,7 +53,7 @@ public class BookController {
     @GetMapping("/new")
     public String create(Model model) {
         model.addAttribute("bookDto", new BookDto());
-        addAuthorsAndGenres(model);
+        addAuthorsAndGenresToModel(model);
         return "book-form";
     }
 
@@ -59,19 +61,26 @@ public class BookController {
     public String edit(Model model, @PathVariable(name = "id") String id) {
         Book book = bookService.findOne(id);
         model.addAttribute("bookDto", bookMapper.toDto(book));
-        model.addAttribute("comments", book.getComments().stream()
-                .map(comment -> new CommentDto(book.getId(), comment.getCommentator(), comment.getText(), comment.getDate()))
-                .collect(Collectors.toList())
-        );
 
-        addAuthorsAndGenres(model);
+        addAuthorsAndGenresToModel(model);
         return "book-form";
     }
 
+    /**
+     * Doesn't use сommentDtoList from bookDto.
+     * To save comments use {@code BookController::saveComment}.
+     *
+     * @return
+     */
     @PostMapping("/save")
     public String save(BookDto bookDto, RedirectAttributes redirectAttributes) {
         if (bookDto.getId() != null && bookDto.getId().length() == 0) {
             bookDto.setId(null);
+        }
+        if (bookDto.getId() != null) {
+            bookDto.setCommentDtoList(bookService.findOne(bookDto.getId()).getComments()
+                    .stream().map(comment -> commentMapper.toCommentDto(comment, bookDto.getId()))
+                    .collect(Collectors.toList()));
         }
         Book savedBook = bookService.save(bookDto);
         redirectAttributes.addFlashAttribute("message", new Message("Book saved"));
@@ -99,7 +108,7 @@ public class BookController {
 
 
 
-    private void addAuthorsAndGenres(Model model) {
+    private void addAuthorsAndGenresToModel(Model model) {
         model.addAttribute("allAuthors", authorService.findAll());
         model.addAttribute("allGenres", genreService.findAll());
     }

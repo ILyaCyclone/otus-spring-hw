@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
@@ -36,7 +37,9 @@ public class AuthorController {
 
     @GetMapping
     public String authors(Model model) {
-        model.addAttribute("authors", authorService.findAll());
+        model.addAttribute("authors", authorService.findAll().stream()
+                .map(authorMapper::toAuthorDto)
+                .collect(Collectors.toList()));
         return "authors";
     }
 
