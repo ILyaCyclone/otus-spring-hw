@@ -25,13 +25,6 @@ public class CommentDto {
         this.text = text;
     }
 
-    public CommentDto(String bookId, String commentator, String text, LocalDateTime date) {
-        this.bookId = bookId;
-        this.commentator = commentator;
-        this.text = text;
-        this.date = date;
-    }
-
     public CommentDto(String id, String bookId, String commentator, String text, LocalDateTime date) {
         this.id = id;
         this.bookId = bookId;

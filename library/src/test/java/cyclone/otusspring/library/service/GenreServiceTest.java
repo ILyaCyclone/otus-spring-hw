@@ -39,9 +39,8 @@ class GenreServiceTest {
     @Test
     @DisplayName("deleting genre with books throws exception")
     void deletingAuthorWithBooksThrowsException() {
-        assertThatThrownBy(() -> {
-            genreService.delete(GENRE1.getId());
-        }).isInstanceOf(DataIntegrityViolationException.class)
+        assertThatThrownBy(() -> genreService.delete(GENRE1.getId()))
+                .isInstanceOf(DataIntegrityViolationException.class)
                 .hasMessageStartingWith("Could not delete genre");
 
     }

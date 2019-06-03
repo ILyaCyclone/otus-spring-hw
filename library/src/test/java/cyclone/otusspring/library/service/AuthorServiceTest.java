@@ -39,9 +39,8 @@ class AuthorServiceTest {
     @Test
     @DisplayName("deleting author with books throws exception")
     void deletingAuthorWithBooksThrowsException() {
-        assertThatThrownBy(() -> {
-            authorService.delete(AUTHOR1.getId());
-        }).isInstanceOf(DataIntegrityViolationException.class)
+        assertThatThrownBy(() -> authorService.delete(AUTHOR1.getId()))
+                .isInstanceOf(DataIntegrityViolationException.class)
                 .hasMessageStartingWith("Could not delete author");
 
     }

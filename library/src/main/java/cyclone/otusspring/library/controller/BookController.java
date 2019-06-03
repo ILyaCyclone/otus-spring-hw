@@ -71,8 +71,6 @@ public class BookController {
     /**
      * Doesn't use сommentDtoList from bookDto.
      * To save comments use {@code BookController::saveComment}.
-     *
-     * @return
      */
     @PostMapping("/save")
     public String save(BookDto bookDto, RedirectAttributes redirectAttributes) {

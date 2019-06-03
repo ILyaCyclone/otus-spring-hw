@@ -60,7 +60,7 @@
 
 
     <form th:action="@{/books/{id}/comments/save(id=${bookDto.id})}" method="post">
-        <p2>Leave a comment:</p2>
+        <h2>Leave a comment:</h2>
         <input type="text" name="commentator" required placeholder="Your name...">
 
         <textarea name="text" required placeholder="Type a comment..."></textarea>
