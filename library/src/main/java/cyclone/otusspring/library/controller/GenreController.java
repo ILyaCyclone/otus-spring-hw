@@ -13,10 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.stream.Collectors;
+
+import static cyclone.otusspring.library.controller.GenreController.BASE_URL;
 
 @Controller
-@RequestMapping("/genres")
+@RequestMapping(BASE_URL)
 public class GenreController {
+    static final String BASE_URL = "/genres";
     private static final Logger logger = LoggerFactory.getLogger(GenreController.class);
 
     private final GenreService genreService;
@@ -38,7 +42,9 @@ public class GenreController {
 
     @GetMapping
     public String genres(Model model) {
-        model.addAttribute("genres", genreService.findAll());
+        model.addAttribute("genres", genreService.findAll().stream()
+                .map(genreMapper::toGenreDto)
+                .collect(Collectors.toList()));
         return "genres";
     }
 
@@ -74,11 +80,11 @@ public class GenreController {
 
 
 
-    private String getRedirectToGenre(String genreId) {
+    static String getRedirectToGenre(String genreId) {
         return "redirect:/genres/" + genreId;
     }
 
-    private String getRedirectToGenres() {
+    static String getRedirectToGenres() {
         return "redirect:/genres";
     }
 

@@ -16,10 +16,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.stream.Collectors;
 
+import static cyclone.otusspring.library.controller.AuthorController.BASE_URL;
+
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/authors")
+@RequestMapping(BASE_URL)
 public class AuthorController {
+    static final String BASE_URL = "/authors";
     private static final Logger logger = LoggerFactory.getLogger(AuthorController.class);
 
     private final AuthorService authorService;
@@ -75,7 +78,7 @@ public class AuthorController {
 
 
 
-    private String getRedirectToAuthors() {
+    static String getRedirectToAuthors() {
         return "redirect:/authors";
     }
 }
