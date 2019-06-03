@@ -3,19 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Library</title>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
-<header th:replace="fragments/header :: header (headerText='Books')">
+<div th:replace="fragments/header :: header (active='books')">
     <h1>App Name</h1>
 
     Navigation goes here
+</div>
 
-    <h2>Page Title</h2>
-</header>
+<div class="container">
 
-<div th:replace="fragments/message :: message (headerText=${message})">Message text</div>
+    <div th:replace="fragments/header-text :: headerText (text='Books')"></div>
 
-<table>
+    <div th:replace="fragments/message :: message (headerText=${message})">Message text</div>
+
+    <table class="table table-hover w-50">
     <thead>
     <tr>
         <th>Title</th>
@@ -33,9 +38,15 @@
         <td></td>
     </tr>
     </tbody>
-</table>
+    </table>
 
-<a href="/book-form.html" th:href="@{/books/new}">Create new book</a>
+    <a class="btn btn-success" href="/book-form.html" th:href="@{/books/new}">Create new book</a>
 
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
 </body>
 </html>
