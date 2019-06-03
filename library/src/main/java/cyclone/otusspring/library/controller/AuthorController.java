@@ -8,7 +8,6 @@ import cyclone.otusspring.library.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +55,7 @@ public class AuthorController {
         return "author-form";
     }
 
-    @PostMapping(value = "/save", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = "/save")
     public String save(AuthorDto authorDto, RedirectAttributes redirectAttributes) {
         if (authorDto.getId() != null && authorDto.getId().length() == 0) {
             authorDto.setId(null);

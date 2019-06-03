@@ -6,6 +6,7 @@ import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.mapper.GenreMapper;
 import cyclone.otusspring.library.model.Genre;
 import cyclone.otusspring.library.service.GenreService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,9 @@ import java.util.List;
 
 import static cyclone.otusspring.library.TestData.*;
 import static cyclone.otusspring.library.controller.GenreController.BASE_URL;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -73,12 +74,13 @@ class GenreControllerTest {
 
     @Test
     void save() throws Exception {
-        final GenreDto genreDto = genreMapper.toGenreDto(NEW_GENRE);
-        when(genreServiceMock.save(NEW_GENRE)).thenReturn(GENRE1);
+        when(genreServiceMock.save(NEW_GENRE)).thenReturn(new Genre(NO_SUCH_ID, NEW_GENRE.getName()));
 
-        mockMvc.perform(post(BASE_URL + "/save", genreDto))
+        mockMvc.perform(post(BASE_URL + "/save")
+                .param("name", NEW_GENRE.getName())
+        )
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(BASE_URL + "/" + GENRE1.getId()));
+                .andExpect(redirectedUrl(BASE_URL + "/" + NO_SUCH_ID));
     }
 
     @Test
@@ -90,8 +92,10 @@ class GenreControllerTest {
                 .andExpect(redirectedUrl(BASE_URL))
                 .andExpect(flash().attribute("message"
                         , hasProperty("text"
-                                , allOf(startsWith("Genre ID"), endsWith("deleted"))))
+                                , allOf(Matchers.startsWith("Genre ID"), Matchers.endsWith("deleted"))))
                 );
+
+        verify(genreServiceMock, times(1)).delete(GENRE1.getId());
     }
 
     @Test

@@ -101,8 +101,9 @@ public class BookController {
     @PostMapping("/{id}/comments/save")
     public String saveComment(@PathVariable(name = "id") String bookId, CommentDto commentDto, RedirectAttributes redirectAttributes) {
         Book book = bookService.findOne(bookId);
-        Comment сomment = new Comment(bookId, commentDto.getCommentator(), commentDto.getText(), commentDto.getDate());
-        book.addComment(сomment);
+
+        Comment comment = commentMapper.toComment(commentDto);
+        book.addComment(comment);
         bookService.save(book);
 
         redirectAttributes.addFlashAttribute("message", new Message("Comment saved"));

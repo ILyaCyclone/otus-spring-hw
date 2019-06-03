@@ -6,6 +6,7 @@ import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.mapper.AuthorMapper;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.service.AuthorService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,9 @@ import java.util.List;
 
 import static cyclone.otusspring.library.TestData.*;
 import static cyclone.otusspring.library.controller.AuthorController.BASE_URL;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -75,17 +76,17 @@ class AuthorControllerTest {
 
     @Test
     void save() throws Exception {
-        final AuthorDto authorDto = authorMapper.toAuthorDto(NEW_AUTHOR);
         final Author savedAuthor = new Author(NO_SUCH_ID, NEW_AUTHOR.getFirstname(), NEW_AUTHOR.getLastname(), NEW_AUTHOR.getHomeland());
         when(authorServiceMock.save(NEW_AUTHOR)).thenReturn(savedAuthor);
 
-        mockMvc.perform(post(BASE_URL + "/save", authorDto)
-                        .characterEncoding("UTF-8")
-//                .contentType("application/x-www-form-urlencoded")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//                .content()
+        mockMvc.perform(post(BASE_URL + "/save")
+                .param("firstname", NEW_AUTHOR.getFirstname())
+                .param("lastname", NEW_AUTHOR.getLastname())
+                .param("homeland", NEW_AUTHOR.getHomeland())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
         )
                 .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("message", new Message("Author saved")))
                 .andExpect(redirectedUrl(BASE_URL + "/" + savedAuthor.getId()));
     }
 
@@ -98,8 +99,10 @@ class AuthorControllerTest {
                 .andExpect(redirectedUrl(BASE_URL))
                 .andExpect(flash().attribute("message"
                         , hasProperty("text"
-                                , allOf(startsWith("Author ID"), endsWith("deleted"))))
+                                , allOf(Matchers.startsWith("Author ID"), Matchers.endsWith("deleted"))))
                 );
+
+        verify(authorServiceMock, times(1)).delete(AUTHOR1.getId());
     }
 
 

@@ -10,13 +10,14 @@ import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.service.AuthorService;
 import cyclone.otusspring.library.service.BookService;
 import cyclone.otusspring.library.service.GenreService;
-import org.junit.jupiter.api.Assertions;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -24,9 +25,9 @@ import java.util.List;
 
 import static cyclone.otusspring.library.TestData.*;
 import static cyclone.otusspring.library.controller.BookController.BASE_URL;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -71,13 +72,33 @@ class BookControllerTest {
     }
 
     @Test
-    void edit() {
-        Assertions.fail("not implemented");
+    void edit() throws Exception {
+        when(bookServiceMock.findOne(BOOK1.getId())).thenReturn(BOOK1);
+
+        mockMvc.perform(get(BASE_URL + "/" + BOOK1.getId()))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("bookDto", bookMapper.toDto(BOOK1)))
+                .andExpect(view().name("book-form"));
     }
 
     @Test
-    void save() {
-        Assertions.fail("not implemented");
+    void save() throws Exception {
+        final Book savedBook = new Book(NO_SUCH_ID, NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre());
+        // AuthorService and GenreService are used by BookMapper
+        when(authorServiceMock.findOne(NEW_BOOK.getAuthor().getId())).thenReturn(NEW_BOOK.getAuthor());
+        when(genreServiceMock.findOne(NEW_BOOK.getGenre().getId())).thenReturn(NEW_BOOK.getGenre());
+        when(bookServiceMock.save(NEW_BOOK)).thenReturn(savedBook);
+
+        mockMvc.perform(post(BASE_URL + "/save")
+                .param("title", NEW_BOOK.getTitle())
+                .param("year", String.valueOf(NEW_BOOK.getYear()))
+                .param("authorId", NEW_BOOK.getAuthor().getId())
+                .param("genreId", NEW_BOOK.getGenre().getId())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("message", new Message("Book saved")))
+                .andExpect(redirectedUrl(BASE_URL + "/" + savedBook.getId()));
     }
 
     @Test
@@ -89,13 +110,24 @@ class BookControllerTest {
                 .andExpect(redirectedUrl(BASE_URL))
                 .andExpect(flash().attribute("message"
                         , hasProperty("text"
-                                , allOf(startsWith("Book ID"), endsWith("deleted"))))
+                                , allOf(Matchers.startsWith("Book ID"), Matchers.endsWith("deleted"))))
                 );
+
+        verify(bookServiceMock, times(1)).delete(BOOK1.getId());
     }
 
     @Test
-    void saveComment() {
-        Assertions.fail("not implemented");
+    void saveComment() throws Exception {
+        when(bookServiceMock.findOne(BOOK1.getId())).thenReturn(BOOK1);
+
+        mockMvc.perform(post(BASE_URL + "/" + BOOK1.getId() + "/comments/save")
+                .param("text", NEW_COMMENT.getText())
+                .param("commentator", NEW_COMMENT.getCommentator())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("message", new Message("Comment saved")))
+                .andExpect(redirectedUrl(BASE_URL + "/" + BOOK1.getId()));
     }
 
     @Test

@@ -1,10 +1,12 @@
 package cyclone.otusspring.library.service;
 
-import cyclone.otusspring.library.mapper.BookMapper;
+import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Genre;
+import cyclone.otusspring.library.repository.AuthorRepository;
 import cyclone.otusspring.library.repository.BookRepository;
+import cyclone.otusspring.library.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +20,8 @@ public class BookServiceImpl implements BookService {
     private static final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
 
     private final BookRepository bookRepository;
-    private final BookMapper bookMapper;
+    private final AuthorRepository authorRepository;
+    private final GenreRepository genreRepository;
 
     @Override
     public Book findOne(String bookId) {
@@ -43,6 +46,16 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book save(Book book) {
+        if (!authorRepository.exists(book.getAuthor().getId())) {
+            throw new RuntimeException("Could not save book"
+                    , new NotFoundException("Author ID " + book.getAuthor().getId() + " not found"));
+
+        }
+        if (!genreRepository.exists(book.getGenre().getId())) {
+            throw new RuntimeException("Could not save book"
+                    , new NotFoundException("Genre ID " + book.getGenre().getId() + " not found"));
+
+        }
         return bookRepository.save(book);
     }
 
