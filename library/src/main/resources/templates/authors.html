@@ -23,7 +23,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="author: ${authors}" th:object="${author}">
+    <tr th:each="authorDto: ${authorDtoList}" th:object="${authorDto}">
         <td><a th:href="@{/authors/{id}(id=*{id})}" th:text="*{firstname} + ' ' + *{lastname}">Firstname
             Lastname</a></td>
         <td th:text="*{homeland}">Homeland</td>

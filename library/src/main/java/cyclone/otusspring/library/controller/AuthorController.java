@@ -8,13 +8,13 @@ import cyclone.otusspring.library.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.stream.Collectors;
 
 import static cyclone.otusspring.library.controller.AuthorController.BASE_URL;
 
@@ -29,10 +29,10 @@ public class AuthorController {
     private final AuthorMapper authorMapper;
 
     @ExceptionHandler(Exception.class)
-    public String handleError(HttpServletRequest req, Exception ex, RedirectAttributes redirectAttributes) {
-        logger.error("Request: " + req.getRequestURL() + " raised " + ex);
+    public String handleError(HttpServletRequest req, Exception e, RedirectAttributes redirectAttributes) {
+        logger.error("Request: " + req.getRequestURL() + " raised " + e, e);
 
-        redirectAttributes.addFlashAttribute("message", new Message(ex.getMessage(), Message.Type.ERROR));
+        redirectAttributes.addFlashAttribute("message", new Message(e.getMessage(), Message.Type.ERROR));
         return getRedirectToAuthors();
     }
 
@@ -40,9 +40,7 @@ public class AuthorController {
 
     @GetMapping
     public String authors(Model model) {
-        model.addAttribute("authors", authorService.findAll().stream()
-                .map(authorMapper::toAuthorDto)
-                .collect(Collectors.toList()));
+        model.addAttribute("authorDtoList", authorMapper.toAuthorDtoList(authorService.findAll()));
         return "authors";
     }
 
@@ -58,15 +56,15 @@ public class AuthorController {
         return "author-form";
     }
 
-    @PostMapping("/save")
+    @PostMapping(value = "/save", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String save(AuthorDto authorDto, RedirectAttributes redirectAttributes) {
         if (authorDto.getId() != null && authorDto.getId().length() == 0) {
             authorDto.setId(null);
         }
-        Author savedAuthor = authorService.save(authorDto);
+        Author savedAuthor = authorService.save(authorMapper.toAuthor(authorDto));
         redirectAttributes.addFlashAttribute("message", new Message("Author saved"));
 
-        return "redirect:/authors/" + savedAuthor.getId();
+        return getRedirectToAuthor(savedAuthor.getId());
     }
 
     @PostMapping("/{id}/delete")
@@ -76,9 +74,11 @@ public class AuthorController {
         return getRedirectToAuthors();
     }
 
+    private String getRedirectToAuthor(String authorId) {
+        return "redirect:" + BASE_URL + "/" + authorId;
+    }
 
-
-    static String getRedirectToAuthors() {
-        return "redirect:/authors";
+    private String getRedirectToAuthors() {
+        return "redirect:" + BASE_URL;
     }
 }

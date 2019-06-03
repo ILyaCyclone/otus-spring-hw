@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -20,7 +21,6 @@ import java.util.List;
 import static cyclone.otusspring.library.TestData.*;
 import static cyclone.otusspring.library.controller.AuthorController.BASE_URL;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -50,7 +50,7 @@ class AuthorControllerTest {
 
         mockMvc.perform(get(BASE_URL))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("authors", authorDtoList))
+                .andExpect(model().attribute("authorDtoList", authorDtoList))
                 .andExpect(view().name("authors"));
     }
 
@@ -75,13 +75,18 @@ class AuthorControllerTest {
 
     @Test
     void save() throws Exception {
-        final AuthorDto authorDto = authorMapper.toAuthorDto(AUTHOR1);
-        authorDto.setId(null);
-        when(authorServiceMock.save((AuthorDto) any())).thenReturn(AUTHOR1);
+        final AuthorDto authorDto = authorMapper.toAuthorDto(NEW_AUTHOR);
+        final Author savedAuthor = new Author(NO_SUCH_ID, NEW_AUTHOR.getFirstname(), NEW_AUTHOR.getLastname(), NEW_AUTHOR.getHomeland());
+        when(authorServiceMock.save(NEW_AUTHOR)).thenReturn(savedAuthor);
 
-        mockMvc.perform(post(BASE_URL + "/save", authorDto))
+        mockMvc.perform(post(BASE_URL + "/save", authorDto)
+                        .characterEncoding("UTF-8")
+//                .contentType("application/x-www-form-urlencoded")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+//                .content()
+        )
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(BASE_URL + "/" + AUTHOR1.getId()));
+                .andExpect(redirectedUrl(BASE_URL + "/" + savedAuthor.getId()));
     }
 
     @Test
@@ -102,11 +107,11 @@ class AuthorControllerTest {
     @DisplayName("has error message when author not found")
     void edit_nonExistent() throws Exception {
         final String authorId = NO_SUCH_ID;
-        final String errorMessage = "Author ID " + authorId + "not found";
+        final String errorMessage = "Author ID " + authorId + " not found";
         when(authorServiceMock.findOne(authorId)).thenThrow(new NotFoundException(errorMessage));
 
         mockMvc.perform(get(BASE_URL + "/" + authorId))
                 .andExpect(flash().attribute("message", new Message(errorMessage, Message.Type.ERROR)))
-                .andExpect(redirectedUrl(AuthorController.getRedirectToAuthors().replace("redirect:", "")));
+                .andExpect(redirectedUrl(BASE_URL));
     }
 }

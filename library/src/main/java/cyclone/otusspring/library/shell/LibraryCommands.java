@@ -3,12 +3,16 @@ package cyclone.otusspring.library.shell;
 import cyclone.otusspring.library.dto.AuthorDto;
 import cyclone.otusspring.library.dto.BookDto;
 import cyclone.otusspring.library.dto.GenreDto;
+import cyclone.otusspring.library.mapper.AuthorMapper;
+import cyclone.otusspring.library.mapper.BookMapper;
+import cyclone.otusspring.library.mapper.GenreMapper;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Genre;
 import cyclone.otusspring.library.service.AuthorService;
 import cyclone.otusspring.library.service.BookService;
 import cyclone.otusspring.library.service.GenreService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.shell.standard.ShellComponent;
@@ -19,18 +23,16 @@ import org.springframework.shell.table.Table;
 import java.util.List;
 
 @ShellComponent
+@RequiredArgsConstructor
 public class LibraryCommands {
     private static final Logger logger = LoggerFactory.getLogger(LibraryCommands.class);
 
     private final AuthorService authorService;
     private final GenreService genreService;
     private final BookService bookService;
-
-    public LibraryCommands(AuthorService authorService, GenreService genreService, BookService bookService) {
-        this.authorService = authorService;
-        this.genreService = genreService;
-        this.bookService = bookService;
-    }
+    private final AuthorMapper authorMapper;
+    private final GenreMapper genreMapper;
+    private final BookMapper bookMapper;
 
     @ShellMethod(value = "List all books")
     public Table listBooks(
@@ -71,7 +73,7 @@ public class LibraryCommands {
 
 
 
-        Book createdBook = bookService.save(new BookDto(title, year, authorId, genreId));
+        Book createdBook = bookService.save(bookMapper.toBook(new BookDto(title, year, authorId, genreId)));
         return "Book \"" + createdBook.getTitle() + "\" created successfully with ID " + createdBook.getId();
     }
 
@@ -80,14 +82,14 @@ public class LibraryCommands {
             @ShellOption String firstname
             , @ShellOption String lastname
             , @ShellOption(defaultValue = ShellOption.NULL) String homeland) {
-        Author createdAuthor = authorService.save(new AuthorDto(firstname, lastname, homeland));
+        Author createdAuthor = authorService.save(authorMapper.toAuthor(new AuthorDto(firstname, lastname, homeland)));
         return "Author \"" + createdAuthor.getFirstname() + " " + createdAuthor.getLastname()
                 + "\" created successfully with ID " + createdAuthor.getId();
     }
 
     @ShellMethod(value = "Create author")
     public String createGenre(@ShellOption String name) {
-        Genre createdGenre = genreService.save(new GenreDto(name));
+        Genre createdGenre = genreService.save(genreMapper.toGenre(new GenreDto(name)));
         return "Genre \"" + createdGenre.getName() + "\" created successfully with ID " + createdGenre.getId();
     }
 

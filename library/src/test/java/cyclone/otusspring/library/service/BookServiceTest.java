@@ -1,7 +1,6 @@
 package cyclone.otusspring.library.service;
 
 import cyclone.otusspring.library.dbteststate.ResetStateExtension;
-import cyclone.otusspring.library.dto.BookDto;
 import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
@@ -17,7 +16,6 @@ import java.util.List;
 import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest(classes = {ServiceTestConfiguration.class})
 @ExtendWith(ResetStateExtension.class)
@@ -28,13 +26,12 @@ class BookServiceTest {
 
     @Test
     void create() {
-        BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor().getId(), NEW_BOOK.getGenre().getId());
+        final Book bookToCreate = new Book(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre());
 
-        Book createdBook = bookService.save(bookDtoToCreate);
+        Book createdBook = bookService.save(bookToCreate);
 
         assertThat(createdBook.getId()).isNotNull();
-        assertAll(() -> assertThat(createdBook.getTitle()).isEqualTo(bookDtoToCreate.getTitle())
-                , () -> assertThat(createdBook.getYear()).isEqualTo(bookDtoToCreate.getYear()));
+        assertThat(createdBook).isEqualToIgnoringGivenFields(bookToCreate, "id", "comments");
         assertThat(bookService.findAll()).usingRecursiveFieldByFieldElementComparator()
                 .contains(createdBook);
     }
@@ -42,9 +39,9 @@ class BookServiceTest {
     @Test
     @DisplayName("creating a book with non existent author fails")
     void create_fail_nonExistentAuthor() {
-        BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NO_SUCH_ID, NEW_BOOK.getGenre().getId());
+        Book bookToCreate = new Book(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), new Author(NO_SUCH_ID), NEW_BOOK.getGenre());
 
-        assertThatThrownBy(() -> bookService.save(bookDtoToCreate))
+        assertThatThrownBy(() -> bookService.save(bookToCreate))
                 .hasMessage("Could not save book")
                 .hasCause(new NotFoundException("Author ID " + NO_SUCH_ID + " not found"));
     }
@@ -52,9 +49,9 @@ class BookServiceTest {
     @Test
     @DisplayName("creating a book with non existent genre fails")
     void create_fail_nonExistentGenre() {
-        BookDto bookDtoToCreate = new BookDto(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor().getId(), NO_SUCH_ID);
+        Book bookToCreate = new Book(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), new Genre(NO_SUCH_ID, "no such genre"));
 
-        assertThatThrownBy(() -> bookService.save(bookDtoToCreate))
+        assertThatThrownBy(() -> bookService.save(bookToCreate))
                 .hasMessage("Could not save book")
                 .hasCause(new NotFoundException("Genre ID " + NO_SUCH_ID + " not found"));
     }

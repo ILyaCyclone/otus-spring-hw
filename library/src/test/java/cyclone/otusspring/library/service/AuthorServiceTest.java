@@ -1,7 +1,6 @@
 package cyclone.otusspring.library.service;
 
 import cyclone.otusspring.library.dbteststate.ResetStateExtension;
-import cyclone.otusspring.library.dto.AuthorDto;
 import cyclone.otusspring.library.model.Author;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,12 +22,11 @@ class AuthorServiceTest {
 
     @Test
     void create() {
-        AuthorDto authorDtoToCreate = new AuthorDto(NEW_AUTHOR.getFirstname(), NEW_AUTHOR.getLastname(), NEW_AUTHOR.getHomeland());
-
-        Author createdAuthor = authorService.save(authorDtoToCreate);
+        final Author authorToCreate = new Author(NEW_AUTHOR.getFirstname(), NEW_AUTHOR.getLastname(), NEW_AUTHOR.getHomeland());
+        Author createdAuthor = authorService.save(authorToCreate);
 
         assertThat(createdAuthor.getId()).isNotNull();
-        assertThat(createdAuthor).isEqualToIgnoringGivenFields(authorDtoToCreate, "id");
+        assertThat(createdAuthor).isEqualToIgnoringGivenFields(authorToCreate, "id");
         assertThat(authorService.findAll()).usingRecursiveFieldByFieldElementComparator()
                 .contains(createdAuthor);
     }

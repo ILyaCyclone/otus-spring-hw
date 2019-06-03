@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.stream.Collectors;
 
 import static cyclone.otusspring.library.controller.GenreController.BASE_URL;
 
@@ -27,10 +26,10 @@ public class GenreController {
     private final GenreMapper genreMapper;
 
     @ExceptionHandler(Exception.class)
-    public String handleError(HttpServletRequest req, Exception ex, RedirectAttributes redirectAttributes) {
-        logger.error("Request: " + req.getRequestURL() + " raised " + ex);
+    public String handleError(HttpServletRequest req, Exception e, RedirectAttributes redirectAttributes) {
+        logger.error("Request: " + req.getRequestURL() + " raised " + e, e);
 
-        redirectAttributes.addFlashAttribute("message", new Message(ex.getMessage(), Message.Type.ERROR));
+        redirectAttributes.addFlashAttribute("message", new Message(e.getMessage(), Message.Type.ERROR));
         return getRedirectToGenres();
     }
 
@@ -42,9 +41,7 @@ public class GenreController {
 
     @GetMapping
     public String genres(Model model) {
-        model.addAttribute("genres", genreService.findAll().stream()
-                .map(genreMapper::toGenreDto)
-                .collect(Collectors.toList()));
+        model.addAttribute("genreDtoList", genreMapper.toGenreDtoList(genreService.findAll()));
         return "genres";
     }
 
@@ -65,7 +62,7 @@ public class GenreController {
         if (genreDto.getId() != null && genreDto.getId().length() == 0) {
             genreDto.setId(null);
         }
-        Genre savedGenre = genreService.save(genreDto);
+        Genre savedGenre = genreService.save(genreMapper.toGenre(genreDto));
         redirectAttributes.addFlashAttribute("message", new Message("Genre saved"));
 
         return getRedirectToGenre(savedGenre.getId());
@@ -80,12 +77,12 @@ public class GenreController {
 
 
 
-    static String getRedirectToGenre(String genreId) {
-        return "redirect:/genres/" + genreId;
+    private static String getRedirectToGenre(String genreId) {
+        return "redirect:" + BASE_URL + "/" + genreId;
     }
 
-    static String getRedirectToGenres() {
-        return "redirect:/genres";
+    private static String getRedirectToGenres() {
+        return "redirect:" + BASE_URL;
     }
 
 }

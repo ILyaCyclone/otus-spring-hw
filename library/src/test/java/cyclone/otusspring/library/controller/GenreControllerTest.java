@@ -20,7 +20,6 @@ import java.util.List;
 import static cyclone.otusspring.library.TestData.*;
 import static cyclone.otusspring.library.controller.GenreController.BASE_URL;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -50,7 +49,7 @@ class GenreControllerTest {
 
         mockMvc.perform(get(BASE_URL))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("genres", genreDtoList))
+                .andExpect(model().attribute("genreDtoList", genreDtoList))
                 .andExpect(view().name("genres"));
     }
 
@@ -74,9 +73,8 @@ class GenreControllerTest {
 
     @Test
     void save() throws Exception {
-        final GenreDto genreDto = genreMapper.toGenreDto(GENRE1);
-        genreDto.setId(null);
-        when(genreServiceMock.save((GenreDto) any())).thenReturn(GENRE1);
+        final GenreDto genreDto = genreMapper.toGenreDto(NEW_GENRE);
+        when(genreServiceMock.save(NEW_GENRE)).thenReturn(GENRE1);
 
         mockMvc.perform(post(BASE_URL + "/save", genreDto))
                 .andExpect(status().is3xxRedirection())
@@ -100,11 +98,11 @@ class GenreControllerTest {
     @DisplayName("has error message when genre not found")
     void edit_nonExistent() throws Exception {
         final String genreId = NO_SUCH_ID;
-        final String errorMessage = "Genre ID " + genreId + "not found";
+        final String errorMessage = "Genre ID " + genreId + " not found";
         when(genreServiceMock.findOne(genreId)).thenThrow(new NotFoundException(errorMessage));
 
         mockMvc.perform(get(BASE_URL + "/" + genreId))
                 .andExpect(flash().attribute("message", new Message(errorMessage, Message.Type.ERROR)))
-                .andExpect(redirectedUrl(GenreController.getRedirectToGenres().replace("redirect:", "")));
+                .andExpect(redirectedUrl(BASE_URL));
     }
 }

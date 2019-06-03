@@ -22,16 +22,14 @@
         <th>Year</th>
         <th>Author</th>
         <th>Genre</th>
-        <th>Edit</th>
-        <th>Delete</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="book: ${books}" th:object="${book}">
+    <tr th:each="booksElementDto: ${booksElementDtoList}" th:object="${booksElementDto}">
         <td><a th:href="@{/books/{id}(id=*{id})}" th:text="*{title}">Title</a></td>
         <td th:text="*{year}">Year</td>
-        <td th:text="*{author.firstname} + ' ' + *{author.lastname}">Author</td>
-        <td th:text="*{genre.name}">Genre</td>
+        <td th:text="*{authorFirstname} + ' ' + *{authorLastname}">Author firstname lastname</td>
+        <td th:text="*{genreName}">Genre</td>
         <td></td>
     </tr>
     </tbody>

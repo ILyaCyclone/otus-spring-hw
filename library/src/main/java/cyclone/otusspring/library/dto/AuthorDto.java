@@ -2,10 +2,10 @@ package cyclone.otusspring.library.dto;
 
 import lombok.Data;
 
-import java.util.Objects;
+import java.io.Serializable;
 
 @Data
-public class AuthorDto {
+public class AuthorDto implements Serializable {
     private String id;
     private String firstname;
     private String lastname;
@@ -19,9 +19,6 @@ public class AuthorDto {
     }
 
     public AuthorDto(String id, String firstname, String lastname, String homeland) {
-        Objects.requireNonNull(firstname, "author firstname must not be null");
-        Objects.requireNonNull(lastname, "author lastname must not be null");
-
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;

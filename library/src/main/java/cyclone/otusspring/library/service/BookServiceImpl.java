@@ -1,6 +1,5 @@
 package cyclone.otusspring.library.service;
 
-import cyclone.otusspring.library.dto.BookDto;
 import cyclone.otusspring.library.mapper.BookMapper;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
@@ -45,16 +44,6 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book save(Book book) {
         return bookRepository.save(book);
-    }
-
-    @Override
-    public Book save(BookDto bookDto) {
-        try {
-            return bookRepository.save(bookMapper.toBook(bookDto));
-        } catch (Exception e) {
-            logger.error("Could not save book", e);
-            throw new RuntimeException("Could not save book", e);
-        }
     }
 
     @Override

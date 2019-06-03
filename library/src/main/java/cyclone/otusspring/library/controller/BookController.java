@@ -19,12 +19,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.stream.Collectors;
+
+import static cyclone.otusspring.library.controller.BookController.BASE_URL;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/books")
+@RequestMapping(BASE_URL)
 public class BookController {
+    static final String BASE_URL = "/books";
     private static final Logger logger = LoggerFactory.getLogger(BookController.class);
 
     private final BookService bookService;
@@ -34,10 +36,10 @@ public class BookController {
     private final CommentMapper commentMapper;
 
     @ExceptionHandler(Exception.class)
-    public String handleError(HttpServletRequest req, Exception ex, RedirectAttributes redirectAttributes) {
-        logger.error("Request: " + req.getRequestURL() + " raised " + ex);
+    public String handleError(HttpServletRequest req, Exception e, RedirectAttributes redirectAttributes) {
+        logger.error("Request: " + req.getRequestURL() + " raised " + e, e);
 
-        redirectAttributes.addFlashAttribute("message", new Message(ex.getMessage(), Message.Type.ERROR));
+        redirectAttributes.addFlashAttribute("message", new Message(e.getMessage(), Message.Type.ERROR));
         return getRedirectToBooks();
     }
 
@@ -45,7 +47,7 @@ public class BookController {
 
     @GetMapping
     public String books(Model model) {
-        model.addAttribute("books", bookService.findAll());
+        model.addAttribute("booksElementDtoList", bookMapper.toBooksElementDtoList(bookService.findAll()));
         return "books";
     }
 
@@ -77,12 +79,13 @@ public class BookController {
         if (bookDto.getId() != null && bookDto.getId().length() == 0) {
             bookDto.setId(null);
         }
+        Book bookToSave = bookMapper.toBook(bookDto);
         if (bookDto.getId() != null) {
-            bookDto.setCommentDtoList(bookService.findOne(bookDto.getId()).getComments()
-                    .stream().map(comment -> commentMapper.toCommentDto(comment, bookDto.getId()))
-                    .collect(Collectors.toList()));
+            bookToSave.addComments(bookService.findOne(bookDto.getId()).getComments());
         }
-        Book savedBook = bookService.save(bookDto);
+
+        Book savedBook = bookService.save(bookToSave);
+
         redirectAttributes.addFlashAttribute("message", new Message("Book saved"));
         return getRedirectToBook(savedBook.getId());
     }
@@ -113,11 +116,11 @@ public class BookController {
         model.addAttribute("allGenres", genreService.findAll());
     }
 
-    private String getRedirectToBook(String bookId) {
+    static String getRedirectToBook(String bookId) {
         return "redirect:/books/" + bookId;
     }
 
-    private String getRedirectToBooks() {
+    static String getRedirectToBooks() {
         return "redirect:/books";
     }
 }
