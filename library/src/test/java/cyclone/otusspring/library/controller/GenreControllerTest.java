@@ -41,7 +41,7 @@ class GenreControllerTest {
     GenreService genreServiceMock;
 
     @Test
-    void genres() throws Exception {
+    void genresView() throws Exception {
         final List<Genre> genres = Arrays.asList(GENRE1, GENRE2, GENRE3);
         when(genreServiceMock.findAll()).thenReturn(genres);
 
@@ -55,7 +55,7 @@ class GenreControllerTest {
     }
 
     @Test
-    void create() throws Exception {
+    void createView() throws Exception {
         mockMvc.perform(get(BASE_URL + "/new"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("genreDto", new GenreDto()))
@@ -63,7 +63,7 @@ class GenreControllerTest {
     }
 
     @Test
-    void edit() throws Exception {
+    void editView() throws Exception {
         when(genreServiceMock.findOne(GENRE1.getId())).thenReturn(GENRE1);
 
         mockMvc.perform(get(BASE_URL + "/" + GENRE1.getId()))

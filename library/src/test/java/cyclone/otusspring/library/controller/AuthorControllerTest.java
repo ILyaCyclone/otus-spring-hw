@@ -42,7 +42,7 @@ class AuthorControllerTest {
     AuthorService authorServiceMock;
 
     @Test
-    void authors() throws Exception {
+    void authorsView() throws Exception {
         final List<Author> authors = Arrays.asList(AUTHOR1, AUTHOR2, AUTHOR3);
         when(authorServiceMock.findAll()).thenReturn(authors);
 
@@ -56,7 +56,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    void create() throws Exception {
+    void createView() throws Exception {
         mockMvc.perform(get(BASE_URL + "/new"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("authorDto", new AuthorDto()))
@@ -64,7 +64,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    void edit() throws Exception {
+    void editView() throws Exception {
         when(authorServiceMock.findOne(AUTHOR1.getId())).thenReturn(AUTHOR1);
 
         mockMvc.perform(get(BASE_URL + "/" + AUTHOR1.getId()))

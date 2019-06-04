@@ -40,19 +40,19 @@ public class GenreController {
     }
 
     @GetMapping
-    public String genres(Model model) {
+    public String genresView(Model model) {
         model.addAttribute("genreDtoList", genreMapper.toGenreDtoList(genreService.findAll()));
         return "genres";
     }
 
     @GetMapping("/new")
-    public String create(Model model) {
+    public String createView(Model model) {
         model.addAttribute("genreDto", new GenreDto());
         return "genre-form";
     }
 
     @GetMapping("/{id}")
-    public String edit(Model model, @PathVariable(name = "id") String id) {
+    public String editView(Model model, @PathVariable(name = "id") String id) {
         model.addAttribute("genreDto", genreMapper.toGenreDto(genreService.findOne(id)));
         return "genre-form";
     }

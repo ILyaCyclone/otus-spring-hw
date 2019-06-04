@@ -46,21 +46,21 @@ public class BookController {
 
 
     @GetMapping
-    public String books(Model model) {
+    public String booksView(Model model) {
         model.addAttribute("booksElementDtoList", bookMapper.toBooksElementDtoList(bookService.findAll()));
         return "books";
     }
 
 
     @GetMapping("/new")
-    public String create(Model model) {
+    public String createView(Model model) {
         model.addAttribute("bookDto", new BookDto());
         addAuthorsAndGenresToModel(model);
         return "book-form";
     }
 
     @GetMapping("/{id}")
-    public String edit(Model model, @PathVariable(name = "id") String id) {
+    public String editView(Model model, @PathVariable(name = "id") String id) {
         Book book = bookService.findOne(id);
         model.addAttribute("bookDto", bookMapper.toDto(book));
 

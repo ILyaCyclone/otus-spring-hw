@@ -38,19 +38,19 @@ public class AuthorController {
 
 
     @GetMapping
-    public String authors(Model model) {
+    public String authorsView(Model model) {
         model.addAttribute("authorDtoList", authorMapper.toAuthorDtoList(authorService.findAll()));
         return "authors";
     }
 
     @GetMapping("/new")
-    public String create(Model model) {
+    public String createView(Model model) {
         model.addAttribute("authorDto", new AuthorDto());
         return "author-form";
     }
 
     @GetMapping("/{id}")
-    public String edit(Model model, @PathVariable(name = "id") String id) {
+    public String editView(Model model, @PathVariable(name = "id") String id) {
         model.addAttribute("authorDto", authorMapper.toAuthorDto(authorService.findOne(id)));
         return "author-form";
     }

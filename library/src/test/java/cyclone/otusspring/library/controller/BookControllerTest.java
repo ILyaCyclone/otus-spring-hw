@@ -52,7 +52,7 @@ class BookControllerTest {
     GenreService genreServiceMock;
 
     @Test
-    void books() throws Exception {
+    void booksView() throws Exception {
         final List<Book> books = Arrays.asList(BOOK1, BOOK2, BOOK3);
         final List<BookListElementDto> bookListElementDtoList = bookMapper.toBooksElementDtoList(books);
         when(bookServiceMock.findAll()).thenReturn(books);
@@ -64,7 +64,7 @@ class BookControllerTest {
     }
 
     @Test
-    void create() throws Exception {
+    void createView() throws Exception {
         mockMvc.perform(get(BASE_URL + "/new"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("bookDto", new BookDto()))
@@ -72,7 +72,7 @@ class BookControllerTest {
     }
 
     @Test
-    void edit() throws Exception {
+    void editView() throws Exception {
         when(bookServiceMock.findOne(BOOK1.getId())).thenReturn(BOOK1);
 
         mockMvc.perform(get(BASE_URL + "/" + BOOK1.getId()))
