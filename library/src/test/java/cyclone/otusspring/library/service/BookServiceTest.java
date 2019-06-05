@@ -4,6 +4,7 @@ import cyclone.otusspring.library.dbteststate.ResetStateExtension;
 import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
+import cyclone.otusspring.library.model.BookWithoutComments;
 import cyclone.otusspring.library.model.Genre;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,34 @@ class BookServiceTest {
         assertThat(createdBook).isEqualToIgnoringGivenFields(bookToCreate, "id", "comments");
         assertThat(bookService.findAll()).usingRecursiveFieldByFieldElementComparator()
                 .contains(createdBook);
+    }
+
+    @Test
+    @DisplayName("possible to use BookWithoutComments to create book")
+    void create_withoutComments() {
+        final BookWithoutComments bookToCreate = new BookWithoutComments(null, NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre());
+
+        BookWithoutComments createdBook = bookService.save(bookToCreate);
+
+        assertThat(createdBook.getId()).isNotNull();
+        assertThat(createdBook).isEqualToIgnoringGivenFields(bookToCreate, "id", "comments");
+        assertThat(bookService.findOne(createdBook.getId())).isEqualToIgnoringGivenFields(bookToCreate, "comments");
+    }
+
+    @Test
+    @DisplayName("updating book without comments doesn't erase existing comments")
+    void update_withoutComments() {
+        final BookWithoutComments bookToCreate = new BookWithoutComments(BOOK1.getId()
+                , "upd " + BOOK1.getTitle(), 1 + BOOK1.getYear(), BOOK2.getAuthor(), BOOK2.getGenre());
+
+        BookWithoutComments createdBook = bookService.save(bookToCreate);
+
+        assertThat(createdBook.getId()).isNotNull();
+        assertThat(createdBook).isEqualToIgnoringGivenFields(bookToCreate, "id", "comments");
+
+        Book book = bookService.findOne(createdBook.getId());
+        assertThat(book).isEqualToIgnoringGivenFields(bookToCreate, "comments");
+        assertThat(book.getComments()).containsExactly(COMMENT1, COMMENT3);
     }
 
     @Test

@@ -1,7 +1,6 @@
 package cyclone.otusspring.library.repository;
 
 
-import com.mongodb.DBObject;
 import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
@@ -17,7 +16,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
@@ -85,18 +83,5 @@ public class BookRepositoryImpl implements BookRepository {
     @Override
     public boolean exists(String id) {
         return mongoRepository.existsById(id);
-    }
-
-
-    private void setField(String fieldPrefix, DBObject data, Update update) {
-        Set<String> keySet = data.keySet();
-        for (String field : keySet) {
-            Object value = data.get(field);
-            if (value instanceof DBObject) {
-                setField(field + ".", (DBObject) value, update);
-            } else {
-                update.set(fieldPrefix + field, value);
-            }
-        }
     }
 }

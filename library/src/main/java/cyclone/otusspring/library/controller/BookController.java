@@ -70,7 +70,7 @@ public class BookController {
     }
 
     /**
-     * Doesn't use сommentDtoList from bookDto.
+     * Doesn't save сommentDtoList from bookDto.
      * To save comments use {@code BookController::saveComment}.
      */
     @PostMapping("/save")
