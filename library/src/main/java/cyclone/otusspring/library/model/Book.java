@@ -23,7 +23,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class Book {
-//    public static final String GRAPH_WITH_AUTHOR_GENRE = "with-author-genre";
 
     @Id
     private String id;

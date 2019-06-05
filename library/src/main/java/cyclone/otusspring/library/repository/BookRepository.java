@@ -2,6 +2,7 @@ package cyclone.otusspring.library.repository;
 
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
+import cyclone.otusspring.library.model.BookWithoutComments;
 import cyclone.otusspring.library.model.Genre;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public interface BookRepository {
     Book findOne(String id);
 
     Book save(Book book);
+
+    BookWithoutComments save(BookWithoutComments book);
 
     void delete(String id);
 
