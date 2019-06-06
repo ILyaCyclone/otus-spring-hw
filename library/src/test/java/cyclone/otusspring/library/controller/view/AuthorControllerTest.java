@@ -1,4 +1,4 @@
-package cyclone.otusspring.library.controller;
+package cyclone.otusspring.library.controller.view;
 
 import cyclone.otusspring.library.dto.AuthorDto;
 import cyclone.otusspring.library.dto.Message;
@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static cyclone.otusspring.library.TestData.*;
-import static cyclone.otusspring.library.controller.AuthorController.BASE_URL;
+import static cyclone.otusspring.library.controller.view.AuthorController.BASE_URL;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.Mockito.*;
