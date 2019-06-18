@@ -2,13 +2,15 @@ import React from 'react'
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 
 import Header from './components/layout/Header';
+import Home from "./components/Home";
 
 import Authors from './components/Authors'
-
-import Home from "./components/Home";
 import AuthorForm from "./components/AuthorForm";
+import Genres from './components/Genres'
+import GenreForm from "./components/GenreForm";
 
-function App() {
+
+export default function App() {
     return (
         <>
             <BrowserRouter basename="/spa">
@@ -17,10 +19,11 @@ function App() {
                     <Route exact path="/" component={Home}/>
                     <Route exact path="/authors" component={Authors}/>
                     <Route exact path="/authors/:id" component={AuthorForm}/>
+
+                    <Route exact path="/genres" component={Genres}/>
+                    <Route exact path="/genres/:id" component={GenreForm}/>
                 </Switch>
             </BrowserRouter>
         </>
     )
 }
-
-export default App;
