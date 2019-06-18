@@ -15,14 +15,18 @@ export default function App() {
         <>
             <BrowserRouter basename="/spa">
                 <Header/>
-                <Switch>
-                    <Route exact path="/" component={Home}/>
-                    <Route exact path="/authors" component={Authors}/>
-                    <Route exact path="/authors/:id" component={AuthorForm}/>
+                <div className="container">
+                    <Switch>
+                        <Route exact path="/" component={Home}/>
+                        <Route exact path="/authors" component={Authors}/>
+                        <Route exact path="/authors/:id" component={AuthorForm}/>
 
-                    <Route exact path="/genres" component={Genres}/>
-                    <Route exact path="/genres/:id" component={GenreForm}/>
-                </Switch>
+                        <Route exact path="/genres" component={Genres}/>
+                        <Route exact path="/genres/:id" component={GenreForm}/>
+
+                        <Route render={() => <p>No such page</p>}/>
+                    </Switch>
+                </div>
             </BrowserRouter>
         </>
     )

@@ -19,11 +19,9 @@ function AuthorForm({match, history}) {
             fetch(apiPath + authorId)
                 .then(response => throwIfError(response))
                 .then(response => response.json())
-                .then(author => {
-                    setAuthor(author);
-                    setIsLoading(false);
-                })
-                .catch(error => alertError(error));
+                .then(author => setAuthor(author))
+                .catch(error => alertError(error))
+                .finally(() => setIsLoading(false));
         }
     }, [])
 

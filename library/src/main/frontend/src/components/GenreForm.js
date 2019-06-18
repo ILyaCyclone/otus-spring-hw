@@ -19,11 +19,9 @@ function GenreForm({match, history}) {
             fetch(apiPath + genreId)
                 .then(response => throwIfError(response))
                 .then(response => response.json())
-                .then(genre => {
-                    setGenre(genre);
-                    setIsLoading(false);
-                })
-                .catch(error => alertError(error));
+                .then(genre => setGenre(genre))
+                .catch(error => alertError(error))
+                .finally(() => setIsLoading(false));
         }
     }, [])
 

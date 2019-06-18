@@ -1,7 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 
+import PageTitle from './layout/PageTitle';
+
 import Loading from './Loading';
+import {throwIfError} from "../utils/errorHandler";
+import {alertError} from "../utils/alert";
 
 export default function Authors() {
     const [authors, setAuthors] = useState([]);
@@ -9,28 +13,30 @@ export default function Authors() {
 
     useEffect(() => {
         fetch("/api/v1/authors")
-            .then(response => {
-                setIsLoading(false);
-                return response.json();
-            })
-            .then(authors => setAuthors(authors));
+            .then(response => throwIfError(response))
+            .then(response => response.json())
+            .then(authors => setAuthors(authors))
+            .catch(error => alertError(error))
+            .finally(() => setIsLoading(false))
     }, []);
 
-    if (isLoading === true) {
-        return (<Loading/>)
-    } else {
-        return (
-            <React.Fragment>
-
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Homeland</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {
+    return (
+        <>
+            <PageTitle title="Authors"/>
+            {isLoading ?
+                <Loading/>
+                :
+                authors.length > 0 ?
+                    <>
+                        <table className="table table-hover w-50">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Homeland</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {
                         authors.map((author, i) => (
                             <tr key={i}>
                                 <td>
@@ -39,11 +45,14 @@ export default function Authors() {
                                 <td>{author.homeland}</td>
                             </tr>
                         ))
-                    }
-                    </tbody>
-                </table>
-                <Link to="/authors/new">Create new author</Link>
-            </React.Fragment>
-        )
-    }
+                            }
+                            </tbody>
+                        </table>
+                    </>
+                    :
+                    <p>No data available</p>
+            }
+            <Link className="btn btn-success mt-3" to="/authors/new">Create new author</Link>
+        </>
+    )
 }

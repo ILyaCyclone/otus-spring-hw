@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
-
-import Loading from './Loading';
+import Loading from "./Loading";
+import PageTitle from "./layout/PageTitle";
+import {alertError} from "../utils/alert";
+import {throwIfError} from "../utils/errorHandler";
 
 export default function Genres() {
     const [genres, setGenres] = useState([]);
@@ -9,39 +11,46 @@ export default function Genres() {
 
     useEffect(() => {
         fetch("/api/v1/genres")
-            .then(response => {
-                setIsLoading(false);
-                return response.json();
-            })
-            .then(genres => setGenres(genres));
+            .then(response => throwIfError(response))
+            .then(response => response.json())
+            .then(genres => setGenres(genres))
+            .catch(error => alertError(error))
+            .finally(() => setIsLoading(false))
     }, []);
 
-    if (isLoading === true) {
-        return (<Loading/>)
-    } else {
-        return (
-            <React.Fragment>
 
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {
-                        genres.map((genre, i) => (
-                            <tr key={i}>
-                                <td>
-                                    <Link to={`/genres/${genre.id}`}>{genre.name}</Link>
-                                </td>
+    return (
+        <>
+            <PageTitle title="Genres"/>
+            {isLoading ?
+                <Loading/>
+                :
+                genres.length > 0 ?
+                    <>
+                        <table className="table table-hover w-50">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
                             </tr>
-                        ))
-                    }
-                    </tbody>
-                </table>
-                <Link to="/genres/new">Create new genre</Link>
-            </React.Fragment>
-        )
-    }
+                            </thead>
+                            <tbody>
+                            {
+                                genres.map((genre, i) => (
+                                    <tr key={i}>
+                                        <td>
+                                            <Link to={`/genres/${genre.id}`}>{genre.name}</Link>
+                                        </td>
+                                    </tr>
+                                ))
+                            }
+                            </tbody>
+                        </table>
+                    </>
+                    :
+                    <p>No data available</p>
+
+            }
+            <Link className="btn btn-success mt-3" to="/genres/new">Create new genre</Link>
+        </>
+    )
 }
