@@ -3,6 +3,7 @@ package cyclone.otusspring.library.service;
 import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
+import cyclone.otusspring.library.model.BookWithoutComments;
 import cyclone.otusspring.library.model.Genre;
 import cyclone.otusspring.library.repository.AuthorRepository;
 import cyclone.otusspring.library.repository.BookRepository;
@@ -57,6 +58,11 @@ public class BookServiceImpl implements BookService {
 
         }
         return bookRepository.save(book);
+    }
+
+    @Override
+    public BookWithoutComments save(BookWithoutComments bookWithoutComments) {
+        return bookRepository.save(bookWithoutComments);
     }
 
     @Override

@@ -7,6 +7,7 @@ import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.mapper.BookMapper;
 import cyclone.otusspring.library.mapper.CommentMapper;
 import cyclone.otusspring.library.model.Book;
+import cyclone.otusspring.library.model.BookWithoutComments;
 import cyclone.otusspring.library.service.AuthorService;
 import cyclone.otusspring.library.service.BookService;
 import cyclone.otusspring.library.service.GenreService;
@@ -83,11 +84,12 @@ class BookControllerTest {
 
     @Test
     void save() throws Exception {
-        final Book savedBook = new Book(NO_SUCH_ID, NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre());
+        final BookWithoutComments bookToSave = new BookWithoutComments(null, NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre());
+        final BookWithoutComments savedBook = new BookWithoutComments(NO_SUCH_ID, NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre());
         // AuthorService and GenreService are used by BookMapper
         when(authorServiceMock.findOne(NEW_BOOK.getAuthor().getId())).thenReturn(NEW_BOOK.getAuthor());
         when(genreServiceMock.findOne(NEW_BOOK.getGenre().getId())).thenReturn(NEW_BOOK.getGenre());
-        when(bookServiceMock.save(NEW_BOOK)).thenReturn(savedBook);
+        when(bookServiceMock.save(bookToSave)).thenReturn(savedBook);
 
         mockMvc.perform(post(BASE_URL + "/save")
                 .param("title", NEW_BOOK.getTitle())
@@ -98,7 +100,7 @@ class BookControllerTest {
         )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("message", new Message("Book saved")))
-                .andExpect(redirectedUrl(BASE_URL + "/" + savedBook.getId()));
+                .andExpect(redirectedUrl(BASE_URL + "/" + NO_SUCH_ID));
     }
 
     @Test

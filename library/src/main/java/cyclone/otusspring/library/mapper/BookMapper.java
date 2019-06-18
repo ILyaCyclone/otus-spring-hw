@@ -5,6 +5,7 @@ import cyclone.otusspring.library.dto.BookListElementDto;
 import cyclone.otusspring.library.dto.CommentDto;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
+import cyclone.otusspring.library.model.BookWithoutComments;
 import cyclone.otusspring.library.model.Genre;
 import cyclone.otusspring.library.service.AuthorService;
 import cyclone.otusspring.library.service.GenreService;
@@ -57,5 +58,15 @@ public class BookMapper {
         return books.stream()
                 .map(this::toBooksElementDto)
                 .collect(Collectors.toList());
+    }
+
+    public BookWithoutComments toBookWithoutComments(BookDto bookDto) {
+        try {
+            Author author = authorService.findOne(bookDto.getAuthorId());
+            Genre genre = genreService.findOne(bookDto.getGenreId());
+            return new BookWithoutComments(bookDto.getId(), bookDto.getTitle(), bookDto.getYear(), author, genre);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not map to book, reason: " + e.getMessage(), e);
+        }
     }
 }

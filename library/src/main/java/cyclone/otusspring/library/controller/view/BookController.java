@@ -6,6 +6,7 @@ import cyclone.otusspring.library.dto.Message;
 import cyclone.otusspring.library.mapper.BookMapper;
 import cyclone.otusspring.library.mapper.CommentMapper;
 import cyclone.otusspring.library.model.Book;
+import cyclone.otusspring.library.model.BookWithoutComments;
 import cyclone.otusspring.library.model.Comment;
 import cyclone.otusspring.library.service.AuthorService;
 import cyclone.otusspring.library.service.BookService;
@@ -69,7 +70,7 @@ public class BookController {
     }
 
     /**
-     * Doesn't use сommentDtoList from bookDto.
+     * Doesn't save сommentDtoList from bookDto.
      * To save comments use {@code BookController::saveComment}.
      */
     @PostMapping("/save")
@@ -77,12 +78,9 @@ public class BookController {
         if (bookDto.getId() != null && bookDto.getId().length() == 0) {
             bookDto.setId(null);
         }
-        Book bookToSave = bookMapper.toBook(bookDto);
-        if (bookDto.getId() != null) {
-            bookToSave.addComments(bookService.findOne(bookDto.getId()).getComments());
-        }
+        BookWithoutComments bookToSave = bookMapper.toBookWithoutComments(bookDto);
 
-        Book savedBook = bookService.save(bookToSave);
+        BookWithoutComments savedBook = bookService.save(bookToSave);
 
         redirectAttributes.addFlashAttribute("message", new Message("Book saved"));
         return getRedirectToBook(savedBook.getId());
