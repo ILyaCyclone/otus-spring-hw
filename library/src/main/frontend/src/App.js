@@ -4,13 +4,14 @@ import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import Header from './components/layout/Header';
 
 import Authors from './components/Authors'
+
 import Home from "./components/Home";
 import AuthorForm from "./components/AuthorForm";
 
 function App() {
     return (
         <>
-            <BrowserRouter>
+            <BrowserRouter basename="/spa">
                 <Header/>
                 <Switch>
                     <Route exact path="/" component={Home}/>
