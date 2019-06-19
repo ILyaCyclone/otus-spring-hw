@@ -4,6 +4,8 @@ import {Link, withRouter} from 'react-router-dom';
 import Loading from './Loading';
 import {throwIfError} from './../utils/errorHandler';
 import {alertError, alertMessage} from './../utils/alert';
+import PageTitle from "./layout/PageTitle";
+import {getFromApi} from "../utils/backendApi";
 
 function AuthorForm({match, history}) {
 
@@ -16,11 +18,8 @@ function AuthorForm({match, history}) {
 
     useEffect(() => {
         if (!isNew) {
-            fetch(apiPath + authorId)
-                .then(response => throwIfError(response))
-                .then(response => response.json())
+            getFromApi(apiPath + authorId)
                 .then(author => setAuthor(author))
-                .catch(error => alertError(error))
                 .finally(() => setIsLoading(false));
         }
     }, [])
@@ -77,6 +76,7 @@ function AuthorForm({match, history}) {
     else
         return (
             <>
+                <PageTitle title={isNew ? "Create author" : "Edit author"}/>
                 <form onSubmit={isNew ? create : update}>
 
                     <div className="form-group">
@@ -97,11 +97,15 @@ function AuthorForm({match, history}) {
                                onChange={onTextChange}/>
                     </div>
 
-                    <input className="btn btn-primary" type="submit" value="Submit"/>
-                    <Link className="btn btn-outline-primary" to="/authors">Cancel</Link>
+                    <div className="btn-group">
+                        <input className="btn btn-primary" type="submit" value="Submit"/>
+                        <Link className="btn btn-outline-primary" to="/authors">Cancel</Link>
+                        {!isNew &&
+                        <input type="button" className="btn btn-outline-danger" onClick={del} value="Delete"/>
+                        }
+                    </div>
 
                 </form>
-                <button onClick={del}>Delete</button>
             </>
         )
 }

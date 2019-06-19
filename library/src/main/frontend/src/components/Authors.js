@@ -4,20 +4,16 @@ import {Link} from 'react-router-dom';
 import PageTitle from './layout/PageTitle';
 
 import Loading from './Loading';
-import {throwIfError} from "../utils/errorHandler";
-import {alertError} from "../utils/alert";
+import {getFromApi} from "../utils/backendApi";
 
 export default function Authors() {
     const [authors, setAuthors] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        fetch("/api/v1/authors")
-            .then(response => throwIfError(response))
-            .then(response => response.json())
+        getFromApi("/api/v1/authors")
             .then(authors => setAuthors(authors))
-            .catch(error => alertError(error))
-            .finally(() => setIsLoading(false))
+            .finally(() => setIsLoading(false));
     }, []);
 
     return (
@@ -52,7 +48,7 @@ export default function Authors() {
                     :
                     <p>No data available</p>
             }
-            <Link className="btn btn-success mt-3" to="/authors/new">Create new author</Link>
+            <Link className="btn btn-success" to="/authors/new">Create new author</Link>
         </>
     )
 }

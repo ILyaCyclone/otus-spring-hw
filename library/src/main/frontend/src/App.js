@@ -8,6 +8,8 @@ import Authors from './components/Authors'
 import AuthorForm from "./components/AuthorForm";
 import Genres from './components/Genres'
 import GenreForm from "./components/GenreForm";
+import Books from "./components/Books";
+import BookForm from "./components/BookForm";
 
 
 export default function App() {
@@ -23,6 +25,9 @@ export default function App() {
 
                         <Route exact path="/genres" component={Genres}/>
                         <Route exact path="/genres/:id" component={GenreForm}/>
+
+                        <Route exact path="/books" component={Books}/>
+                        <Route exact path="/books/:id" component={BookForm}/>
 
                         <Route render={() => <p>No such page</p>}/>
                     </Switch>

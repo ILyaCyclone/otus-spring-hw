@@ -1,41 +1,48 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
-import Loading from "./Loading";
-import PageTitle from "./layout/PageTitle";
+
+import PageTitle from './layout/PageTitle';
+
+import Loading from './Loading';
 import {getFromApi} from "../utils/backendApi";
 
-export default function Genres() {
-    const [genres, setGenres] = useState([]);
+export default function Books() {
+    const [books, setBooks] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        getFromApi("/api/v1/genres")
-            .then(genres => setGenres(genres))
+        getFromApi("/api/v1/books")
+            .then(books => setBooks(books))
             .finally(() => setIsLoading(false));
     }, []);
 
-
     return (
         <>
-            <PageTitle title="Genres"/>
+            <PageTitle title="Books"/>
             {isLoading ?
                 <Loading/>
                 :
-                genres.length > 0 ?
+                books.length > 0 ?
                     <>
-                        <table className="table table-hover w-25">
+                        <table className="table table-hover w-75">
                             <thead>
                             <tr>
-                                <th>Name</th>
+                                <th>Title</th>
+                                <th>Year</th>
+                                <th>Author</th>
+                                <th>Genre</th>
                             </tr>
                             </thead>
                             <tbody>
                             {
-                                genres.map((genre, i) => (
+                                books.map((book, i) => (
                                     <tr key={i}>
                                         <td>
-                                            <Link to={`/genres/${genre.id}`}>{genre.name}</Link>
+                                            <Link to={`/books/${book.id}`}>{book.title}</Link>
                                         </td>
+                                        <td>{book.year}</td>
+                                        <td>{book.authorFirstname} {book.authorLastname}</td>
+                                        <td>{book.genreName}</td>
                                     </tr>
                                 ))
                             }
@@ -44,9 +51,8 @@ export default function Genres() {
                     </>
                     :
                     <p>No data available</p>
-
             }
-            <Link className="btn btn-success" to="/genres/new">Create new genre</Link>
+            <Link className="btn btn-success" to="/books/new">Create new book</Link>
         </>
     )
 }

@@ -3,7 +3,9 @@ import {Link, withRouter} from 'react-router-dom';
 
 import Loading from './Loading';
 import {throwIfError} from './../utils/errorHandler';
-import {alertError} from './../utils/alert';
+import {alertError, alertMessage} from './../utils/alert';
+import PageTitle from "./layout/PageTitle";
+import {getFromApi} from "../utils/backendApi";
 
 function GenreForm({match, history}) {
 
@@ -16,11 +18,8 @@ function GenreForm({match, history}) {
 
     useEffect(() => {
         if (!isNew) {
-            fetch(apiPath + genreId)
-                .then(response => throwIfError(response))
-                .then(response => response.json())
+            getFromApi(apiPath + genreId)
                 .then(genre => setGenre(genre))
-                .catch(error => alertError(error))
                 .finally(() => setIsLoading(false));
         }
     }, [])
@@ -39,7 +38,7 @@ function GenreForm({match, history}) {
             .then(response => throwIfError(response))
             .then(response => response.json())
             .then(created => history.push("/genres/" + created.id))
-            // .then(response => alertMessage("Genre created"))
+            .then(response => alertMessage("Genre created"))
             .catch(error => alertError(error));
     }
 
@@ -53,7 +52,7 @@ function GenreForm({match, history}) {
             }
         })
             .then(response => throwIfError(response))
-            // .then(response => alertMessage("Genre updated"))
+            .then(response => alertMessage("Genre updated"))
             .catch(error => alertError(error));
     }
 
@@ -63,7 +62,7 @@ function GenreForm({match, history}) {
         })
             .then(response => throwIfError(response))
             .then(response => history.push("/genres"))
-            // .then(response => alertMessage("Genre deleted"))
+            .then(response => alertMessage("Genre deleted"))
             .catch(error => alertError(error));
     }
 
@@ -77,6 +76,7 @@ function GenreForm({match, history}) {
     else
         return (
             <>
+                <PageTitle title={isNew ? "Create genre" : "Edit genre"}/>
                 <form onSubmit={isNew ? create : update}>
 
                     <div className="form-group">
@@ -85,11 +85,15 @@ function GenreForm({match, history}) {
                                onChange={onTextChange}/>
                     </div>
 
-                    <input className="btn btn-primary" type="submit" value="Submit"/>
-                    <Link className="btn btn-outline-primary" to="/genres">Cancel</Link>
+                    <div className="btn-group">
+                        <input className="btn btn-primary" type="submit" value="Submit"/>
+                        <Link className="btn btn-outline-primary" to="/genres">Cancel</Link>
+                        {!isNew &&
+                        <input type="button" className="btn btn-outline-danger" onClick={del} value="Delete"/>
+                        }
+                    </div>
 
                 </form>
-                <button onClick={del}>Delete</button>
             </>
         )
 }
