@@ -13,7 +13,7 @@ function AuthorForm({match, history}) {
     const authorId = match.params.id;
     const isNew = authorId === "new";
 
-    const [author, setAuthor] = useState({});
+    const [author, setAuthor] = useState({firstname: "", lastname: "", homeland: ""});
     const [isLoading, setIsLoading] = useState(!isNew);
 
     useEffect(() => {

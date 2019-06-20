@@ -13,7 +13,7 @@ function GenreForm({match, history}) {
     const genreId = match.params.id;
     const isNew = genreId === "new";
 
-    const [genre, setGenre] = useState({});
+    const [genre, setGenre] = useState({name: ""});
     const [isLoading, setIsLoading] = useState(!isNew);
 
     useEffect(() => {
