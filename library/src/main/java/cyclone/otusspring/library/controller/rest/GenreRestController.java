@@ -18,26 +18,6 @@ import java.util.List;
 
 import static cyclone.otusspring.library.controller.rest.GenreRestController.BASE_URL;
 
-/**
- * curl commands
- * ## get all genres
- * curl http://localhost:8080/api/v1/genres
- * <p>
- * ## get genre by {id}
- * curl http://localhost:8080/api/v1/genres/{id}
- * <p>
- * ## create genre
- * curl http://localhost:8080/api/v1/genres -X POST -H "Content-Type:application/json" -d "{\"firstname\":\"New Fi
- * rstname\", \"lastname\": \"New Lastname\", \"homeland\": \"New Homeland\"}" -i
- * <p>
- * ## update genre by {id}
- * curl http://localhost:8080/api/v1/genres/{id} -X PUT -H "Content-Type:application/json" -d "{\"firstname\":\"New F
- * irstname\", \"lastname\": \"New Lastname\", \"homeland\": \"upd\"}" -i
- * <p>
- * ## delete genre by {id}
- * curl http://localhost:8080/api/v1/genres/{id} -X DELETE -i
- */
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(BASE_URL)

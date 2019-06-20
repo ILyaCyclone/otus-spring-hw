@@ -27,26 +27,6 @@ import java.util.List;
 
 import static cyclone.otusspring.library.controller.rest.BookRestController.BASE_URL;
 
-/**
- * curl commands
- * ## get all books
- * curl http://localhost:8080/api/v1/books
- * <p>
- * ## get book by {id}
- * curl http://localhost:8080/api/v1/books/{id}
- * <p>
- * ## create book
- * curl http://localhost:8080/api/v1/books -X POST -H "Content-Type:application/json" -d "{\"firstname\":\"New Fi
- * rstname\", \"lastname\": \"New Lastname\", \"homeland\": \"New Homeland\"}" -i
- * <p>
- * ## update book by {id}
- * curl http://localhost:8080/api/v1/books/{id} -X PUT -H "Content-Type:application/json" -d "{\"firstname\":\"New F
- * irstname\", \"lastname\": \"New Lastname\", \"homeland\": \"upd\"}" -i
- * <p>
- * ## delete book by {id}
- * curl http://localhost:8080/api/v1/books/{id} -X DELETE -i
- */
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(BASE_URL)

@@ -18,26 +18,6 @@ import java.util.List;
 
 import static cyclone.otusspring.library.controller.rest.AuthorRestController.BASE_URL;
 
-/**
- * curl commands
- * ## get all authors
- * curl http://localhost:8080/api/v1/authors
- * <p>
- * ## get author by {id}
- * curl http://localhost:8080/api/v1/authors/{id}
- * <p>
- * ## create author
- * curl http://localhost:8080/api/v1/authors -X POST -H "Content-Type:application/json" -d "{\"firstname\":\"New Fi
- * rstname\", \"lastname\": \"New Lastname\", \"homeland\": \"New Homeland\"}" -i
- * <p>
- * ## update author by {id}
- * curl http://localhost:8080/api/v1/authors/{id} -X PUT -H "Content-Type:application/json" -d "{\"firstname\":\"New F
- * irstname\", \"lastname\": \"New Lastname\", \"homeland\": \"upd\"}" -i
- * <p>
- * ## delete author by {id}
- * curl http://localhost:8080/api/v1/authors/{id} -X DELETE -i
- */
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(BASE_URL)
