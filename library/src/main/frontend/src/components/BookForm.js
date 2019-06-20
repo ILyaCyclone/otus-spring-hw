@@ -6,35 +6,40 @@ import {throwIfError} from './../utils/errorHandler';
 import {alertError, alertMessage} from './../utils/alert';
 import {getFromApi} from './../utils/backendApi';
 import PageTitle from "./layout/PageTitle";
+import Comments from "./Comments";
 
 function BookForm({match, history}) {
 
-    const apiPath = "/api/v1/books/";
+    const apiPath = "/api/v1/books";
     const bookId = match.params.id;
     const isNew = bookId === "new";
 
-    const [book, setBook] = useState({});
+    const [book, setBook] = useState({title: "", year: "", authorId: "", genreId: "", commentDtoList: []});
     const [allAuthors, setAllAuthors] = useState([]);
     const [allGenres, setAllGenres] = useState([]);
     const [isLoading, setIsLoading] = useState(!isNew);
 
     useEffect(() => {
-        if (!isNew) {
-            getFromApi(apiPath + bookId)
-                .then(book => setBook(book))
+        const fetchUrl = apiPath + "/formdata/" + (isNew ? "new" : bookId);
+        getFromApi(fetchUrl)
+            .then(bookForm => {
+                if (!isNew) {
+                    setBook(bookForm.bookDto);
+                }
+                setAllAuthors(bookForm.allAuthors);
+                setAllGenres(bookForm.allGenres);
+                if (isNew) {
+                    // init select lists with first value
+                    setBook({
+                        ...book
+                        , authorId: bookForm.allAuthors[0].id
+                        , genreId: bookForm.allGenres[0].id
+                    })
+                }
+            })
                 .finally(() => setIsLoading(false));
-        }
     }, [])
 
-    useEffect(() => {
-        getFromApi("/api/v1/authors")
-            .then(authors => setAllAuthors(authors));
-    }, [])
-
-    useEffect(() => {
-        getFromApi("/api/v1/genres")
-            .then(genres => setAllGenres(genres));
-    }, [])
 
 
     function create(e) {
@@ -56,7 +61,7 @@ function BookForm({match, history}) {
 
     function update(e) {
         e.preventDefault();
-        fetch(apiPath + bookId, {
+        fetch(`${apiPath}/${bookId}`, {
             method: "PUT",
             body: JSON.stringify(book),
             headers: {
@@ -69,13 +74,29 @@ function BookForm({match, history}) {
     }
 
     function del(e) {
-        fetch(apiPath + bookId, {
+        fetch(`${apiPath}/${bookId}`, {
             method: "DELETE",
         })
             .then(response => throwIfError(response))
             .then(response => history.push("/books"))
             .then(response => alertMessage("Book deleted"))
             .catch(error => alertError(error));
+    }
+
+    function submitComment(comment) {
+        return fetch(`${apiPath}/${bookId}/comments/save`, {
+            method: "POST",
+            body: JSON.stringify(comment),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(response => throwIfError(response))
+            .then(response => {
+                setBook({...book, commentDtoList: [...book.commentDtoList, comment]});
+                alertMessage("Comment created")
+            });
     }
 
 
@@ -93,19 +114,20 @@ function BookForm({match, history}) {
 
                     <div className="form-group">
                         <label>Title:</label>
-                        <input className="form-control" type="text" name="title" value={book.title}
+                        <input className="form-control" type="text" name="title" value={book.title} required
                                onChange={onTextChange}/>
                     </div>
 
                     <div className="form-group">
                         <label>Year:</label>
-                        <input className="form-control" type="number" name="year" value={book.year}
+                        <input className="form-control" type="number" name="year" value={book.year} required
                                onChange={onTextChange}/>
                     </div>
 
                     <div className="form-group">
                         <label>Author:</label>
-                        <select className="form-control" name="authorId">
+                        <select name="authorId" value={book.authorId} onChange={onTextChange}
+                                className="form-control">
                             {allAuthors.map((author, i) => <option key={i}
                                                                    value={author.id}>{author.firstname} {author.lastname}</option>)}
                         </select>
@@ -113,7 +135,8 @@ function BookForm({match, history}) {
 
                     <div className="form-group">
                         <label>Genres:</label>
-                        <select className="form-control" name="genreId">
+                        <select name="genreId" value={book.genreId} onChange={onTextChange}
+                                className="form-control">
                             {allGenres.map((genre, i) => <option key={i} value={genre.id}>{genre.name}</option>)}
                         </select>
                     </div>
@@ -127,6 +150,10 @@ function BookForm({match, history}) {
                     </div>
 
                 </form>
+
+                {!isNew &&
+                <Comments comments={book.commentDtoList} submitComment={submitComment}/>
+                }
 
             </>
         )

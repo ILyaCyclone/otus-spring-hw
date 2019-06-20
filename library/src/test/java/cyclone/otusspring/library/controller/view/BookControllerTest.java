@@ -78,7 +78,7 @@ class BookControllerTest {
 
         mockMvc.perform(get(BASE_URL + "/" + BOOK1.getId()))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("bookDto", bookMapper.toDto(BOOK1)))
+                .andExpect(model().attribute("bookDto", bookMapper.toBookDto(BOOK1)))
                 .andExpect(view().name("book-form"));
     }
 

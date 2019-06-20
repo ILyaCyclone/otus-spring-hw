@@ -63,7 +63,7 @@ public class BookController {
     @GetMapping("/{id}")
     public String editView(Model model, @PathVariable(name = "id") String id) {
         Book book = bookService.findOne(id);
-        model.addAttribute("bookDto", bookMapper.toDto(book));
+        model.addAttribute("bookDto", bookMapper.toBookDto(book));
 
         addAuthorsAndGenresToModel(model);
         return "book-form";
