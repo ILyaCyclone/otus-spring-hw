@@ -109,7 +109,7 @@ public class BookRestController {
 
 
     @PostMapping("/{id}/comments/save")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @ResponseStatus(value = HttpStatus.CREATED)
     public void saveComment(@PathVariable(name = "id") String bookId, @RequestBody CommentDto commentDto) {
         Book book = bookService.findOne(bookId);
 
