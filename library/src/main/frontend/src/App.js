@@ -29,10 +29,13 @@ export default function App() {
                         <Route exact path="/books" component={Books}/>
                         <Route exact path="/books/:id" component={BookForm}/>
 
-                        <Route render={() => <p>No such page</p>}/>
+                        {/*<Route render={() => <p>No such page</p>}/>*/}
+                        <Route component={Home}/>
                     </Switch>
                 </div>
             </BrowserRouter>
+
+
         </>
     )
 }
