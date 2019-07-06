@@ -25,8 +25,7 @@ function AuthorForm({match, history}) {
     }, [])
 
 
-    function create(e) {
-        e.preventDefault();
+    function create() {
         fetch(apiPath, {
             method: "POST",
             body: JSON.stringify(author),
@@ -42,8 +41,7 @@ function AuthorForm({match, history}) {
             .catch(error => alertError(error));
     }
 
-    function update(e) {
-        e.preventDefault();
+    function update() {
         fetch(apiPath + authorId, {
             method: "PUT",
             body: JSON.stringify(author),
@@ -56,7 +54,7 @@ function AuthorForm({match, history}) {
             .catch(error => alertError(error));
     }
 
-    function del(e) {
+    function del() {
         fetch(apiPath + authorId, {
             method: "DELETE",
         })
@@ -77,7 +75,7 @@ function AuthorForm({match, history}) {
         return (
             <>
                 <PageTitle title={isNew ? "Create author" : "Edit author"}/>
-                <form onSubmit={isNew ? create : update}>
+                <form>
 
                     <div className="form-group">
                         <label>Firstname:</label>
@@ -98,10 +96,10 @@ function AuthorForm({match, history}) {
                     </div>
 
                     <div className="btn-group">
-                        <input className="btn btn-primary" type="submit" value="Submit"/>
-                        <Link className="btn btn-outline-primary" to="/authors">Cancel</Link>
+                        <input type="button" onClick={isNew ? create : update} value="Submit" className="btn btn-primary"/>
+                        <Link to="/authors" className="btn btn-outline-primary">Cancel</Link>
                         {!isNew &&
-                        <input type="button" className="btn btn-outline-danger" onClick={del} value="Delete"/>
+                        <input type="button" onClick={del} value="Delete" className="btn btn-outline-danger"/>
                         }
                     </div>
 

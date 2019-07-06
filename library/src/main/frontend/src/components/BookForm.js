@@ -42,8 +42,7 @@ function BookForm({match, history}) {
 
 
 
-    function create(e) {
-        e.preventDefault();
+    function create() {
         fetch(apiPath, {
             method: "POST",
             body: JSON.stringify(book),
@@ -59,8 +58,7 @@ function BookForm({match, history}) {
             .catch(error => alertError(error));
     }
 
-    function update(e) {
-        e.preventDefault();
+    function update() {
         fetch(`${apiPath}/${bookId}`, {
             method: "PUT",
             body: JSON.stringify(book),
@@ -73,7 +71,7 @@ function BookForm({match, history}) {
             .catch(error => alertError(error));
     }
 
-    function del(e) {
+    function del() {
         fetch(`${apiPath}/${bookId}`, {
             method: "DELETE",
         })
@@ -110,7 +108,7 @@ function BookForm({match, history}) {
         return (
             <>
                 <PageTitle title={isNew ? "Create book" : "Edit book"}/>
-                <form onSubmit={isNew ? create : update}>
+                <form>
 
                     <div className="form-group">
                         <label>Title:</label>
@@ -142,10 +140,10 @@ function BookForm({match, history}) {
                     </div>
 
                     <div className="btn-group">
-                        <input className="btn btn-primary" type="submit" value="Submit"/>
-                        <Link className="btn btn-outline-primary" to="/books">Cancel</Link>
+                        <input type="button" onClick={isNew ? create : update} value="Submit" className="btn btn-primary"/>
+                        <Link to="/books" className="btn btn-outline-primary">Cancel</Link>
                         {!isNew &&
-                        <input type="button" className="btn btn-outline-danger" onClick={del} value="Delete"/>
+                        <input type="button" onClick={del} value="Delete" className="btn btn-outline-danger"/>
                         }
                     </div>
 

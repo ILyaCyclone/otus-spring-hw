@@ -7,8 +7,7 @@ export default function Comments(props) {
     const emptyComment = {commentator: "", text: ""};
     const [newComment, setNewComment] = useState(emptyComment);
 
-    function onSubmit(e) {
-        e.preventDefault();
+    function submit() {
         props.submitComment(newComment)
             .then(() => setNewComment(emptyComment))
             .catch(error => alertError(error));
@@ -40,7 +39,7 @@ export default function Comments(props) {
 
             <div className="mt-4">
                 <h4>Leave a comment:</h4>
-                <form onSubmit={onSubmit}>
+                <form>
 
                     <div className="form-group">
                         <input value={newComment.commentator} onChange={onTextChange}
@@ -56,7 +55,7 @@ export default function Comments(props) {
                         />
                     </div>
 
-                    <input className="btn btn-primary" type="submit" value="Submit"/>
+                    <input type="button" onClick={submit} value="Submit" className="btn btn-primary"/>
                 </form>
             </div>
         </section>
