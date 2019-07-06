@@ -1,18 +1,13 @@
 package cyclone.otusspring.library.controller.rest;
 
 import cyclone.otusspring.library.dto.BookDto;
-import cyclone.otusspring.library.dto.BookFormDto;
 import cyclone.otusspring.library.dto.BookListElementDto;
 import cyclone.otusspring.library.dto.CommentDto;
-import cyclone.otusspring.library.mapper.AuthorMapper;
 import cyclone.otusspring.library.mapper.BookMapper;
 import cyclone.otusspring.library.mapper.CommentMapper;
-import cyclone.otusspring.library.mapper.GenreMapper;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
-import cyclone.otusspring.library.service.AuthorService;
 import cyclone.otusspring.library.service.BookService;
-import cyclone.otusspring.library.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,12 +32,6 @@ public class BookRestController {
     private final BookService bookService;
     private final BookMapper bookMapper;
 
-    private final AuthorService authorService;
-    private final AuthorMapper authorMapper;
-
-    private final GenreService genreService;
-    private final GenreMapper genreMapper;
-
     private final CommentMapper commentMapper;
 
 
@@ -58,20 +47,6 @@ public class BookRestController {
     public BookDto findOne(@PathVariable("id") String id) {
         return bookMapper.toBookDto(bookService.findOne(id));
     }
-
-
-
-    @GetMapping("/formdata/{id}")
-    public BookFormDto getBookFormData(@PathVariable("id") String id) {
-        BookFormDto bookFormDto = new BookFormDto();
-        if (!"new".equals(id)) {
-            bookFormDto.setBookDto(bookMapper.toBookDto(bookService.findOne(id)));
-        }
-        bookFormDto.setAllAuthors(authorMapper.toAuthorDtoList(authorService.findAll()));
-        bookFormDto.setAllGenres(genreMapper.toGenreDtoList(genreService.findAll()));
-        return bookFormDto;
-    }
-
 
 
     @PostMapping
