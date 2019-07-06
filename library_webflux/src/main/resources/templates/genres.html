@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Library</title>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<div th:replace="fragments/header :: header (active='genres')">
+    <h1>App Name</h1>
+
+    Navigation goes here
+</div>
+
+<div class="container">
+
+    <div th:replace="fragments/header-text :: headerText (text='Genres')"></div>
+
+    <div th:replace="fragments/message :: message (headerText=${message})">Message text</div>
+
+    <table class="table table-hover w-50">
+        <thead>
+        <tr>
+            <th>Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="genreDto: ${genreDtoList}" th:object="${genreDto}">
+            <td><a th:href="@{/genres/{id}(id=*{id})}" th:text="*{name}">Genre name</a></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-success" href="/genre-form.html" th:href="@{/genres/new}">Create new genre</a>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>
