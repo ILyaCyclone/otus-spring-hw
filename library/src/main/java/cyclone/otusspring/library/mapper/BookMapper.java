@@ -40,7 +40,7 @@ public class BookMapper {
         }
     }
 
-    public BookDto toDto(Book book) {
+    public BookDto toBookDto(Book book) {
         List<CommentDto> commentDtoList = book.getComments().stream()
                 .map(comment -> commentMapper.toCommentDto(comment, book.getId()))
                 .collect(Collectors.toList());

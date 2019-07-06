@@ -1,4 +1,4 @@
-package cyclone.otusspring.library.controller;
+package cyclone.otusspring.library.controller.view;
 
 import cyclone.otusspring.library.dto.AuthorDto;
 import cyclone.otusspring.library.dto.Message;
@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static cyclone.otusspring.library.controller.AuthorController.BASE_URL;
+import static cyclone.otusspring.library.controller.view.AuthorController.BASE_URL;
 
 @RequiredArgsConstructor
 @Controller

@@ -1,4 +1,4 @@
-package cyclone.otusspring.library.controller;
+package cyclone.otusspring.library.controller.view;
 
 import cyclone.otusspring.library.dto.BookDto;
 import cyclone.otusspring.library.dto.BookListElementDto;
@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static cyclone.otusspring.library.TestData.*;
-import static cyclone.otusspring.library.controller.BookController.BASE_URL;
+import static cyclone.otusspring.library.controller.view.BookController.BASE_URL;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.Mockito.*;
@@ -78,7 +78,7 @@ class BookControllerTest {
 
         mockMvc.perform(get(BASE_URL + "/" + BOOK1.getId()))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("bookDto", bookMapper.toDto(BOOK1)))
+                .andExpect(model().attribute("bookDto", bookMapper.toBookDto(BOOK1)))
                 .andExpect(view().name("book-form"));
     }
 
