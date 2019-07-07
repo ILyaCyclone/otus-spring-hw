@@ -2,6 +2,7 @@ package cyclone.otusspring.library.service;
 
 import cyclone.otusspring.library.dbteststate.ResetStateExtension;
 import cyclone.otusspring.library.model.Author;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +33,8 @@ class AuthorServiceTest {
                 .assertNext(author -> {
                     assertThat(author.getId()).isNotNull();
                     assertThat(author).isEqualToIgnoringGivenFields(authorToCreate, "id");
-                });
+                })
+                .verifyComplete();
 
 //        assertThat(mongoTemplate.findAll(Author.class))
 //                .usingElementComparatorIgnoringFields("id")
@@ -72,6 +74,7 @@ class AuthorServiceTest {
     @Test
     @DisplayName("deleting author without books does not throw exception")
     void deletingAuthorWithoutBooks() {
-        authorService.delete(AUTHOR_WITHOUT_BOOKS.getId());
+        authorService.delete(AUTHOR_WITHOUT_BOOKS.getId())
+                .doOnError(throwable -> Assertions.fail("no exception expected"));
     }
 }

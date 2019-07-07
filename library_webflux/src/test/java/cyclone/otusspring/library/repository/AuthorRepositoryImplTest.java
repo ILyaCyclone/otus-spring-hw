@@ -34,10 +34,6 @@ class AuthorRepositoryImplTest {
     MongoTemplate mongoTemplate;
 
     @Test
-    void contextLoads() {
-    }
-
-    @Test
     void findAll() {
         StepVerifier.create(authorRepository.findAll())
                 .expectSubscription()
@@ -113,9 +109,7 @@ class AuthorRepositoryImplTest {
         authorRepository.delete(AUTHOR1.getId())
                 .block();
 
-        assertThat(
-                mongoTemplate.findAll(Author.class)
-        ).doesNotContain(AUTHOR1);
+        assertThat(mongoTemplate.findAll(Author.class)).doesNotContain(AUTHOR1);
     }
 
     @Test

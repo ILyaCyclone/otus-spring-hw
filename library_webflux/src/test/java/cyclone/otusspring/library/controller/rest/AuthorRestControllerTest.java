@@ -7,36 +7,25 @@ import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.repository.AuthorRepository;
 import cyclone.otusspring.library.service.AuthorService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.reactive.server.EntityExchangeResult;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 import static cyclone.otusspring.library.TestData.*;
 import static cyclone.otusspring.library.controller.rest.AuthorRestController.BASE_URL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
-@WebMvcTest(AuthorRestController.class)
-@Import(AuthorMapper.class)
-class AuthorRestControllerTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class AuthorRestControllerTest {
     @Autowired
-    MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     @MockBean
     AuthorService authorService;
@@ -50,87 +39,74 @@ class AuthorRestControllerTest {
     @Autowired
     AuthorMapper authorMapper;
 
-
     @Test
-    void findAll() throws Exception {
+    void findAll() {
         when(authorService.findAll()).thenReturn(Flux.just(AUTHOR1, AUTHOR3, AUTHOR2));
 
-        MvcResult mvcResult =
-                mockMvc.perform(get(BASE_URL))
-                        .andExpect(status().isOk())
-                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                        .andReturn();
-
-        verify(authorService).findAll();
-
-        List<AuthorDto> actualAuthorDtoList = JsonUtils.readListFromMvcResult(objectMapper, mvcResult, AuthorDto.class);
-        assertThat(actualAuthorDtoList)
-                .usingFieldByFieldElementComparator()
-                .containsExactly(authorMapper.toAuthorDto(AUTHOR1), authorMapper.toAuthorDto(AUTHOR3), authorMapper.toAuthorDto(AUTHOR2));
-
+        webTestClient.get().uri(BASE_URL)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBodyList(AuthorDto.class)
+                .contains(authorMapper.toAuthorDto(AUTHOR1), authorMapper.toAuthorDto(AUTHOR3), authorMapper.toAuthorDto(AUTHOR2));
     }
 
     @Test
-    void findOne() throws Exception {
+    void findOne() {
         when(authorService.findOne("1")).thenReturn(Mono.just(AUTHOR1));
 
-        MvcResult mvcResult =
-                mockMvc.perform(get(BASE_URL + "/1"))
-                        .andExpect(status().isOk())
-                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                        .andReturn();
-
-        verify(authorService).findOne("1");
-
-        AuthorDto actualAuthorDto = JsonUtils.readValueFromMvcResult(objectMapper, mvcResult, AuthorDto.class);
-        assertThat(actualAuthorDto)
-                .isEqualToComparingFieldByField(AUTHOR1);
+        webTestClient.get().uri(BASE_URL + "/1")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody(AuthorDto.class)
+                .isEqualTo(authorMapper.toAuthorDto(AUTHOR1));
     }
 
     @Test
-    void create() throws Exception {
+    void create() {
         final AuthorDto authorDtoToCreate = new AuthorDto("new firstname", "new lastname", "new homeland");
-        Author authorToCreate = authorMapper.toAuthor(authorDtoToCreate);
         Author createdAuthor = authorMapper.toAuthor(authorDtoToCreate);
         createdAuthor.setId("generated-new-id");
 
         when(authorService.save(authorMapper.toAuthor(authorDtoToCreate))).thenReturn(Mono.just(createdAuthor));
 
-        MvcResult mvcResult =
-                mockMvc.perform(post(BASE_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtils.writeValue(objectMapper, authorDtoToCreate)))
+        EntityExchangeResult<AuthorDto> exchangeResult = webTestClient.post().uri(BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(authorDtoToCreate), AuthorDto.class)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody(AuthorDto.class)
+                .returnResult();
 
-                        .andExpect(status().isCreated())
-                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                        .andReturn();
-
-        verify(authorService).save(authorToCreate);
-
-        AuthorDto createdAuthorDto = JsonUtils.readValueFromMvcResult(objectMapper, mvcResult, AuthorDto.class);
-
+        AuthorDto createdAuthorDto = exchangeResult.getResponseBody();
         assertThat(createdAuthorDto.getId()).isNotNull();
         assertThat(createdAuthorDto).isEqualToIgnoringGivenFields(authorDtoToCreate, "id");
     }
 
     @Test
-    void update() throws Exception {
+    void update() {
         final AuthorDto authorDtoToUpdate = new AuthorDto("1", "upd fistname", "upd lastname", "upd homeland");
         Author authorToUpdate = authorMapper.toAuthor(authorDtoToUpdate);
 
-        mockMvc.perform(put(BASE_URL + "/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtils.writeValue(objectMapper, authorDtoToUpdate)))
-
-                .andExpect(status().isNoContent());
+        webTestClient.put().uri(BASE_URL + "/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(authorDtoToUpdate), AuthorDto.class)
+                .exchange()
+                .expectStatus().isNoContent();
 
         verify(authorService).save(authorToUpdate);
     }
 
     @Test
-    void delete() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/1"))
-                .andExpect(status().isNoContent());
+    void delete() {
+        webTestClient.delete().uri(BASE_URL + "/1")
+                .exchange()
+                .expectStatus().isNoContent();
 
         verify(authorService).delete("1");
     }
