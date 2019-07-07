@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventLis
 import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.List;
 
 @Component
@@ -26,7 +27,10 @@ public class GenreDeleteListener extends AbstractMongoEventListener<Genre> {
     public void onBeforeDelete(BeforeDeleteEvent<Genre> event) {
 
         Object id = event.getSource().get("_id");
-        Genre genre = genreService.findOne(id.toString());
+        //TODO unblock
+        Genre genre = genreService.findOne(id.toString())
+                .timeout(Duration.ofSeconds(2))
+                .block();
 
         List<Book> books = bookService.findByGenre(genre);
 

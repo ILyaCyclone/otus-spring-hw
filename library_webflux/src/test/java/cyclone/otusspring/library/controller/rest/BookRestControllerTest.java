@@ -24,6 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.List;
@@ -103,9 +104,8 @@ class BookRestControllerTest {
 
     @Test
     void create() throws Exception {
-        //TODO uncomment
-//        when(authorService.findOne("1")).thenReturn(AUTHOR1);
-        when(genreService.findOne("1")).thenReturn(GENRE1);
+        when(authorService.findOne("1")).thenReturn(Mono.just(AUTHOR1));
+        when(genreService.findOne("1")).thenReturn(Mono.just(GENRE1));
 
         final BookDto bookDtoToCreate = new BookDto("new title", 2000, "1", "1");
         Book bookToCreate = bookMapper.toBook(bookDtoToCreate);
@@ -133,9 +133,8 @@ class BookRestControllerTest {
 
     @Test
     void update() throws Exception {
-        //TODO uncomment
-//        when(authorService.findOne("1")).thenReturn(AUTHOR1);
-        when(genreService.findOne("1")).thenReturn(GENRE1);
+        when(authorService.findOne("1")).thenReturn(Mono.just(AUTHOR1));
+        when(genreService.findOne("1")).thenReturn(Mono.just(GENRE1));
 
         final BookDto bookDtoToUpdate = new BookDto("1", "upd title", 2000, "1", "1");
         Book bookToUpdate = bookMapper.toBook(bookDtoToUpdate);

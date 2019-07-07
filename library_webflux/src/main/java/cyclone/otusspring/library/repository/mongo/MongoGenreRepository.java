@@ -1,12 +1,11 @@
 package cyclone.otusspring.library.repository.mongo;
 
 import cyclone.otusspring.library.model.Genre;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import reactor.core.publisher.Flux;
 
-import java.util.List;
+public interface MongoGenreRepository extends ReactiveMongoRepository<Genre, String> {
+    Flux<Genre> findAllByOrderByName();
 
-public interface MongoGenreRepository extends MongoRepository<Genre, String> {
-    List<Genre> findAllByOrderByName();
-
-    List<Genre> findByNameContainingIgnoreCaseOrderByName(String name);
+    Flux<Genre> findByNameContainingIgnoreCaseOrderByName(String name);
 }

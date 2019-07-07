@@ -11,9 +11,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import reactor.test.StepVerifier;
 
 import java.util.stream.Stream;
 
@@ -22,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataMongoTest
-@ComponentScan("cyclone.otusspring.library.repository")
+@Import(GenreRepositoryImpl.class)
 @ExtendWith(ResetStateExtension.class)
 class GenreRepositoryImplTest {
 
@@ -34,13 +35,19 @@ class GenreRepositoryImplTest {
 
     @Test
     void findAll() {
-        assertThat(genreRepository.findAll()).containsExactly(GENRE1, GENRE4, GENRE3, GENRE2, GENRE_WITHOUT_BOOKS);
+        StepVerifier.create(genreRepository.findAll())
+                .expectSubscription()
+                .expectNext(GENRE1, GENRE4, GENRE3, GENRE2, GENRE_WITHOUT_BOOKS)
+                .verifyComplete();
     }
 
     @ParameterizedTest
     @MethodSource("findByNameParameters")
     void findByName(String nameQuery, Genre[] expected) {
-        assertThat(genreRepository.findByName(nameQuery)).containsExactly(expected);
+        StepVerifier.create(genreRepository.findByName(nameQuery))
+                .expectSubscription()
+                .expectNext(expected)
+                .verifyComplete();
     }
 
     private static Stream<Arguments> findByNameParameters() {
@@ -52,73 +59,87 @@ class GenreRepositoryImplTest {
 
     @Test
     void findOne() {
-        assertThat(genreRepository.findOne("2")).isEqualTo(GENRE2);
+        StepVerifier.create(genreRepository.findOne("2"))
+                .expectSubscription()
+                .expectNext(GENRE2)
+                .verifyComplete();
     }
 
     @Test
     @DisplayName("finding non existent ID throws exception")
     void findOne_nonExistent() {
-        assertThatThrownBy(() -> genreRepository.findOne(NO_SUCH_ID)).isInstanceOf(NotFoundException.class);
+        StepVerifier.create(genreRepository.findOne(NO_SUCH_ID))
+                .expectSubscription()
+                .expectError(NotFoundException.class)
+                .verify();
     }
 
 
 
     @Test
     void testInsert() {
-        String savedId = genreRepository.save(NEW_GENRE).getId();
-
-        Genre actual = genreRepository.findOne(savedId);
-
-        assertThat(actual.getId()).isNotNull();
-        assertThat(actual).isEqualToIgnoringGivenFields(NEW_GENRE, "id");
+        genreRepository.save(NEW_GENRE)
+                .map(Genre::getId)
+                .subscribe(savedId ->
+                        StepVerifier.create(genreRepository.findOne(savedId))
+                                .expectSubscription()
+                                .assertNext(actual -> {
+                                    assertThat(actual.getId()).isNotNull();
+                                    assertThat(actual).isEqualToIgnoringGivenFields(NEW_GENRE, "id");
+                                })
+                                .verifyComplete()
+                );
     }
 
     @Test
     void testUpdate() {
         Genre updatedGenre2 = new Genre(GENRE2.getId(), "Updated " + GENRE2.getName());
-        genreRepository.save(updatedGenre2);
-
-        Genre actual = genreRepository.findOne(updatedGenre2.getId());
-
-        assertThat(actual).isEqualToComparingFieldByField(updatedGenre2);
+        genreRepository.save(updatedGenre2)
+                .subscribe(savedAuthor ->
+                        StepVerifier.create(genreRepository.findOne(updatedGenre2.getId()))
+                                .expectSubscription()
+                                .expectNext(updatedGenre2));
     }
 
     @Test
     void testDelete() {
-        Genre bookToDelete = mongoTemplate.findById(GENRE2.getId(), Genre.class);
+        genreRepository.delete(GENRE2.getId())
+                .block();
 
-        genreRepository.delete(bookToDelete);
-        assertThat(genreRepository.findAll()).doesNotContain(GENRE2);
-    }
-
-    @Test
-    void testDeleteById() {
-        genreRepository.delete(GENRE1.getId());
-        assertThat(genreRepository.findAll()).doesNotContain(GENRE1);
+        assertThat(mongoTemplate.findAll(Genre.class)).doesNotContain(GENRE2);
     }
 
     @Test
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
-        assertThatThrownBy(() -> genreRepository.delete(NO_SUCH_ID)).isInstanceOf(NotFoundException.class);
+        StepVerifier.create(genreRepository.delete(NO_SUCH_ID))
+                .expectSubscription()
+                .expectError(NotFoundException.class)
+                .verify();
     }
 
-    @Test
-    void testExistsTrue() {
-        assertThat(genreRepository.exists(GENRE2.getId())).isTrue();
+    @ParameterizedTest
+    @MethodSource("existsParameters")
+    void exists(String genreId, boolean expected) {
+        StepVerifier.create(genreRepository.exists(genreId))
+                .expectSubscription()
+                .expectNext(expected)
+                .verifyComplete();
     }
 
-    @Test
-    void testExistsFalse() {
-        assertThat(genreRepository.exists(NO_SUCH_ID)).isFalse();
+    private static Stream<Arguments> existsParameters() {
+        return Stream.of(
+                Arguments.of(GENRE2.getId(), true),
+                Arguments.of(NO_SUCH_ID, false)
+        );
     }
 
     @Test
     @DisplayName("adding non unique records throws exception")
     void uniqueViolationThrowsException() {
         assertThatThrownBy(() -> {
-            genreRepository.save(new Genre(NEW_GENRE.getName()));
-            genreRepository.save(new Genre(NEW_GENRE.getName()));
+            genreRepository.save(new Genre(NEW_GENRE.getName())).block();
+            genreRepository.save(new Genre(NEW_GENRE.getName())).block();
         }).isInstanceOf(DataIntegrityViolationException.class);
     }
 }

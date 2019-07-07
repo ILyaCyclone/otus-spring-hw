@@ -27,7 +27,8 @@ public class BookMapper {
         try {
             //TODO unblock
             Author author = authorService.findOne(bookDto.getAuthorId()).block();
-            Genre genre = genreService.findOne(bookDto.getGenreId());
+            //TODO unblock
+            Genre genre = genreService.findOne(bookDto.getGenreId()).block();
             Book book = new Book(bookDto.getId(), bookDto.getTitle(), bookDto.getYear(), author, genre);
             book.addComments(
                     bookDto.getCommentDtoList().stream()
@@ -65,7 +66,8 @@ public class BookMapper {
         try {
             //TODO unblock
             Author author = authorService.findOne(bookDto.getAuthorId()).block();
-            Genre genre = genreService.findOne(bookDto.getGenreId());
+            //TODO unblock
+            Genre genre = genreService.findOne(bookDto.getGenreId()).block();
             return new BookWithoutComments(bookDto.getId(), bookDto.getTitle(), bookDto.getYear(), author, genre);
         } catch (Exception e) {
             throw new RuntimeException("Could not map to book, reason: " + e.getMessage(), e);

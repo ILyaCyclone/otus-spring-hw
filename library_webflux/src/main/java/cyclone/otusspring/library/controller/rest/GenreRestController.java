@@ -2,19 +2,15 @@ package cyclone.otusspring.library.controller.rest;
 
 import cyclone.otusspring.library.dto.GenreDto;
 import cyclone.otusspring.library.mapper.GenreMapper;
-import cyclone.otusspring.library.model.Genre;
 import cyclone.otusspring.library.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import static cyclone.otusspring.library.controller.rest.GenreRestController.BASE_URL;
 
@@ -31,32 +27,29 @@ public class GenreRestController {
 
 
     @GetMapping
-    public List<GenreDto> findAll() {
-        return genreMapper.toGenreDtoList(genreService.findAll());
+    public Flux<GenreDto> findAll() {
+        return genreService.findAll()
+                .map(genreMapper::toGenreDto);
     }
 
 
 
     @GetMapping("/{id}")
-    public GenreDto findOne(@PathVariable("id") String id) {
-        return genreMapper.toGenreDto(genreService.findOne(id));
+    public Mono<GenreDto> findOne(@PathVariable("id") String id) {
+        return genreService.findOne(id)
+                .map(genreMapper::toGenreDto);
     }
 
 
 
     @PostMapping
-    public ResponseEntity<GenreDto> create(@RequestBody GenreDto genreDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<GenreDto> create(@RequestBody GenreDto genreDto) {
         if (genreDto.getId() != null && genreDto.getId().length() == 0) {
             genreDto.setId(null);
         }
-        Genre savedGenre = genreService.save(genreMapper.toGenre(genreDto));
-
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(BASE_URL + "/{id}")
-                .buildAndExpand(savedGenre.getId()).toUri();
-        GenreDto savedDto = genreMapper.toGenreDto(savedGenre);
-
-        return ResponseEntity.created(uriOfNewResource).body(savedDto);
+        return genreService.save(genreMapper.toGenre(genreDto))
+                .map(genreMapper::toGenreDto);
     }
 
 

@@ -21,8 +21,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import reactor.core.publisher.Flux;
 
-import java.util.Arrays;
-
 import static cyclone.otusspring.library.TestData.*;
 import static cyclone.otusspring.library.controller.rest.BookFormdataRestController.BASE_URL;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,8 +63,8 @@ class BookFormdataRestControllerTest {
     @Test
     void getBookFormData() throws Exception {
         when(bookService.findOne("1")).thenReturn(BOOK1);
-//        when(authorService.findAll()).thenReturn(Arrays.asList(AUTHOR1, AUTHOR2));
-        when(genreService.findAll()).thenReturn(Arrays.asList(GENRE1, GENRE2));
+        when(authorService.findAll()).thenReturn(Flux.just(AUTHOR1, AUTHOR2));
+        when(genreService.findAll()).thenReturn(Flux.just(GENRE1, GENRE2));
 
         MvcResult mvcResult =
                 mockMvc.perform(get(BASE_URL + "/1"))
@@ -88,7 +86,7 @@ class BookFormdataRestControllerTest {
     @Test
     void getNewBookFormData() throws Exception {
         when(authorService.findAll()).thenReturn(Flux.just(AUTHOR1, AUTHOR2));
-        when(genreService.findAll()).thenReturn(Arrays.asList(GENRE1, GENRE2));
+        when(genreService.findAll()).thenReturn(Flux.just(GENRE1, GENRE2));
 
         MvcResult mvcResult =
                 mockMvc.perform(get(BASE_URL + "/new"))

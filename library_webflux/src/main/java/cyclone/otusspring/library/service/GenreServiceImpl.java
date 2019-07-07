@@ -3,8 +3,8 @@ package cyclone.otusspring.library.service;
 import cyclone.otusspring.library.model.Genre;
 import cyclone.otusspring.library.repository.GenreRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class GenreServiceImpl implements GenreService {
@@ -16,22 +16,22 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public Genre findOne(String id) {
+    public Mono<Genre> findOne(String id) {
         return genreRepository.findOne(id);
     }
 
     @Override
-    public Genre save(Genre genre) {
+    public Mono<Genre> save(Genre genre) {
         return genreRepository.save(genre);
     }
 
     @Override
-    public List<Genre> findAll() {
+    public Flux<Genre> findAll() {
         return genreRepository.findAll();
     }
 
     @Override
-    public void delete(String id) {
-        genreRepository.delete(id);
+    public Mono<Void> delete(String id) {
+        return genreRepository.delete(id);
     }
 }

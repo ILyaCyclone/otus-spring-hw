@@ -1,21 +1,19 @@
 package cyclone.otusspring.library.repository;
 
 import cyclone.otusspring.library.model.Genre;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface GenreRepository {
-    List<Genre> findAll();
+    Flux<Genre> findAll();
 
-    List<Genre> findByName(String name);
+    Flux<Genre> findByName(String name);
 
-    Genre findOne(String id);
+    Mono<Genre> findOne(String id);
 
-    Genre save(Genre genre);
+    Mono<Genre> save(Genre Genre);
 
-    void delete(String id);
+    Mono<Void> delete(String id);
 
-    void delete(Genre genre);
-
-    boolean exists(String id);
+    Mono<Boolean> exists(String id);
 }

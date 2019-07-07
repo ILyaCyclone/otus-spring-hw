@@ -1,6 +1,5 @@
 package cyclone.otusspring.library.service;
 
-import cyclone.otusspring.library.exceptions.NotFoundException;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.BookWithoutComments;
@@ -53,11 +52,11 @@ public class BookServiceImpl implements BookService {
 //                    , new NotFoundException("Author ID " + book.getAuthor().getId() + " not found"));
 //
 //        }
-        if (!genreRepository.exists(book.getGenre().getId())) {
-            throw new RuntimeException("Could not save book"
-                    , new NotFoundException("Genre ID " + book.getGenre().getId() + " not found"));
-
-        }
+//        if (!genreRepository.exists(book.getGenre().getId())) {
+//            throw new RuntimeException("Could not save book"
+//                    , new NotFoundException("Genre ID " + book.getGenre().getId() + " not found"));
+//
+//        }
         return bookRepository.save(book);
     }
 

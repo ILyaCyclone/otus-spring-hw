@@ -14,7 +14,5 @@ public interface MongoAuthorRepository extends ReactiveMongoRepository<Author, S
 
     Mono<Author> save(Mono<Author> author);
 
-    //    Mono<Void> delete(Mono<Author> author);
-//
     Mono<Void> deleteById(String id);
 }

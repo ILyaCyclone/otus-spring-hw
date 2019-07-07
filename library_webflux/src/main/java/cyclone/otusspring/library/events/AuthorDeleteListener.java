@@ -31,9 +31,6 @@ public class AuthorDeleteListener extends AbstractMongoEventListener<Author> {
         Author author = authorService.findOne(id.toString())
                 .timeout(Duration.ofSeconds(2))
                 .block();
-//        authorService.findOne(id.toString())
-//                .map(author -> bookService.findByAuthor(author))
-//                .if
 
         List<Book> books = bookService.findByAuthor(author);
 
