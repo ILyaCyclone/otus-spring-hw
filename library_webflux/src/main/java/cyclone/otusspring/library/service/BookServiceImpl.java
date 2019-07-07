@@ -47,11 +47,12 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book save(Book book) {
-        if (!authorRepository.exists(book.getAuthor().getId())) {
-            throw new RuntimeException("Could not save book"
-                    , new NotFoundException("Author ID " + book.getAuthor().getId() + " not found"));
-
-        }
+        //TODO temporary disabled
+//        if (!authorRepository.exists(book.getAuthor().getId())) {
+//            throw new RuntimeException("Could not save book"
+//                    , new NotFoundException("Author ID " + book.getAuthor().getId() + " not found"));
+//
+//        }
         if (!genreRepository.exists(book.getGenre().getId())) {
             throw new RuntimeException("Could not save book"
                     , new NotFoundException("Genre ID " + book.getGenre().getId() + " not found"));

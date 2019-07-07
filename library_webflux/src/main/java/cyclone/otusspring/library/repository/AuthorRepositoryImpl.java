@@ -5,8 +5,8 @@ import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.repository.mongo.MongoAuthorRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
 public class AuthorRepositoryImpl implements AuthorRepository {
@@ -19,38 +19,36 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 
 
     @Override
-    public List<Author> findAll() {
+    public Flux<Author> findAll() {
         return mongoRepository.findAll(Sort.by("firstname", "lastname"));
     }
 
     @Override
-    public List<Author> findByName(String name) {
+    public Flux<Author> findByName(String name) {
         return mongoRepository.findByName(name);
     }
 
     @Override
-    public Author findOne(String id) {
-        return mongoRepository.findById(id).orElseThrow(() -> new NotFoundException("Author ID " + id + " not found"));
+    public Mono<Author> findOne(String id) {
+        return mongoRepository.findById(id)
+                .switchIfEmpty(Mono.error(new NotFoundException("Author ID " + id + " not found")));
     }
 
     @Override
-    public Author save(Author author) {
+    public Mono<Author> save(Author author) {
         return mongoRepository.save(author);
     }
 
     @Override
-    public void delete(String id) {
-        if (!mongoRepository.existsById(id)) throw new NotFoundException("Author ID " + id + " not found");
-        mongoRepository.deleteById(id);
+    public Mono<Void> delete(String id) {
+        return Mono.just(id)
+                .filterWhen(mongoRepository::existsById)
+                .switchIfEmpty(Mono.error(new NotFoundException("Author ID " + id + " not found")))
+                .flatMap(mongoRepository::deleteById);
     }
 
     @Override
-    public void delete(Author author) {
-        mongoRepository.delete(author);
-    }
-
-    @Override
-    public boolean exists(String id) {
+    public Mono<Boolean> exists(String id) {
         return mongoRepository.existsById(id);
     }
 }
