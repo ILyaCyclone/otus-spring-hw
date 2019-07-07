@@ -103,7 +103,8 @@ class BookRestControllerTest {
 
     @Test
     void create() throws Exception {
-        when(authorService.findOne("1")).thenReturn(AUTHOR1);
+        //TODO uncomment
+//        when(authorService.findOne("1")).thenReturn(AUTHOR1);
         when(genreService.findOne("1")).thenReturn(GENRE1);
 
         final BookDto bookDtoToCreate = new BookDto("new title", 2000, "1", "1");
@@ -132,7 +133,8 @@ class BookRestControllerTest {
 
     @Test
     void update() throws Exception {
-        when(authorService.findOne("1")).thenReturn(AUTHOR1);
+        //TODO uncomment
+//        when(authorService.findOne("1")).thenReturn(AUTHOR1);
         when(genreService.findOne("1")).thenReturn(GENRE1);
 
         final BookDto bookDtoToUpdate = new BookDto("1", "upd title", 2000, "1", "1");

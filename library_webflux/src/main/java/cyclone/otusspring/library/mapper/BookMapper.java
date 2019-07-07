@@ -25,7 +25,8 @@ public class BookMapper {
 
     public Book toBook(BookDto bookDto) {
         try {
-            Author author = authorService.findOne(bookDto.getAuthorId());
+            //TODO unblock
+            Author author = authorService.findOne(bookDto.getAuthorId()).block();
             Genre genre = genreService.findOne(bookDto.getGenreId());
             Book book = new Book(bookDto.getId(), bookDto.getTitle(), bookDto.getYear(), author, genre);
             book.addComments(
@@ -62,7 +63,8 @@ public class BookMapper {
 
     public BookWithoutComments toBookWithoutComments(BookDto bookDto) {
         try {
-            Author author = authorService.findOne(bookDto.getAuthorId());
+            //TODO unblock
+            Author author = authorService.findOne(bookDto.getAuthorId()).block();
             Genre genre = genreService.findOne(bookDto.getGenreId());
             return new BookWithoutComments(bookDto.getId(), bookDto.getTitle(), bookDto.getYear(), author, genre);
         } catch (Exception e) {

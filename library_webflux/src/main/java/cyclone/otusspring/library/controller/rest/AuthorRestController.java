@@ -2,19 +2,15 @@ package cyclone.otusspring.library.controller.rest;
 
 import cyclone.otusspring.library.dto.AuthorDto;
 import cyclone.otusspring.library.mapper.AuthorMapper;
-import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import static cyclone.otusspring.library.controller.rest.AuthorRestController.BASE_URL;
 
@@ -31,32 +27,29 @@ public class AuthorRestController {
 
 
     @GetMapping
-    public List<AuthorDto> findAll() {
-        return authorMapper.toAuthorDtoList(authorService.findAll());
+    public Flux<AuthorDto> findAll() {
+        return authorService.findAll()
+                .map(authorMapper::toAuthorDto);
     }
 
 
 
     @GetMapping("/{id}")
-    public AuthorDto findOne(@PathVariable("id") String id) {
-        return authorMapper.toAuthorDto(authorService.findOne(id));
+    public Mono<AuthorDto> findOne(@PathVariable("id") String id) {
+        return authorService.findOne(id)
+                .map(authorMapper::toAuthorDto);
     }
 
 
 
     @PostMapping
-    public ResponseEntity<AuthorDto> create(@RequestBody AuthorDto authorDto) {
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public Mono<AuthorDto> create(@RequestBody AuthorDto authorDto) {
         if (authorDto.getId() != null && authorDto.getId().length() == 0) {
             authorDto.setId(null);
         }
-        Author savedAuthor = authorService.save(authorMapper.toAuthor(authorDto));
-
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(BASE_URL + "/{id}")
-                .buildAndExpand(savedAuthor.getId()).toUri();
-        AuthorDto savedDto = authorMapper.toAuthorDto(savedAuthor);
-
-        return ResponseEntity.created(uriOfNewResource).body(savedDto);
+        return authorService.save(authorMapper.toAuthor(authorDto))
+                .map(authorMapper::toAuthorDto);
     }
 
 

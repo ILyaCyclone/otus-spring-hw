@@ -8,10 +8,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import reactor.test.StepVerifier;
 
 import static cyclone.otusspring.library.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(classes = {ServiceTestConfiguration.class})
 @ExtendWith(ResetStateExtension.class)
@@ -20,28 +21,51 @@ class AuthorServiceTest {
     @Autowired
     private AuthorService authorService;
 
+    @Autowired
+    MongoTemplate mongoTemplate;
+
     @Test
     void create() {
         final Author authorToCreate = new Author(NEW_AUTHOR.getFirstname(), NEW_AUTHOR.getLastname(), NEW_AUTHOR.getHomeland());
-        Author createdAuthor = authorService.save(authorToCreate);
+        StepVerifier.create(authorService.save(authorToCreate))
+                .expectSubscription()
+                .assertNext(author -> {
+                    assertThat(author.getId()).isNotNull();
+                    assertThat(author).isEqualToIgnoringGivenFields(authorToCreate, "id");
+                });
 
-        assertThat(createdAuthor.getId()).isNotNull();
-        assertThat(createdAuthor).isEqualToIgnoringGivenFields(authorToCreate, "id");
-        assertThat(authorService.findAll()).usingRecursiveFieldByFieldElementComparator()
-                .contains(createdAuthor);
+//        assertThat(mongoTemplate.findAll(Author.class))
+//                .usingElementComparatorIgnoringFields("id")
+//                .contains(authorToCreate);
     }
 
     @Test
-    void testFindAll() {
-        assertThat(authorService.findAll()).containsExactly(AUTHOR1, AUTHOR3, AUTHOR2, AUTHOR_WITHOUT_BOOKS);
+    void findAll() {
+        StepVerifier.create(authorService.findAll())
+                .expectSubscription()
+                .expectNext(AUTHOR1, AUTHOR3, AUTHOR2, AUTHOR_WITHOUT_BOOKS)
+                .verifyComplete();
     }
+
+    @Test
+    void findOne() {
+        StepVerifier.create(authorService.findOne("1"))
+                .expectSubscription()
+                .expectNext(AUTHOR1)
+                .verifyComplete();
+    }
+
+
 
     @Test
     @DisplayName("deleting author with books throws exception")
     void deletingAuthorWithBooksThrowsException() {
-        assertThatThrownBy(() -> authorService.delete(AUTHOR1.getId()))
-                .isInstanceOf(DataIntegrityViolationException.class)
-                .hasMessageStartingWith("Could not delete author");
+        StepVerifier.create(authorService.delete(AUTHOR1.getId()))
+                .expectSubscription()
+                .expectError(DataIntegrityViolationException.class);
+//        assertThatThrownBy(() -> authorService.delete(AUTHOR1.getId()).block())
+//                .isInstanceOf(DataIntegrityViolationException.class)
+//                .hasMessageStartingWith("Could not delete author");
 
     }
 

@@ -3,9 +3,8 @@ package cyclone.otusspring.library.service;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.repository.AuthorRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
@@ -17,25 +16,22 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<Author> findAll() {
-//        return authorRepository.findAll();
-        return Collections.emptyList();
+    public Flux<Author> findAll() {
+        return authorRepository.findAll();
     }
 
     @Override
-    public Author findOne(String id) {
-//        return authorRepository.findOne(id);
-        return new Author("99");
+    public Mono<Author> findOne(String id) {
+        return authorRepository.findOne(id);
     }
 
     @Override
-    public Author save(Author author) {
-//        return authorRepository.save(author);
-        return new Author("99");
+    public Mono<Author> save(Author author) {
+        return authorRepository.save(author);
     }
 
     @Override
-    public void delete(String id) {
-        authorRepository.delete(id);
+    public Mono<Void> delete(String id) {
+        return authorRepository.delete(id);
     }
 }

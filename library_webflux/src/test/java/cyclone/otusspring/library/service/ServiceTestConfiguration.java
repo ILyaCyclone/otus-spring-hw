@@ -4,6 +4,7 @@ import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataM
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 
 @Configuration
 @ComponentScan({
@@ -13,6 +14,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
         "cyclone.otusspring.library.service"
 })
 @AutoConfigureDataMongo
+@EnableReactiveMongoRepositories(basePackages = "cyclone.otusspring.library.repository.mongo")
 @EnableMongoRepositories(basePackages = "cyclone.otusspring.library.repository.mongo")
 public class ServiceTestConfiguration {
 }

@@ -1,15 +1,15 @@
 package cyclone.otusspring.library.service;
 
 import cyclone.otusspring.library.model.Author;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface AuthorService {
-    List<Author> findAll();
+    Flux<Author> findAll();
 
-    Author findOne(String id);
+    Mono<Author> findOne(String id);
 
-    Author save(Author author);
+    Mono<Author> save(Author author);
 
-    void delete(String id);
+    Mono<Void> delete(String id);
 }

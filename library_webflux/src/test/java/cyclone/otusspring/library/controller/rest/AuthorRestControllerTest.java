@@ -17,8 +17,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static cyclone.otusspring.library.TestData.*;
@@ -52,7 +53,7 @@ class AuthorRestControllerTest {
 
     @Test
     void findAll() throws Exception {
-        when(authorService.findAll()).thenReturn(Arrays.asList(AUTHOR1, AUTHOR3, AUTHOR2));
+        when(authorService.findAll()).thenReturn(Flux.just(AUTHOR1, AUTHOR3, AUTHOR2));
 
         MvcResult mvcResult =
                 mockMvc.perform(get(BASE_URL))
@@ -71,7 +72,7 @@ class AuthorRestControllerTest {
 
     @Test
     void findOne() throws Exception {
-        when(authorService.findOne("1")).thenReturn(AUTHOR1);
+        when(authorService.findOne("1")).thenReturn(Mono.just(AUTHOR1));
 
         MvcResult mvcResult =
                 mockMvc.perform(get(BASE_URL + "/1"))
@@ -93,7 +94,7 @@ class AuthorRestControllerTest {
         Author createdAuthor = authorMapper.toAuthor(authorDtoToCreate);
         createdAuthor.setId("generated-new-id");
 
-        when(authorService.save(authorMapper.toAuthor(authorDtoToCreate))).thenReturn(createdAuthor);
+        when(authorService.save(authorMapper.toAuthor(authorDtoToCreate))).thenReturn(Mono.just(createdAuthor));
 
         MvcResult mvcResult =
                 mockMvc.perform(post(BASE_URL)

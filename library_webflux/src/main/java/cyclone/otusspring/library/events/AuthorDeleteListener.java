@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventLis
 import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.List;
 
 @Component
@@ -26,7 +27,13 @@ public class AuthorDeleteListener extends AbstractMongoEventListener<Author> {
     public void onBeforeDelete(BeforeDeleteEvent<Author> event) {
 
         Object id = event.getSource().get("_id");
-        Author author = authorService.findOne(id.toString());
+        //TODO unblock
+        Author author = authorService.findOne(id.toString())
+                .timeout(Duration.ofSeconds(2))
+                .block();
+//        authorService.findOne(id.toString())
+//                .map(author -> bookService.findByAuthor(author))
+//                .if
 
         List<Book> books = bookService.findByAuthor(author);
 
