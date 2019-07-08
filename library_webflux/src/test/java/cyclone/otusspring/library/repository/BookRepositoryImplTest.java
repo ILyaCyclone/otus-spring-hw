@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import reactor.test.StepVerifier;
 
 import java.util.stream.Stream;
 
@@ -34,16 +35,19 @@ class BookRepositoryImplTest {
 
     @Test
     void findAll() {
-        assertThat(bookRepository.findAll()).usingElementComparatorIgnoringFields("comments")
-                .containsExactly(BOOK5, BOOK2, BOOK4, BOOK3, BOOK1);
+        StepVerifier.create(bookRepository.findAll())
+                .expectSubscription()
+                .expectNext(BOOK5, BOOK2, BOOK4, BOOK3, BOOK1)
+                .verifyComplete();
     }
 
     @ParameterizedTest
     @MethodSource("findByTitleParameters")
     void findByTitle(String title, Book[] expected) {
-        assertThat(bookRepository.findByTitle(title))
-                .usingElementComparatorIgnoringFields("comments")
-                .containsExactly(expected);
+        StepVerifier.create(bookRepository.findByTitle(title))
+                .expectSubscription()
+                .expectNext(expected)
+                .verifyComplete();
     }
 
     private static Stream<Arguments> findByTitleParameters() {
@@ -54,26 +58,35 @@ class BookRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("finding non existent ID throws exception")
-    void findOne_nonExistent() {
-        assertThatThrownBy(() -> bookRepository.findOne(NO_SUCH_ID)).isInstanceOf(NotFoundException.class);
+    void findOne() {
+        StepVerifier.create(bookRepository.findOne("2"))
+                .expectSubscription()
+                .assertNext(book -> assertThat(book).isEqualToIgnoringGivenFields(BOOK2, "comments"))
+                .verifyComplete();
     }
 
     @Test
-    void findOne() {
-        assertThat(bookRepository.findOne("2")).isEqualToIgnoringGivenFields(BOOK2, "comments");
+    @DisplayName("finding non existent ID throws exception")
+    void findOne_nonExistent() {
+        StepVerifier.create(bookRepository.findOne(NO_SUCH_ID))
+                .expectSubscription()
+                .expectError(NotFoundException.class)
+                .verify();
     }
-
-
 
     @Test
     void testInsert() {
-        String savedId = bookRepository.save(NEW_BOOK).getId();
-
-        Book actual = bookRepository.findOne(savedId);
-
-        assertThat(actual.getId()).isNotNull();
-        assertThat(actual).isEqualToIgnoringGivenFields(NEW_BOOK, "id");
+        bookRepository.save(NEW_BOOK)
+                .map(Book::getId)
+                .subscribe(savedId ->
+                        StepVerifier.create(bookRepository.findOne(savedId))
+                                .expectSubscription()
+                                .assertNext(actual -> {
+                                    assertThat(actual.getId()).isNotNull();
+                                    assertThat(actual).isEqualToIgnoringGivenFields(NEW_BOOK, "id");
+                                })
+                                .verifyComplete()
+                );
     }
 
     @Test
@@ -83,51 +96,53 @@ class BookRepositoryImplTest {
         bookToUpdate.setTitle("updated " + bookToUpdate.getTitle());
         bookToUpdate.setYear(bookToUpdate.getYear() + 1);
 
-        Book updatedBook = bookRepository.save(bookToUpdate);
-
-        assertThat(updatedBook).isEqualToComparingFieldByField(bookToUpdate);
+        bookRepository.save(bookToUpdate)
+                .subscribe(savedBook ->
+                        StepVerifier.create(bookRepository.findOne(BOOK2.getId()))
+                                .expectSubscription()
+                                .expectNext(bookToUpdate));
     }
 
     @Test
     void testDelete() {
-        Book bookToDelete = mongoTemplate.findById(BOOK2.getId(), Book.class);
+        bookRepository.delete(BOOK2.getId()).block();
 
-        bookRepository.delete(bookToDelete);
-        assertThat(bookRepository.findAll())
+        assertThat(mongoTemplate.findAll(Book.class))
                 .usingElementComparatorIgnoringFields("comments")
-                .doesNotContain(bookToDelete);
-    }
-
-    @Test
-    void testDeleteById() {
-        bookRepository.delete(BOOK1.getId());
-        assertThat(bookRepository.findAll())
-                .usingElementComparatorIgnoringFields("comments")
-                .containsExactly(BOOK5, BOOK2, BOOK4, BOOK3);
+                .doesNotContain(BOOK2);
     }
 
     @Test
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
-        assertThatThrownBy(() -> bookRepository.delete(NO_SUCH_ID)).isInstanceOf(NotFoundException.class);
+        StepVerifier.create(bookRepository.delete(NO_SUCH_ID))
+                .expectSubscription()
+                .expectError(NotFoundException.class)
+                .verify();
     }
 
-    @Test
-    void testExistsTrue() {
-        assertThat(bookRepository.exists(BOOK2.getId())).isTrue();
+    @ParameterizedTest
+    @MethodSource("existsParameters")
+    void exists(String bookId, boolean expected) {
+        StepVerifier.create(bookRepository.exists(bookId))
+                .expectSubscription()
+                .expectNext(expected)
+                .verifyComplete();
     }
 
-    @Test
-    void testExistsFalse() {
-        assertThat(bookRepository.exists(NO_SUCH_ID)).isFalse();
+    private static Stream<Arguments> existsParameters() {
+        return Stream.of(
+                Arguments.of(BOOK2.getId(), true),
+                Arguments.of(NO_SUCH_ID, false)
+        );
     }
 
     @Test
     @DisplayName("adding non unique records throws exception")
     void uniqueViolationThrowsException() {
         assertThatThrownBy(() -> {
-            bookRepository.save(new Book(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre()));
-            bookRepository.save(new Book(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre()));
+            bookRepository.save(new Book(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre())).block();
+            bookRepository.save(new Book(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre())).block();
         }).isInstanceOf(DataIntegrityViolationException.class);
     }
 }

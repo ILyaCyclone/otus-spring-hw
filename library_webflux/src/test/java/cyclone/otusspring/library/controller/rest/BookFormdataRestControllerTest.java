@@ -20,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import static cyclone.otusspring.library.TestData.*;
 import static cyclone.otusspring.library.controller.rest.BookFormdataRestController.BASE_URL;
@@ -62,7 +63,7 @@ class BookFormdataRestControllerTest {
 
     @Test
     void getBookFormData() throws Exception {
-        when(bookService.findOne("1")).thenReturn(BOOK1);
+        when(bookService.findOne("1")).thenReturn(Mono.just(BOOK1));
         when(authorService.findAll()).thenReturn(Flux.just(AUTHOR1, AUTHOR2));
         when(genreService.findAll()).thenReturn(Flux.just(GENRE1, GENRE2));
 

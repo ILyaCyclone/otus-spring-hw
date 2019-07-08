@@ -40,7 +40,8 @@ public class BookFormdataRestController {
     public BookFormDto getBookFormData(@PathVariable("id") String id) {
         BookFormDto bookFormDto = new BookFormDto();
         if (!"new".equals(id)) {
-            bookFormDto.setBookDto(bookMapper.toBookDto(bookService.findOne(id)));
+            //TODO unblock
+            bookFormDto.setBookDto(bookMapper.toBookDto(bookService.findOne(id).block()));
         }
         //TODO unblock
         bookFormDto.setAllAuthors(authorMapper.toAuthorDtoList(authorService.findAll().collectList().block()));

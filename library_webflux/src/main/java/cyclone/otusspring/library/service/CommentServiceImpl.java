@@ -19,12 +19,15 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<Comment> findByBookId(String bookId) {
-        return bookRepository.findOne(bookId).getComments();
+        return bookRepository.findOne(bookId)
+                .block() //TODO unblock
+                .getComments();
     }
 
     @Override
     public void create(CommentDto commentDto) {
-        Book book = bookRepository.findOne(commentDto.getBookId());
+        Book book = bookRepository.findOne(commentDto.getBookId()).block() //TODO unblock
+                ;
         Comment comment = new Comment(commentDto.getCommentator(), commentDto.getText());
 
         book.addComment(comment);
@@ -34,7 +37,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void delete(String bookId, String commentId) {
-        Book book = bookRepository.findOne(bookId);
+        Book book = bookRepository.findOne(bookId).block() //TODO unblock
+                ;
         book.removeComment(commentId);
         bookRepository.save(book);
     }

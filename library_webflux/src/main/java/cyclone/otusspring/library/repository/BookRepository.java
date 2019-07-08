@@ -4,27 +4,25 @@ import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.BookWithoutComments;
 import cyclone.otusspring.library.model.Genre;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface BookRepository {
-    List<Book> findAll();
+    Flux<Book> findAll();
 
-    List<Book> findByTitle(String title);
+    Flux<Book> findByTitle(String title);
 
-    List<Book> findByAuthor(Author author);
+    Flux<Book> findByAuthor(Author author);
 
-    List<Book> findByGenre(Genre genre);
+    Flux<Book> findByGenre(Genre genre);
 
-    Book findOne(String id);
+    Mono<Book> findOne(String id);
 
-    Book save(Book book);
+    Mono<Book> save(Book book);
 
     BookWithoutComments save(BookWithoutComments book);
 
-    void delete(String id);
+    Mono<Void> delete(String id);
 
-    void delete(Book book);
-
-    boolean exists(String id);
+    Mono<Boolean> exists(String id);
 }

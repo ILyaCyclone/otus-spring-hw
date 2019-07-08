@@ -1,16 +1,13 @@
 package cyclone.otusspring.library.events;
 
 import cyclone.otusspring.library.model.Author;
-import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.service.AuthorService;
 import cyclone.otusspring.library.service.BookService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
 import org.springframework.stereotype.Component;
-
-import java.time.Duration;
-import java.util.List;
+import reactor.core.publisher.Mono;
 
 @Component
 public class AuthorDeleteListener extends AbstractMongoEventListener<Author> {
@@ -28,16 +25,18 @@ public class AuthorDeleteListener extends AbstractMongoEventListener<Author> {
 
         Object id = event.getSource().get("_id");
         //TODO unblock
-        Author author = authorService.findOne(id.toString())
-                .timeout(Duration.ofSeconds(2))
-                .block();
+        Author author = authorService.findOne(id.toString()).block();
 
-        List<Book> books = bookService.findByAuthor(author);
+//        List<Book> books = bookService.findByAuthor(author);
+        bookService.findByAuthor(author)
+                .switchIfEmpty(Mono.error(new DataIntegrityViolationException("Could not delete author." +
+                        "\nReason: author has books. To delete author delete their books first.")))
+                .subscribe();
 
-        if (!books.isEmpty()) {
-            throw new DataIntegrityViolationException("Could not delete author." +
-                    "\nReason: author has books. To delete author delete their books first.");
-        }
+//        if (!books.isEmpty()) {
+//            throw new DataIntegrityViolationException("Could not delete author." +
+//                    "\nReason: author has books. To delete author delete their books first.");
+//        }
 
         super.onBeforeDelete(event);
     }

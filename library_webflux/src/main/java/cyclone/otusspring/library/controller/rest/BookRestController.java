@@ -13,12 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import static cyclone.otusspring.library.controller.rest.BookRestController.BASE_URL;
 
@@ -37,31 +34,28 @@ public class BookRestController {
 
 
     @GetMapping
-    public List<BookListElementDto> findAll() {
-        return bookMapper.toBooksElementDtoList(bookService.findAll());
+    public Flux<BookListElementDto> findAll() {
+        return bookService.findAll()
+                .map(bookMapper::toBooksElementDto);
     }
 
 
 
     @GetMapping("/{id}")
-    public BookDto findOne(@PathVariable("id") String id) {
-        return bookMapper.toBookDto(bookService.findOne(id));
+    public Mono<BookDto> findOne(@PathVariable("id") String id) {
+        return bookService.findOne(id)
+                .map(bookMapper::toBookDto);
     }
 
 
     @PostMapping
-    public ResponseEntity<BookDto> create(@RequestBody BookDto bookDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<BookDto> create(@RequestBody BookDto bookDto) {
         if (bookDto.getId() != null && "".equals(bookDto.getId())) {
             bookDto.setId(null);
         }
-        Book savedBook = bookService.save(bookMapper.toBook(bookDto));
-
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(BASE_URL + "/{id}")
-                .buildAndExpand(savedBook.getId()).toUri();
-        BookDto savedDto = bookMapper.toBookDto(savedBook);
-
-        return ResponseEntity.created(uriOfNewResource).body(savedDto);
+        return bookService.save(bookMapper.toBook(bookDto))
+                .map(bookMapper::toBookDto);
     }
 
 
@@ -86,7 +80,8 @@ public class BookRestController {
     @PostMapping("/{id}/comments/save")
     @ResponseStatus(value = HttpStatus.CREATED)
     public void saveComment(@PathVariable(name = "id") String bookId, @RequestBody CommentDto commentDto) {
-        Book book = bookService.findOne(bookId);
+        //TODO unblock
+        Book book = bookService.findOne(bookId).block();
 
         Comment comment = commentMapper.toComment(commentDto);
         book.addComment(comment);

@@ -26,9 +26,9 @@ public class BookUpdateListener extends AbstractMongoEventListener<Book> {
 
         Book book = event.getSource();
         Author author = book.getAuthor();
-        authorService.save(author);
+        authorService.save(author).block();
 
         Genre genre = book.getGenre();
-        genreService.save(genre);
+        genreService.save(genre).block();
     }
 }

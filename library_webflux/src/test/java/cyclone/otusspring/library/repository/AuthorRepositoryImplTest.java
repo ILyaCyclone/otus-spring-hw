@@ -99,8 +99,6 @@ class AuthorRepositoryImplTest {
                         StepVerifier.create(authorRepository.findOne(updatedAuthor2.getId()))
                                 .expectSubscription()
                                 .expectNext(updatedAuthor2));
-
-
     }
 
 

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import reactor.test.StepVerifier;
 
 import java.util.List;
 
@@ -29,12 +30,13 @@ class BookServiceTest {
     void create() {
         final Book bookToCreate = new Book(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre());
 
-        Book createdBook = bookService.save(bookToCreate);
-
-        assertThat(createdBook.getId()).isNotNull();
-        assertThat(createdBook).isEqualToIgnoringGivenFields(bookToCreate, "id", "comments");
-        assertThat(bookService.findAll()).usingRecursiveFieldByFieldElementComparator()
-                .contains(createdBook);
+        StepVerifier.create(bookService.save(bookToCreate))
+                .expectSubscription()
+                .assertNext(book -> {
+                    assertThat(book.getId()).isNotNull();
+                    assertThat(book).isEqualToIgnoringGivenFields(bookToCreate, "id", "comments");
+                })
+                .verifyComplete();
     }
 
     @Test
@@ -46,7 +48,10 @@ class BookServiceTest {
 
         assertThat(createdBook.getId()).isNotNull();
         assertThat(createdBook).isEqualToIgnoringGivenFields(bookToCreate, "id", "comments");
-        assertThat(bookService.findOne(createdBook.getId())).isEqualToIgnoringGivenFields(bookToCreate, "comments");
+        //TODO unblock
+        assertThat(bookService.findOne(createdBook.getId()).block()).isEqualToIgnoringGivenFields(bookToCreate, "comments");
+
+
     }
 
     @Test
@@ -60,9 +65,11 @@ class BookServiceTest {
         assertThat(createdBook.getId()).isNotNull();
         assertThat(createdBook).isEqualToIgnoringGivenFields(bookToCreate, "id", "comments");
 
-        Book book = bookService.findOne(createdBook.getId());
-        assertThat(book).isEqualToIgnoringGivenFields(bookToCreate, "comments");
-        assertThat(book.getComments()).containsExactly(COMMENT1, COMMENT3);
+        StepVerifier.create(bookService.findOne(createdBook.getId()))
+                .assertNext(book -> {
+                    assertThat(book).isEqualToIgnoringGivenFields(bookToCreate, "comments");
+                    assertThat(book.getComments()).containsExactly(COMMENT1, COMMENT3);
+                });
     }
 
     @Test
@@ -70,7 +77,7 @@ class BookServiceTest {
     void create_fail_nonExistentAuthor() {
         Book bookToCreate = new Book(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), new Author(NO_SUCH_ID), NEW_BOOK.getGenre());
 
-        assertThatThrownBy(() -> bookService.save(bookToCreate))
+        assertThatThrownBy(() -> bookService.save(bookToCreate).block())
                 .hasMessage("Could not save book")
                 .hasCause(new NotFoundException("Author ID " + NO_SUCH_ID + " not found"));
     }
@@ -80,31 +87,33 @@ class BookServiceTest {
     void create_fail_nonExistentGenre() {
         Book bookToCreate = new Book(NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), new Genre(NO_SUCH_ID, "no such genre"));
 
-        assertThatThrownBy(() -> bookService.save(bookToCreate))
+        assertThatThrownBy(() -> bookService.save(bookToCreate).block())
                 .hasMessage("Could not save book")
                 .hasCause(new NotFoundException("Genre ID " + NO_SUCH_ID + " not found"));
     }
 
     @Test
     void findAll() {
-        List<Book> books = bookService.findAll();
+        List<Book> books = bookService.findAll().collectList().block();
 
         assertThat(books).usingRecursiveFieldByFieldElementComparator()
                 .usingElementComparatorIgnoringFields("comments")
                 .containsExactly(BOOK5, BOOK2, BOOK4, BOOK3, BOOK1);
+
+
     }
 
     @Test
     void cascadeSaveAuthor() {
-        Book book = bookService.findOne(BOOK1.getId());
+        Book book = bookService.findOne(BOOK1.getId()).block();
         Author author = book.getAuthor();
         final String updatedFirstname = "Cascade save " + author.getFirstname();
         author.setFirstname(updatedFirstname);
         book.setAuthor(author);
 
-        bookService.save(book);
+        bookService.save(book).block();
 
-        Book bookAfterSave = bookService.findOne(BOOK1.getId());
+        Book bookAfterSave = bookService.findOne(BOOK1.getId()).block();
         assertThat(bookAfterSave.getAuthor().getFirstname())
                 .as("Author should be updated by cascade")
                 .isEqualTo(updatedFirstname);
@@ -113,15 +122,15 @@ class BookServiceTest {
 
     @Test
     void cascadeSaveGenre() {
-        Book book = bookService.findOne(BOOK1.getId());
+        Book book = bookService.findOne(BOOK1.getId()).block();
         Genre genre = book.getGenre();
         final String updatedName = "Cascade save " + genre.getName();
         genre.setName(updatedName);
         book.setGenre(genre);
 
-        bookService.save(book);
+        bookService.save(book).block();
 
-        Book bookAfterSave = bookService.findOne(BOOK1.getId());
+        Book bookAfterSave = bookService.findOne(BOOK1.getId()).block();
         assertThat(bookAfterSave.getGenre().getName())
                 .as("Genre should be updated by cascade")
                 .isEqualTo(updatedName);

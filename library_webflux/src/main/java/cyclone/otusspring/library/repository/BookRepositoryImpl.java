@@ -8,14 +8,10 @@ import cyclone.otusspring.library.model.BookWithoutComments;
 import cyclone.otusspring.library.model.Genre;
 import cyclone.otusspring.library.repository.mongo.MongoBookRepository;
 import lombok.RequiredArgsConstructor;
-import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
@@ -25,63 +21,63 @@ public class BookRepositoryImpl implements BookRepository {
     private final MongoTemplate mongoTemplate;
 
     @Override
-    public List<Book> findAll() {
+    public Flux<Book> findAll() {
         return mongoRepository.findAllByOrderByTitle();
     }
 
     @Override
-    public List<Book> findByTitle(String title) {
+    public Flux<Book> findByTitle(String title) {
         return mongoRepository.findByTitleContainingIgnoreCaseOrderByTitle(title);
     }
 
     @Override
-    public List<Book> findByAuthor(Author author) {
+    public Flux<Book> findByAuthor(Author author) {
         return mongoRepository.findByAuthorOrderByTitle(author);
     }
 
     @Override
-    public List<Book> findByGenre(Genre genre) {
+    public Flux<Book> findByGenre(Genre genre) {
         return mongoRepository.findByGenreOrderByTitle(genre);
     }
 
     @Override
-    public Book findOne(String id) {
-        return mongoRepository.findById(id).orElseThrow(() -> new NotFoundException("Book ID " + id + " not found"));
+    public Mono<Book> findOne(String id) {
+        return mongoRepository.findById(id)
+                .switchIfEmpty(Mono.error(new NotFoundException("Book ID " + id + " not found")));
     }
 
     @Override
-    public Book save(Book book) {
+    public Mono<Book> save(Book book) {
         return mongoRepository.save(book);
     }
 
     @Override
     public BookWithoutComments save(BookWithoutComments bookWithoutComments) {
-        String id = bookWithoutComments.getId();
-        if (id != null && mongoRepository.existsById(id)) {
-            Update update = new Update();
-            Document document = (Document) (mongoTemplate.getConverter().convertToMongoType(bookWithoutComments));
-            document.entrySet().forEach(entry -> update.set(entry.getKey(), entry.getValue()));
-
-            mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(id)), update, BookWithoutComments.class);
-            return bookWithoutComments;
-        } else {
-            return mongoTemplate.save(bookWithoutComments);
-        }
+        //TODO temporarily disabled
+//        String id = bookWithoutComments.getId();
+//        if (id != null && mongoRepository.existsById(id)) {
+//            Update update = new Update();
+//            Document document = (Document) (mongoTemplate.getConverter().convertToMongoType(bookWithoutComments));
+//            document.entrySet().forEach(entry -> update.set(entry.getKey(), entry.getValue()));
+//
+//            mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(id)), update, BookWithoutComments.class);
+//            return bookWithoutComments;
+//        } else {
+//            return mongoTemplate.save(bookWithoutComments);
+//        }
+        return mongoTemplate.save(bookWithoutComments);
     }
 
     @Override
-    public void delete(String id) {
-        if (!mongoRepository.existsById(id)) throw new NotFoundException("Book ID " + id + " not found");
-        mongoRepository.deleteById(id);
+    public Mono<Void> delete(String id) {
+        return Mono.just(id)
+                .filterWhen(mongoRepository::existsById)
+                .switchIfEmpty(Mono.error(new NotFoundException("Book ID " + id + " not found")))
+                .flatMap(mongoRepository::deleteById);
     }
 
     @Override
-    public void delete(Book book) {
-        mongoRepository.delete(book);
-    }
-
-    @Override
-    public boolean exists(String id) {
+    public Mono<Boolean> exists(String id) {
         return mongoRepository.existsById(id);
     }
 }
