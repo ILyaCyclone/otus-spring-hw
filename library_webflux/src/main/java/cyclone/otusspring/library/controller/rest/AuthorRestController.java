@@ -56,16 +56,17 @@ public class AuthorRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@RequestBody AuthorDto authorDto, @PathVariable("id") String id) {
+    public Mono<Void> update(@RequestBody AuthorDto authorDto, @PathVariable("id") String id) {
         authorDto.setId(id);
-        authorService.save(authorMapper.toAuthor(authorDto));
+        return authorService.save(authorMapper.toAuthor(authorDto))
+                .then();
     }
 
 
 
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable(name = "id") String id) {
-        authorService.delete(id);
+    public Mono<Void> delete(@PathVariable(name = "id") String id) {
+        return authorService.delete(id);
     }
 }
