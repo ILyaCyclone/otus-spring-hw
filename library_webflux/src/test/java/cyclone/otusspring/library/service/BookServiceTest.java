@@ -44,7 +44,8 @@ class BookServiceTest {
     void create_withoutComments() {
         final BookWithoutComments bookToCreate = new BookWithoutComments(null, NEW_BOOK.getTitle(), NEW_BOOK.getYear(), NEW_BOOK.getAuthor(), NEW_BOOK.getGenre());
 
-        BookWithoutComments createdBook = bookService.save(bookToCreate);
+        BookWithoutComments createdBook = bookService.save(bookToCreate)
+                .block();
 
         assertThat(createdBook.getId()).isNotNull();
         assertThat(createdBook).isEqualToIgnoringGivenFields(bookToCreate, "id", "comments");
@@ -60,7 +61,8 @@ class BookServiceTest {
         final BookWithoutComments bookToCreate = new BookWithoutComments(BOOK1.getId()
                 , "upd " + BOOK1.getTitle(), 1 + BOOK1.getYear(), BOOK2.getAuthor(), BOOK2.getGenre());
 
-        BookWithoutComments createdBook = bookService.save(bookToCreate);
+        BookWithoutComments createdBook = bookService.save(bookToCreate)
+                .block();
 
         assertThat(createdBook.getId()).isNotNull();
         assertThat(createdBook).isEqualToIgnoringGivenFields(bookToCreate, "id", "comments");

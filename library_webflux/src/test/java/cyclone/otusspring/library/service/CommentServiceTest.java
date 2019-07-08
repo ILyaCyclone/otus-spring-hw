@@ -24,7 +24,8 @@ class CommentServiceTest {
 
     @Test
     void findByBookId() {
-        List<Comment> comments = commentService.findByBookId(BOOK1.getId());
+        List<Comment> comments = commentService.findByBookId(BOOK1.getId())
+                .collectList().block();
 
         assertThat(comments).usingRecursiveFieldByFieldElementComparator()
                 .usingElementComparatorIgnoringFields("book")
@@ -40,15 +41,18 @@ class CommentServiceTest {
         CommentDto commentDtoToCreate = new CommentDto(bookId, username, text);
 
         // act
-        commentService.create(commentDtoToCreate);
+        commentService.create(commentDtoToCreate)
+                .block();
 
         // find saved comment for assertions
-        List<Comment> commentsByUsernameAndText = commentService.findByBookId(bookId).stream()
+        List<Comment> commentsByUsernameAndText = commentService.findByBookId(bookId)
+                .collectList().block()
+                .stream()
                 .filter(comment -> comment.getCommentator().equals(username))
                 .filter(comment -> comment.getText().equals(text))
                 .collect(Collectors.toList());
 
-        assertThat(commentsByUsernameAndText).as("only 1 comment saved")
+        assertThat(commentsByUsernameAndText).as("comment wasn't saved")
                 .hasSize(1);
 
         Comment createdComment = commentsByUsernameAndText.get(0);
@@ -61,9 +65,10 @@ class CommentServiceTest {
 
     @Test
     void delete() {
-        commentService.delete(BOOK2.getId(), COMMENT4.getId());
+        commentService.delete(BOOK2.getId(), COMMENT4.getId()).block();
 
-        assertThat(commentService.findByBookId(BOOK2.getId()))
+        assertThat(commentService.findByBookId(BOOK2.getId())
+                .collectList().block())
                 .hasSize(1)
                 .doesNotContain(COMMENT4);
     }

@@ -3,13 +3,13 @@ package cyclone.otusspring.library.controller.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cyclone.otusspring.library.dto.BookDto;
 import cyclone.otusspring.library.dto.BookListElementDto;
+import cyclone.otusspring.library.dto.CommentDto;
 import cyclone.otusspring.library.mapper.BookMapper;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.repository.BookRepository;
 import cyclone.otusspring.library.service.AuthorService;
 import cyclone.otusspring.library.service.BookService;
 import cyclone.otusspring.library.service.GenreService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +23,7 @@ import reactor.core.publisher.Mono;
 import static cyclone.otusspring.library.TestData.*;
 import static cyclone.otusspring.library.controller.rest.BookRestController.BASE_URL;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -143,19 +144,17 @@ public class BookRestControllerTest {
     }
 
     @Test
-    @Disabled("not implemented yet")
     void saveComment() throws Exception {
-//        when(bookService.findOne("1")).thenReturn(Mono.just(BOOK1));
-//        CommentDto commentDtoToCreate = new CommentDto("1", "new commentator", "new text");
-//
-//        mockMvc.perform(post(BASE_URL + "/1/comments/save")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(JsonUtils.writeValue(objectMapper, commentDtoToCreate)))
-//
-//                .andExpect(status().isCreated())
-//                .andReturn();
-//
-//        verify(bookService).findOne("1");
-//        verify(bookService).save((Book) any());
+        when(bookService.findOne("1")).thenReturn(Mono.just(BOOK1));
+        CommentDto commentDtoToCreate = new CommentDto("1", "new commentator", "new text");
+
+        webTestClient.post().uri(BASE_URL + "/1/comments/save")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(commentDtoToCreate), CommentDto.class)
+                .exchange()
+                .expectStatus().isCreated();
+
+        verify(bookService).findOne("1");
+        verify(bookService).save((Book) any());
     }
 }

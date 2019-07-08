@@ -63,7 +63,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookWithoutComments save(BookWithoutComments bookWithoutComments) {
+    public Mono<BookWithoutComments> save(BookWithoutComments bookWithoutComments) {
         return bookRepository.save(bookWithoutComments);
     }
 
