@@ -8,7 +8,11 @@ import cyclone.otusspring.library.model.BookWithoutComments;
 import cyclone.otusspring.library.model.Genre;
 import cyclone.otusspring.library.repository.mongo.MongoBookRepository;
 import lombok.RequiredArgsConstructor;
+import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -52,20 +56,19 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    public BookWithoutComments save(BookWithoutComments bookWithoutComments) {
-        //TODO temporarily disabled
-//        String id = bookWithoutComments.getId();
-//        if (id != null && mongoRepository.existsById(id)) {
-//            Update update = new Update();
-//            Document document = (Document) (mongoTemplate.getConverter().convertToMongoType(bookWithoutComments));
-//            document.entrySet().forEach(entry -> update.set(entry.getKey(), entry.getValue()));
-//
-//            mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(id)), update, BookWithoutComments.class);
-//            return bookWithoutComments;
-//        } else {
-//            return mongoTemplate.save(bookWithoutComments);
-//        }
-        return mongoTemplate.save(bookWithoutComments);
+    public Mono<BookWithoutComments> save(BookWithoutComments bookWithoutComments) {
+        String id = bookWithoutComments.getId();
+        //TODO unblock
+        if (id != null && mongoRepository.existsById(id).block()) {
+            Update update = new Update();
+            Document document = (Document) (mongoTemplate.getConverter().convertToMongoType(bookWithoutComments));
+            document.entrySet().forEach(entry -> update.set(entry.getKey(), entry.getValue()));
+
+            mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(id)), update, BookWithoutComments.class);
+            return Mono.just(bookWithoutComments);
+        } else {
+            return Mono.just(mongoTemplate.save(bookWithoutComments));
+        }
     }
 
     @Override

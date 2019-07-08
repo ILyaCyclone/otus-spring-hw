@@ -20,7 +20,7 @@ public interface BookRepository {
 
     Mono<Book> save(Book book);
 
-    BookWithoutComments save(BookWithoutComments book);
+    Mono<BookWithoutComments> save(BookWithoutComments book);
 
     Mono<Void> delete(String id);
 

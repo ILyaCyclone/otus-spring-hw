@@ -2,14 +2,14 @@ package cyclone.otusspring.library.service;
 
 import cyclone.otusspring.library.dto.CommentDto;
 import cyclone.otusspring.library.model.Comment;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface CommentService {
 
-    List<Comment> findByBookId(String bookId);
+    Flux<Comment> findByBookId(String bookId);
 
-    void create(CommentDto commentDto);
+    Mono<Void> create(CommentDto commentDto);
 
-    void delete(String bookId, String commentId);
+    Mono<Void> delete(String bookId, String commentId);
 }

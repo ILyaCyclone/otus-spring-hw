@@ -35,6 +35,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>io.projectreactor.addons</groupId>
+            <artifactId>reactor-extra</artifactId>
+        </dependency>
+
         <!-- data access -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

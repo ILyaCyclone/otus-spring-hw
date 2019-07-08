@@ -5,8 +5,8 @@ import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
 import cyclone.otusspring.library.repository.BookRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -18,14 +18,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> findByBookId(String bookId) {
+    public Flux<Comment> findByBookId(String bookId) {
         return bookRepository.findOne(bookId)
-                .block() //TODO unblock
-                .getComments();
+                .map(Book::getComments)
+                .flatMapMany(Flux::fromIterable);
     }
 
     @Override
-    public void create(CommentDto commentDto) {
+    public Mono<Void> create(CommentDto commentDto) {
         Book book = bookRepository.findOne(commentDto.getBookId()).block() //TODO unblock
                 ;
         Comment comment = new Comment(commentDto.getCommentator(), commentDto.getText());
