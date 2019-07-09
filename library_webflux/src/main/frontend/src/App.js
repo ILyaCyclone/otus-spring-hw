@@ -3,6 +3,9 @@ import {BrowserRouter, Route, Switch} from 'react-router-dom';
 
 import Header from './components/layout/Header';
 import Home from "./components/Home";
+import Authors from "./components/Authors";
+import Genres from "./components/Genres";
+import Books from "./components/Books";
 import AuthorForm from "./components/AuthorForm";
 import GenreForm from "./components/GenreForm";
 import BookForm from "./components/BookForm";
