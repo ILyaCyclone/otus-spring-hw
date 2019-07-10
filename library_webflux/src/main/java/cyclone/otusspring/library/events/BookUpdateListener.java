@@ -8,6 +8,7 @@ import cyclone.otusspring.library.service.GenreService;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 @Component
 public class BookUpdateListener extends AbstractMongoEventListener<Book> {
@@ -26,9 +27,11 @@ public class BookUpdateListener extends AbstractMongoEventListener<Book> {
 
         Book book = event.getSource();
         Author author = book.getAuthor();
-        authorService.save(author).block();
-
         Genre genre = book.getGenre();
-        genreService.save(genre).block();
+
+        Mono.zip(
+                authorService.save(author)
+                , genreService.save(genre))
+                .subscribe();
     }
 }

@@ -92,6 +92,7 @@ public class AuthorRestControllerTest {
     void update() {
         final AuthorDto authorDtoToUpdate = new AuthorDto("1", "upd fistname", "upd lastname", "upd homeland");
         Author authorToUpdate = authorMapper.toAuthor(authorDtoToUpdate);
+        when(authorService.save(authorToUpdate)).thenReturn(Mono.just(authorToUpdate));
 
         webTestClient.put().uri(BASE_URL + "/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)

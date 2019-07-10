@@ -113,10 +113,14 @@ class AuthorRepositoryImplTest {
     @Test
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
-        StepVerifier.create(authorRepository.delete(NO_SUCH_ID))
-                .expectSubscription()
-                .expectError(NotFoundException.class)
-                .verify();
+        assertThatThrownBy(() -> {
+            authorRepository.delete(NO_SUCH_ID).block();
+        }).isInstanceOf(NotFoundException.class);
+
+//        StepVerifier.create(authorRepository.delete(NO_SUCH_ID))
+//                .expectSubscription()
+//                .expectError(NotFoundException.class)
+//                .verify();
     }
 
     @ParameterizedTest

@@ -29,9 +29,8 @@ public class CommentServiceImpl implements CommentService {
         // find a book by commentDto.bookId; create a Comment from CommentDto; add comment to book; save book
 //
 //        return bookRepository.findOne(commentDto.getBookId())
-////                .doOnEach(bookSignal -> bookSignal.get().addComment(new Comment(commentDto.getCommentator(), commentDto.getText())))
 //                .map(book -> {book.addComment(new Comment(commentDto.getCommentator(), commentDto.getText())); return book;})
-//                .map(bookRepository::save)
+//                .flatMap(bookRepository::save)
 //                .then();
 
         Book book = bookRepository.findOne(commentDto.getBookId()).block() //TODO unblock
@@ -47,20 +46,17 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Mono<Void> delete(String bookId, String commentId) {
         // find book by id; remove comment from found book; save found book
-        Book book = bookRepository.findOne(bookId).block();
-        book.removeComment(commentId);
-        return bookRepository.save(book)
+//        Book book = bookRepository.findOne(bookId).block();
+//        book.removeComment(commentId);
+//        return bookRepository.save(book)
+//                .then();
+
+        return bookRepository.findOne(bookId)
+                .map(book -> {
+                    book.removeComment(commentId);
+                    return book;
+                })
+                .flatMap(bookRepository::save)
                 .then();
-
-//        return bookRepository.findOne(bookId)
-//                .map(book -> {book.removeComment(commentId); return book;})
-////                .doOnEach(bookSignal -> bookSignal.get().removeComment(commentId))
-//                .map(bookRepository::save)
-//                .then();
-
-//        return bookRepository.findOne(bookId)
-//                .flatMap(boo -> {boo.removeComment(commentId); return Mono.just(boo);})
-//                .flatMap(bookRepository::save)
-//                .then();
     }
 }
