@@ -25,11 +25,16 @@ public class BookUpdateListener extends AbstractMongoEventListener<Book> {
     public void onBeforeConvert(BeforeConvertEvent<Book> event) {
         super.onBeforeConvert(event);
 
-        Book book = event.getSource();
-        Author author = book.getAuthor();
-        Genre genre = book.getGenre();
+        Mono<Author> authorMono = Mono.just(event)
+                .map(BeforeConvertEvent::getSource)
+                .map(Book::getAuthor)
+                .flatMap(authorService::save);
+        Mono<Genre> genreMono = Mono.just(event)
+                .map(BeforeConvertEvent::getSource)
+                .map(Book::getGenre)
+                .flatMap(genreService::save);
 
-        Mono.when(authorService.save(author), genreService.save(genre))
+        Mono.when(authorMono, genreMono)
                 .subscribe();
     }
 }

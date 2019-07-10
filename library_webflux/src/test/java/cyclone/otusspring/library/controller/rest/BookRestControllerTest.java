@@ -52,7 +52,7 @@ public class BookRestControllerTest {
 
 
     @Test
-    void findAll() throws Exception {
+    void findAll() {
         when(bookService.findAll()).thenReturn(Flux.just(BOOK1, BOOK2));
 
         webTestClient.get().uri(BASE_URL)
@@ -67,7 +67,7 @@ public class BookRestControllerTest {
     }
 
     @Test
-    void findOne() throws Exception {
+    void findOne() {
         when(bookService.findOne("1")).thenReturn(Mono.just(BOOK1));
 
         EntityExchangeResult<BookDto> exchangeResult = webTestClient.get().uri(BASE_URL + "/1")
@@ -88,7 +88,7 @@ public class BookRestControllerTest {
     }
 
     @Test
-    void create() throws Exception {
+    void create() {
         when(authorService.findOne("1")).thenReturn(Mono.just(AUTHOR1));
         when(genreService.findOne("1")).thenReturn(Mono.just(GENRE1));
 
@@ -118,12 +118,13 @@ public class BookRestControllerTest {
     }
 
     @Test
-    void update() throws Exception {
+    void update() {
         when(authorService.findOne("1")).thenReturn(Mono.just(AUTHOR1));
         when(genreService.findOne("1")).thenReturn(Mono.just(GENRE1));
 
         final BookDto bookDtoToUpdate = new BookDto("1", "upd title", 2000, "1", "1");
         Book bookToUpdate = bookMapper.toBook(bookDtoToUpdate);
+        when(bookService.save(bookToUpdate)).thenReturn(Mono.just(bookToUpdate));
 
         webTestClient.put().uri(BASE_URL + "/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -144,8 +145,9 @@ public class BookRestControllerTest {
     }
 
     @Test
-    void saveComment() throws Exception {
+    void saveComment() {
         when(bookService.findOne("1")).thenReturn(Mono.just(BOOK1));
+        when(bookService.save(BOOK1)).thenReturn(Mono.just(BOOK1));
         CommentDto commentDtoToCreate = new CommentDto("1", "new commentator", "new text");
 
         webTestClient.post().uri(BASE_URL + "/1/comments/save")

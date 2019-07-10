@@ -48,6 +48,17 @@ public class BookFormdataRestController {
         //TODO unblock
         bookFormDto.setAllGenres(genreMapper.toGenreDtoList(genreService.findAll().collectList().block()));
         return bookFormDto;
+
+//        return Mono.zip(authorService.findAll().collectList(), genreService.findAll().collectList())
+//                .map(tuple2 -> {
+//                    BookFormDto bookFormDto = new BookFormDto();
+//                    bookFormDto.setAllAuthors(authorMapper.toAuthorDtoList(tuple2.getT1()));
+//                    bookFormDto.setAllGenres(genreMapper.toGenreDtoList(tuple2.getT2()));
+//                    if (!"new".equals(id)) {
+//                        bookFormDto.setBookDto(bookMapper.toBookDto(bookService.findOne(id).block()));
+//                    }
+//                    return bookFormDto;
+//                });
     }
 
 }

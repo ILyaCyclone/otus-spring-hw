@@ -52,10 +52,7 @@ public class CommentServiceImpl implements CommentService {
 //                .then();
 
         return bookRepository.findOne(bookId)
-                .map(book -> {
-                    book.removeComment(commentId);
-                    return book;
-                })
+                .doOnNext(book -> book.removeComment(commentId))
                 .flatMap(bookRepository::save)
                 .then();
     }

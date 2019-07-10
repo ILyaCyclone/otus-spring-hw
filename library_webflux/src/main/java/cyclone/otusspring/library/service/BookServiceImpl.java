@@ -47,19 +47,35 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Mono<Book> save(Book book) {
-        //TODO unblock
-        if (!authorRepository.exists(book.getAuthor().getId()).block()) {
-            throw new RuntimeException("Could not save book"
-                    , new NotFoundException("Author ID " + book.getAuthor().getId() + " not found"));
+//        Boolean bookAuthorExists = authorRepository.exists(book.getAuthor().getId()).block();
+//        if (!bookAuthorExists) {
+//            throw new RuntimeException("Could not save book"
+//                    , new NotFoundException("Author ID " + book.getAuthor().getId() + " not found"));
+//
+//        }
+//        Boolean bookGenreExists = genreRepository.exists(book.getGenre().getId()).block();
+//        if (!bookGenreExists) {
+//            throw new RuntimeException("Could not save book"
+//                    , new NotFoundException("Genre ID " + book.getGenre().getId() + " not found"));
+//
+//        }
+//        return bookRepository.save(book);
 
-        }
-        //TODO unblock
-        if (!genreRepository.exists(book.getGenre().getId()).block()) {
-            throw new RuntimeException("Could not save book"
-                    , new NotFoundException("Genre ID " + book.getGenre().getId() + " not found"));
-
-        }
-        return bookRepository.save(book);
+        return Mono.zip(
+                authorRepository.exists(book.getAuthor().getId())
+                , genreRepository.exists(book.getGenre().getId())
+        )
+                .flatMap(tuple2 -> {
+                    if (!tuple2.getT1()) {
+                        return Mono.error(new RuntimeException("Could not save book"
+                                , new NotFoundException("Author ID " + book.getAuthor().getId() + " not found")));
+                    }
+                    if (!tuple2.getT2()) {
+                        return Mono.error(new RuntimeException("Could not save book"
+                                , new NotFoundException("Genre ID " + book.getGenre().getId() + " not found")));
+                    }
+                    return bookRepository.save(book);
+                });
     }
 
     @Override

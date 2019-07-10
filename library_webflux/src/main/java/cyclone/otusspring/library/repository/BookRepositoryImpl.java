@@ -76,7 +76,8 @@ public class BookRepositoryImpl implements BookRepository {
         return Mono.just(id)
                 .filterWhen(mongoRepository::existsById)
                 .switchIfEmpty(Mono.error(new NotFoundException("Book ID " + id + " not found")))
-                .flatMap(mongoRepository::deleteById);
+                .flatMap(mongoRepository::deleteById)
+                .then();
     }
 
     @Override

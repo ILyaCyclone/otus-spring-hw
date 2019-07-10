@@ -45,10 +45,14 @@ public class AuthorRestController {
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public Mono<AuthorDto> create(@RequestBody AuthorDto authorDto) {
-        if (authorDto.getId() != null && authorDto.getId().length() == 0) {
-            authorDto.setId(null);
-        }
-        return authorService.save(authorMapper.toAuthor(authorDto))
+        return Mono.just(authorDto)
+                .doOnNext(aDto -> {
+                    if (aDto.getId() != null && aDto.getId().length() == 0) {
+                        aDto.setId(null);
+                    }
+                })
+                .map(authorMapper::toAuthor)
+                .flatMap(authorService::save)
                 .map(authorMapper::toAuthorDto);
     }
 
@@ -57,8 +61,10 @@ public class AuthorRestController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public Mono<Void> update(@RequestBody AuthorDto authorDto, @PathVariable("id") String id) {
-        authorDto.setId(id);
-        return authorService.save(authorMapper.toAuthor(authorDto))
+        return Mono.just(authorDto)
+                .doOnNext(aDto -> aDto.setId(id))
+                .map(authorMapper::toAuthor)
+                .flatMap(authorService::save)
                 .then();
     }
 

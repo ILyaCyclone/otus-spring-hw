@@ -5,7 +5,6 @@ import cyclone.otusspring.library.dto.BookListElementDto;
 import cyclone.otusspring.library.dto.CommentDto;
 import cyclone.otusspring.library.mapper.BookMapper;
 import cyclone.otusspring.library.mapper.CommentMapper;
-import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
 import cyclone.otusspring.library.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -62,29 +61,30 @@ public class BookRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@RequestBody BookDto bookDto, @PathVariable("id") String id) {
+    public Mono<Void> update(@RequestBody BookDto bookDto, @PathVariable("id") String id) {
         bookDto.setId(id);
-        bookService.save(bookMapper.toBook(bookDto));
+        return bookService.save(bookMapper.toBook(bookDto))
+                .then();
     }
 
 
 
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable(name = "id") String id) {
-        bookService.delete(id);
+    public Mono<Void> delete(@PathVariable(name = "id") String id) {
+        return bookService.delete(id);
     }
 
 
 
     @PostMapping("/{id}/comments/save")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public void saveComment(@PathVariable(name = "id") String bookId, @RequestBody CommentDto commentDto) {
-        //TODO unblock
-        Book book = bookService.findOne(bookId).block();
-
+    public Mono<Void> saveComment(@PathVariable(name = "id") String bookId, @RequestBody CommentDto commentDto) {
         Comment comment = commentMapper.toComment(commentDto);
-        book.addComment(comment);
-        bookService.save(book);
+        return bookService.findOne(bookId)
+//                .map(book -> {book.addComment(comment); return book;})
+                .doOnNext(book -> book.addComment(comment))
+                .flatMap(bookService::save)
+                .then();
     }
 }
