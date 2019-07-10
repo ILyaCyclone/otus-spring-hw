@@ -29,9 +29,7 @@ public class BookUpdateListener extends AbstractMongoEventListener<Book> {
         Author author = book.getAuthor();
         Genre genre = book.getGenre();
 
-        Mono.zip(
-                authorService.save(author)
-                , genreService.save(genre))
+        Mono.when(authorService.save(author), genreService.save(genre))
                 .subscribe();
     }
 }
