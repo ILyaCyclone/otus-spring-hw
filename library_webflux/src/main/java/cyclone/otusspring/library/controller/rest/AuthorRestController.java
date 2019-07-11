@@ -29,7 +29,7 @@ public class AuthorRestController {
     @GetMapping
     public Flux<AuthorDto> findAll() {
         return authorService.findAll()
-                .map(authorMapper::toAuthorDto);
+                .transform(authorMapper::toAuthorDtoList);
     }
 
 
@@ -37,7 +37,7 @@ public class AuthorRestController {
     @GetMapping("/{id}")
     public Mono<AuthorDto> findOne(@PathVariable("id") String id) {
         return authorService.findOne(id)
-                .map(authorMapper::toAuthorDto);
+                .transform(authorMapper::toAuthorDto);
     }
 
 
@@ -51,9 +51,9 @@ public class AuthorRestController {
                         aDto.setId(null);
                     }
                 })
-                .map(authorMapper::toAuthor)
+                .transform(authorMapper::toAuthor)
                 .flatMap(authorService::save)
-                .map(authorMapper::toAuthorDto);
+                .transform(authorMapper::toAuthorDto);
     }
 
 
@@ -63,7 +63,7 @@ public class AuthorRestController {
     public Mono<Void> update(@RequestBody AuthorDto authorDto, @PathVariable("id") String id) {
         return Mono.just(authorDto)
                 .doOnNext(aDto -> aDto.setId(id))
-                .map(authorMapper::toAuthor)
+                .transform(authorMapper::toAuthor)
                 .flatMap(authorService::save)
                 .then();
     }

@@ -44,7 +44,9 @@ public class BookFormdataRestController {
             bookFormDto.setBookDto(bookMapper.toBookDto(bookService.findOne(id).block()));
         }
         //TODO unblock
-        bookFormDto.setAllAuthors(authorMapper.toAuthorDtoList(authorService.findAll().collectList().block()));
+        bookFormDto.setAllAuthors(authorService.findAll()
+                .transform(authorMapper::toAuthorDtoList)
+                .collectList().block());
         //TODO unblock
         bookFormDto.setAllGenres(genreMapper.toGenreDtoList(genreService.findAll().collectList().block()));
         return bookFormDto;
