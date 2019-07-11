@@ -4,21 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cyclone.otusspring.library.dto.BookFormDto;
 import cyclone.otusspring.library.mapper.AuthorMapper;
 import cyclone.otusspring.library.mapper.BookMapper;
-import cyclone.otusspring.library.mapper.CommentMapper;
 import cyclone.otusspring.library.mapper.GenreMapper;
 import cyclone.otusspring.library.service.AuthorService;
 import cyclone.otusspring.library.service.BookService;
 import cyclone.otusspring.library.service.GenreService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.reactive.server.EntityExchangeResult;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -27,16 +23,11 @@ import static cyclone.otusspring.library.controller.rest.BookFormdataRestControl
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
-@WebMvcTest(BookFormdataRestController.class)
-@Import({BookMapper.class, AuthorMapper.class, GenreMapper.class, CommentMapper.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class BookFormdataRestControllerTest {
     @Autowired
-    MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     @MockBean
     BookService bookService;
@@ -62,20 +53,22 @@ class BookFormdataRestControllerTest {
 
 
     @Test
-    void getBookFormData() throws Exception {
+    void getBookFormData() {
         when(bookService.findOne("1")).thenReturn(Mono.just(BOOK1));
         when(authorService.findAll()).thenReturn(Flux.just(AUTHOR1, AUTHOR2));
         when(genreService.findAll()).thenReturn(Flux.just(GENRE1, GENRE2));
 
-        MvcResult mvcResult =
-                mockMvc.perform(get(BASE_URL + "/1"))
-                        .andExpect(status().isOk())
-                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                        .andReturn();
+        EntityExchangeResult<BookFormDto> exchangeResult = webTestClient.get().uri(BASE_URL + "/1")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody(BookFormDto.class)
+                .returnResult();
 
         verify(bookService).findOne("1");
 
-        BookFormDto bookFormDto = JsonUtils.readValueFromMvcResult(objectMapper, mvcResult, BookFormDto.class);
+        BookFormDto bookFormDto = exchangeResult.getResponseBody();
         assertThat(bookFormDto.getBookDto())
                 .isEqualTo(bookMapper.toBookDto(BOOK1));
         assertThat(bookFormDto.getAllAuthors())
@@ -85,19 +78,21 @@ class BookFormdataRestControllerTest {
     }
 
     @Test
-    void getNewBookFormData() throws Exception {
+    void getNewBookFormData() {
         when(authorService.findAll()).thenReturn(Flux.just(AUTHOR1, AUTHOR2));
         when(genreService.findAll()).thenReturn(Flux.just(GENRE1, GENRE2));
 
-        MvcResult mvcResult =
-                mockMvc.perform(get(BASE_URL + "/new"))
-                        .andExpect(status().isOk())
-                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                        .andReturn();
+        EntityExchangeResult<BookFormDto> exchangeResult = webTestClient.get().uri(BASE_URL + "/new")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody(BookFormDto.class)
+                .returnResult();
 
         verify(bookService, never()).findOne(any());
 
-        BookFormDto bookFormDto = JsonUtils.readValueFromMvcResult(objectMapper, mvcResult, BookFormDto.class);
+        BookFormDto bookFormDto = exchangeResult.getResponseBody();
         assertThat(bookFormDto.getBookDto()).isNull();
         assertThat(bookFormDto.getAllAuthors())
                 .containsExactly(authorMapper.toAuthorDto(AUTHOR1), authorMapper.toAuthorDto(AUTHOR2));

@@ -1,6 +1,8 @@
 package cyclone.otusspring.library.controller.rest;
 
+import cyclone.otusspring.library.dto.AuthorDto;
 import cyclone.otusspring.library.dto.BookFormDto;
+import cyclone.otusspring.library.dto.GenreDto;
 import cyclone.otusspring.library.mapper.AuthorReactiveMapper;
 import cyclone.otusspring.library.mapper.BookReactiveMapper;
 import cyclone.otusspring.library.mapper.GenreReactiveMapper;
@@ -12,6 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 import static cyclone.otusspring.library.controller.rest.BookFormdataRestController.BASE_URL;
 
@@ -34,31 +39,29 @@ public class BookFormdataRestController {
 
 
     @GetMapping("/{id}")
-    public BookFormDto getBookFormData(@PathVariable("id") String id) {
-        BookFormDto bookFormDto = new BookFormDto();
-        if (!"new".equals(id)) {
-            bookFormDto.setBookDto(bookService.findOne(id)
-                    .transform(bookMapper::toBookDto)
-                    .block());
-        }
-        bookFormDto.setAllAuthors(authorService.findAll()
-                .transform(authorMapper::toAuthorDtoFlux)
-                .collectList().block());
-        bookFormDto.setAllGenres(genreService.findAll()
-                .transform(genreMapper::toGenreDtoFlux)
-                .collectList().block());
-        return bookFormDto;
+    public Mono<BookFormDto> getBookFormData(@PathVariable("id") String id) {
 
-//        return Mono.zip(authorService.findAll().collectList(), genreService.findAll().collectList())
-//                .map(tuple2 -> {
-//                    BookFormDto bookFormDto = new BookFormDto();
-//                    bookFormDto.setAllAuthors(authorMapper.toAuthorDtoList(tuple2.getT1()));
-//                    bookFormDto.setAllGenres(genreMapper.toGenreDtoList(tuple2.getT2()));
-//                    if (!"new".equals(id)) {
-//                        bookFormDto.setBookDto(bookMapper.toBookDto(bookService.findOne(id).block()));
-//                    }
-//                    return bookFormDto;
-//                });
+        Mono<BookFormDto> bookDtoMono = "new".equals(id)
+                ? Mono.just(new BookFormDto())
+                : bookService.findOne(id).transform(bookMapper::toBookDto)
+                    .map(bookDto -> {
+                        BookFormDto bookFormDto = new BookFormDto();
+                        bookFormDto.setBookDto(bookDto);
+                        return bookFormDto;
+                    });
+
+        return Mono.zip(bookDtoMono
+                , authorService.findAll().transform(authorMapper::toAuthorDtoFlux).collectList()
+                , genreService.findAll().transform(genreMapper::toGenreDtoFlux).collectList()
+        ).map(tuple3 -> {
+            BookFormDto bookFormDto = tuple3.getT1();
+            List<AuthorDto> authorDtoList = tuple3.getT2();
+            List<GenreDto> genreDtoList = tuple3.getT3();
+
+            bookFormDto.setAllAuthors(authorDtoList);
+            bookFormDto.setAllGenres(genreDtoList);
+            return bookFormDto;
+        });
     }
 
 }
