@@ -29,7 +29,7 @@ public class GenreRestController {
     @GetMapping
     public Flux<GenreDto> findAll() {
         return genreService.findAll()
-                .map(genreMapper::toGenreDto);
+                .transform(genreMapper::toGenreDtoList);
     }
 
 
@@ -37,35 +37,42 @@ public class GenreRestController {
     @GetMapping("/{id}")
     public Mono<GenreDto> findOne(@PathVariable("id") String id) {
         return genreService.findOne(id)
-                .map(genreMapper::toGenreDto);
+                .transform(genreMapper::toGenreDto);
     }
 
 
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(value = HttpStatus.CREATED)
     public Mono<GenreDto> create(@RequestBody GenreDto genreDto) {
-        if (genreDto.getId() != null && genreDto.getId().length() == 0) {
-            genreDto.setId(null);
-        }
-        return genreService.save(genreMapper.toGenre(genreDto))
-                .map(genreMapper::toGenreDto);
+        return Mono.just(genreDto)
+                .doOnNext(aDto -> {
+                    if (aDto.getId() != null && aDto.getId().length() == 0) {
+                        aDto.setId(null);
+                    }
+                })
+                .transform(genreMapper::toGenre)
+                .flatMap(genreService::save)
+                .transform(genreMapper::toGenreDto);
     }
 
 
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@RequestBody GenreDto genreDto, @PathVariable("id") String id) {
-        genreDto.setId(id);
-        genreService.save(genreMapper.toGenre(genreDto));
+    public Mono<Void> update(@RequestBody GenreDto genreDto, @PathVariable("id") String id) {
+        return Mono.just(genreDto)
+                .doOnNext(aDto -> aDto.setId(id))
+                .transform(genreMapper::toGenre)
+                .flatMap(genreService::save)
+                .then();
     }
 
 
 
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable(name = "id") String id) {
-        genreService.delete(id);
+    public Mono<Void> delete(@PathVariable(name = "id") String id) {
+        return genreService.delete(id);
     }
 }

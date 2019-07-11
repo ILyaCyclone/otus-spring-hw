@@ -47,7 +47,7 @@ public class AuthorDeleteListener extends AbstractMongoEventListener<Author> {
                 .map(ev -> ev.getSource().get("_id").toString())
                 .flatMap(authorService::findOne)
                 .flatMapMany(bookService::findByAuthor)
-                .switchIfEmpty(Subscriber::onComplete) // proceed if author do not have books
+                .switchIfEmpty(Subscriber::onComplete) // proceed if author does not have books
                 // throw error if author has books
                 .flatMap(book -> Flux.error(new DataIntegrityViolationException("Could not delete author." +
                         "\nReason: author has books. To delete author delete their books first.")))

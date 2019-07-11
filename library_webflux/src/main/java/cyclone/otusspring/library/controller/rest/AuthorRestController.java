@@ -4,8 +4,6 @@ import cyclone.otusspring.library.dto.AuthorDto;
 import cyclone.otusspring.library.mapper.AuthorMapper;
 import cyclone.otusspring.library.service.AuthorService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +17,6 @@ import static cyclone.otusspring.library.controller.rest.AuthorRestController.BA
 @RequestMapping(BASE_URL)
 public class AuthorRestController {
     static final String BASE_URL = "/api/v1/authors";
-    private static final Logger logger = LoggerFactory.getLogger(AuthorRestController.class);
 
     private final AuthorService authorService;
     private final AuthorMapper authorMapper;

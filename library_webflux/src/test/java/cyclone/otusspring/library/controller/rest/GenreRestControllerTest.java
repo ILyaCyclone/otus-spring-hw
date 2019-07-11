@@ -95,6 +95,7 @@ public class GenreRestControllerTest {
     void update() throws Exception {
         final GenreDto genreDtoToUpdate = new GenreDto("1", "upd name");
         Genre genreToUpdate = genreMapper.toGenre(genreDtoToUpdate);
+        when(genreService.save(genreToUpdate)).thenReturn(Mono.just(genreToUpdate));
 
         webTestClient.put().uri(BASE_URL + "/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)

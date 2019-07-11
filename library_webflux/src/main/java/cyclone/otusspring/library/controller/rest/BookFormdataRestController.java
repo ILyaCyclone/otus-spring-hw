@@ -40,15 +40,14 @@ public class BookFormdataRestController {
     public BookFormDto getBookFormData(@PathVariable("id") String id) {
         BookFormDto bookFormDto = new BookFormDto();
         if (!"new".equals(id)) {
-            //TODO unblock
             bookFormDto.setBookDto(bookMapper.toBookDto(bookService.findOne(id).block()));
         }
-        //TODO unblock
         bookFormDto.setAllAuthors(authorService.findAll()
                 .transform(authorMapper::toAuthorDtoList)
                 .collectList().block());
-        //TODO unblock
-        bookFormDto.setAllGenres(genreMapper.toGenreDtoList(genreService.findAll().collectList().block()));
+        bookFormDto.setAllGenres(genreService.findAll()
+                .transform(genreMapper::toGenreDtoList)
+                .collectList().block());
         return bookFormDto;
 
 //        return Mono.zip(authorService.findAll().collectList(), genreService.findAll().collectList())

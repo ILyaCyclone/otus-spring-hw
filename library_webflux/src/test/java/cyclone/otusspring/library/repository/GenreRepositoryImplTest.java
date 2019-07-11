@@ -112,10 +112,14 @@ class GenreRepositoryImplTest {
     @Test
     @DisplayName("deleting non existent ID throws exception")
     void testDeleteNonExistent() {
-        StepVerifier.create(genreRepository.delete(NO_SUCH_ID))
-                .expectSubscription()
-                .expectError(NotFoundException.class)
-                .verify();
+        assertThatThrownBy(() -> {
+            genreRepository.delete(NO_SUCH_ID).block();
+        }).isInstanceOf(NotFoundException.class);
+
+//        StepVerifier.create(genreRepository.delete(NO_SUCH_ID))
+//                .expectSubscription()
+//                .expectError(NotFoundException.class)
+//                .verify();
     }
 
     @ParameterizedTest
