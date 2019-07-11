@@ -3,7 +3,7 @@ package cyclone.otusspring.library.controller.rest;
 import cyclone.otusspring.library.dto.BookDto;
 import cyclone.otusspring.library.dto.BookListElementDto;
 import cyclone.otusspring.library.dto.CommentDto;
-import cyclone.otusspring.library.mapper.BookMapper;
+import cyclone.otusspring.library.mapper.BookReactiveMapper;
 import cyclone.otusspring.library.mapper.CommentMapper;
 import cyclone.otusspring.library.model.Comment;
 import cyclone.otusspring.library.service.BookService;
@@ -26,7 +26,7 @@ public class BookRestController {
     private static final Logger logger = LoggerFactory.getLogger(BookRestController.class);
 
     private final BookService bookService;
-    private final BookMapper bookMapper;
+    private final BookReactiveMapper bookMapper;
 
     private final CommentMapper commentMapper;
 
@@ -35,7 +35,7 @@ public class BookRestController {
     @GetMapping
     public Flux<BookListElementDto> findAll() {
         return bookService.findAll()
-                .map(bookMapper::toBooksElementDto);
+                .transform(bookMapper::toBooksElementDtoFlux);
     }
 
 
@@ -43,18 +43,22 @@ public class BookRestController {
     @GetMapping("/{id}")
     public Mono<BookDto> findOne(@PathVariable("id") String id) {
         return bookService.findOne(id)
-                .map(bookMapper::toBookDto);
+                .transform(bookMapper::toBookDto);
     }
 
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<BookDto> create(@RequestBody BookDto bookDto) {
-        if (bookDto.getId() != null && "".equals(bookDto.getId())) {
-            bookDto.setId(null);
-        }
-        return bookService.save(bookMapper.toBook(bookDto))
-                .map(bookMapper::toBookDto);
+        return Mono.just(bookDto)
+                .doOnNext(bDto -> {
+                    if (bDto.getId() != null && "".equals(bDto.getId())) {
+                        bDto.setId(null);
+                    }
+                })
+                .transform(bookMapper::toBook)
+                .flatMap(bookService::save)
+                .transform(bookMapper::toBookDto);
     }
 
 
@@ -62,8 +66,10 @@ public class BookRestController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public Mono<Void> update(@RequestBody BookDto bookDto, @PathVariable("id") String id) {
-        bookDto.setId(id);
-        return bookService.save(bookMapper.toBook(bookDto))
+        return Mono.just(bookDto)
+                .doOnNext(bDto -> bDto.setId(id))
+                .transform(bookMapper::toBook)
+                .flatMap(bookService::save)
                 .then();
     }
 
@@ -82,7 +88,6 @@ public class BookRestController {
     public Mono<Void> saveComment(@PathVariable(name = "id") String bookId, @RequestBody CommentDto commentDto) {
         Comment comment = commentMapper.toComment(commentDto);
         return bookService.findOne(bookId)
-//                .map(book -> {book.addComment(comment); return book;})
                 .doOnNext(book -> book.addComment(comment))
                 .flatMap(bookService::save)
                 .then();

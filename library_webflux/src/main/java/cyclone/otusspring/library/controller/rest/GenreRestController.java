@@ -1,11 +1,9 @@
 package cyclone.otusspring.library.controller.rest;
 
 import cyclone.otusspring.library.dto.GenreDto;
-import cyclone.otusspring.library.mapper.GenreMapper;
+import cyclone.otusspring.library.mapper.GenreReactiveMapper;
 import cyclone.otusspring.library.service.GenreService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -19,17 +17,16 @@ import static cyclone.otusspring.library.controller.rest.GenreRestController.BAS
 @RequestMapping(BASE_URL)
 public class GenreRestController {
     static final String BASE_URL = "/api/v1/genres";
-    private static final Logger logger = LoggerFactory.getLogger(GenreRestController.class);
 
     private final GenreService genreService;
-    private final GenreMapper genreMapper;
+    private final GenreReactiveMapper genreMapper;
 
 
 
     @GetMapping
     public Flux<GenreDto> findAll() {
         return genreService.findAll()
-                .transform(genreMapper::toGenreDtoList);
+                .transform(genreMapper::toGenreDtoFlux);
     }
 
 

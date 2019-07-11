@@ -1,15 +1,13 @@
 package cyclone.otusspring.library.controller.rest;
 
 import cyclone.otusspring.library.dto.BookFormDto;
-import cyclone.otusspring.library.mapper.AuthorMapper;
-import cyclone.otusspring.library.mapper.BookMapper;
-import cyclone.otusspring.library.mapper.GenreMapper;
+import cyclone.otusspring.library.mapper.AuthorReactiveMapper;
+import cyclone.otusspring.library.mapper.BookReactiveMapper;
+import cyclone.otusspring.library.mapper.GenreReactiveMapper;
 import cyclone.otusspring.library.service.AuthorService;
 import cyclone.otusspring.library.service.BookService;
 import cyclone.otusspring.library.service.GenreService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,16 +21,15 @@ import static cyclone.otusspring.library.controller.rest.BookFormdataRestControl
 @RequestMapping(BASE_URL)
 public class BookFormdataRestController {
     static final String BASE_URL = "/api/v1/books/formdata";
-    private static final Logger logger = LoggerFactory.getLogger(BookFormdataRestController.class);
 
     private final BookService bookService;
-    private final BookMapper bookMapper;
+    private final BookReactiveMapper bookMapper;
 
     private final AuthorService authorService;
-    private final AuthorMapper authorMapper;
+    private final AuthorReactiveMapper authorMapper;
 
     private final GenreService genreService;
-    private final GenreMapper genreMapper;
+    private final GenreReactiveMapper genreMapper;
 
 
 
@@ -40,13 +37,15 @@ public class BookFormdataRestController {
     public BookFormDto getBookFormData(@PathVariable("id") String id) {
         BookFormDto bookFormDto = new BookFormDto();
         if (!"new".equals(id)) {
-            bookFormDto.setBookDto(bookMapper.toBookDto(bookService.findOne(id).block()));
+            bookFormDto.setBookDto(bookService.findOne(id)
+                    .transform(bookMapper::toBookDto)
+                    .block());
         }
         bookFormDto.setAllAuthors(authorService.findAll()
-                .transform(authorMapper::toAuthorDtoList)
+                .transform(authorMapper::toAuthorDtoFlux)
                 .collectList().block());
         bookFormDto.setAllGenres(genreService.findAll()
-                .transform(genreMapper::toGenreDtoList)
+                .transform(genreMapper::toGenreDtoFlux)
                 .collectList().block());
         return bookFormDto;
 

@@ -9,8 +9,6 @@ import cyclone.otusspring.library.repository.AuthorRepository;
 import cyclone.otusspring.library.repository.BookRepository;
 import cyclone.otusspring.library.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -18,7 +16,6 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
-    private static final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
 
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
@@ -47,19 +44,6 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Mono<Book> save(Book book) {
-//        Boolean bookAuthorExists = authorRepository.exists(book.getAuthor().getId()).block();
-//        if (!bookAuthorExists) {
-//            throw new RuntimeException("Could not save book"
-//                    , new NotFoundException("Author ID " + book.getAuthor().getId() + " not found"));
-//
-//        }
-//        Boolean bookGenreExists = genreRepository.exists(book.getGenre().getId()).block();
-//        if (!bookGenreExists) {
-//            throw new RuntimeException("Could not save book"
-//                    , new NotFoundException("Genre ID " + book.getGenre().getId() + " not found"));
-//
-//        }
-//        return bookRepository.save(book);
 
         return Mono.zip(
                 authorRepository.exists(book.getAuthor().getId())

@@ -64,13 +64,12 @@ public class BookMapper {
 
     public BookWithoutComments toBookWithoutComments(BookDto bookDto) {
         try {
-            //TODO unblock
             Author author = authorService.findOne(bookDto.getAuthorId()).block();
-            //TODO unblock
             Genre genre = genreService.findOne(bookDto.getGenreId()).block();
             return new BookWithoutComments(bookDto.getId(), bookDto.getTitle(), bookDto.getYear(), author, genre);
         } catch (Exception e) {
             throw new RuntimeException("Could not map to book, reason: " + e.getMessage(), e);
         }
     }
+
 }

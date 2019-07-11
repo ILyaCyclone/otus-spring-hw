@@ -45,8 +45,8 @@ public class AuthorRepositoryImpl implements AuthorRepository {
         if (!mongoRepository.existsById(id).block()) {
             throw new NotFoundException("Author ID " + id + " not found");
         }
-        return mongoRepository.deleteById(id)
-                .then();
+        return mongoRepository.deleteById(id);
+
 //        return Mono.just(id)
 //                .filterWhen(mongoRepository::existsById)
 //                .switchIfEmpty(Mono.error(new NotFoundException("Author ID " + id + " not found")))

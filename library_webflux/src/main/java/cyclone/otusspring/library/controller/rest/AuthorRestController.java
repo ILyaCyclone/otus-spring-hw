@@ -1,7 +1,7 @@
 package cyclone.otusspring.library.controller.rest;
 
 import cyclone.otusspring.library.dto.AuthorDto;
-import cyclone.otusspring.library.mapper.AuthorMapper;
+import cyclone.otusspring.library.mapper.AuthorReactiveMapper;
 import cyclone.otusspring.library.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,14 +19,14 @@ public class AuthorRestController {
     static final String BASE_URL = "/api/v1/authors";
 
     private final AuthorService authorService;
-    private final AuthorMapper authorMapper;
+    private final AuthorReactiveMapper authorMapper;
 
 
 
     @GetMapping
     public Flux<AuthorDto> findAll() {
         return authorService.findAll()
-                .transform(authorMapper::toAuthorDtoList);
+                .transform(authorMapper::toAuthorDtoFlux);
     }
 
 
