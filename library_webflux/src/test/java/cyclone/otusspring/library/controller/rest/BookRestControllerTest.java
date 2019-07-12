@@ -6,6 +6,7 @@ import cyclone.otusspring.library.dto.BookListElementDto;
 import cyclone.otusspring.library.dto.CommentDto;
 import cyclone.otusspring.library.mapper.BookMapper;
 import cyclone.otusspring.library.model.Book;
+import cyclone.otusspring.library.model.BookWithoutComments;
 import cyclone.otusspring.library.repository.BookRepository;
 import cyclone.otusspring.library.service.AuthorService;
 import cyclone.otusspring.library.service.BookService;
@@ -123,7 +124,7 @@ public class BookRestControllerTest {
         when(genreService.findOne("1")).thenReturn(Mono.just(GENRE1));
 
         final BookDto bookDtoToUpdate = new BookDto("1", "upd title", 2000, "1", "1");
-        Book bookToUpdate = bookMapper.toBook(bookDtoToUpdate);
+        BookWithoutComments bookToUpdate = bookMapper.toBookWithoutComments(bookDtoToUpdate);
         when(bookService.save(bookToUpdate)).thenReturn(Mono.just(bookToUpdate));
 
         webTestClient.put().uri(BASE_URL + "/1")

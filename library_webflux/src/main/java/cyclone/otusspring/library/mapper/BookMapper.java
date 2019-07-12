@@ -25,9 +25,7 @@ public class BookMapper {
 
     public Book toBook(BookDto bookDto) {
         try {
-            //TODO unblock
             Author author = authorService.findOne(bookDto.getAuthorId()).block();
-            //TODO unblock
             Genre genre = genreService.findOne(bookDto.getGenreId()).block();
             Book book = new Book(bookDto.getId(), bookDto.getTitle(), bookDto.getYear(), author, genre);
             book.addComments(

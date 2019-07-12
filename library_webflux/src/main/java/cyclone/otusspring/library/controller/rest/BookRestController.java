@@ -68,7 +68,7 @@ public class BookRestController {
     public Mono<Void> update(@RequestBody BookDto bookDto, @PathVariable("id") String id) {
         return Mono.just(bookDto)
                 .doOnNext(bDto -> bDto.setId(id))
-                .transform(bookMapper::toBook)
+                .transform(bookMapper::toBookWithoutComments)
                 .flatMap(bookService::save)
                 .then();
     }

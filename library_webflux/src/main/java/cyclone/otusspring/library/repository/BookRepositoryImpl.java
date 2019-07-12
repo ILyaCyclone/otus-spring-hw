@@ -58,17 +58,22 @@ public class BookRepositoryImpl implements BookRepository {
     @Override
     public Mono<BookWithoutComments> save(BookWithoutComments bookWithoutComments) {
         String id = bookWithoutComments.getId();
-        //TODO unblock
-        if (id != null && mongoRepository.existsById(id).block()) {
-            Update update = new Update();
-            Document document = (Document) (mongoTemplate.getConverter().convertToMongoType(bookWithoutComments));
-            document.entrySet().forEach(entry -> update.set(entry.getKey(), entry.getValue()));
 
-            mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(id)), update, BookWithoutComments.class);
-            return Mono.just(bookWithoutComments);
-        } else {
-            return Mono.just(mongoTemplate.save(bookWithoutComments));
-        }
+        return id == null
+                ? Mono.just(mongoTemplate.save(bookWithoutComments))
+                : mongoRepository.existsById(id)
+                .flatMap(exists -> {
+                    if (exists) {
+                        Update update = new Update();
+                        Document document = (Document) (mongoTemplate.getConverter().convertToMongoType(bookWithoutComments));
+                        document.entrySet().forEach(entry -> update.set(entry.getKey(), entry.getValue()));
+
+                        mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(id)), update, BookWithoutComments.class);
+                        return Mono.just(bookWithoutComments);
+                    } else {
+                        return Mono.just(mongoTemplate.save(bookWithoutComments));
+                    }
+                });
     }
 
     @Override
