@@ -40,16 +40,10 @@ public class GenreRepositoryImpl implements GenreRepository {
 
     @Override
     public Mono<Void> delete(String id) {
-        //TODO unblock
-        if (!mongoRepository.existsById(id).block()) {
-            throw new NotFoundException("Genre ID " + id + " not found");
-        }
-        return mongoRepository.deleteById(id);
-
-//        return Mono.just(id)
-//                .filterWhen(mongoRepository::existsById)
-//                .switchIfEmpty(Mono.error(new NotFoundException("Genre ID " + id + " not found")))
-//                .flatMap(mongoRepository::deleteById);
+        return Mono.just(id)
+                .filterWhen(mongoRepository::existsById)
+                .switchIfEmpty(Mono.error(new NotFoundException("Genre ID " + id + " not found")))
+                .flatMap(mongoRepository::deleteById);
     }
 
     @Override
