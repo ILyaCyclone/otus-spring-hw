@@ -35,19 +35,4 @@ public class GenreDeleteListener extends AbstractMongoEventListener<Genre> {
                         "\nReason: genre has books. To delete genre delete its books first.")))
                 .then().block();
     }
-
-//    @Override
-//    public void onBeforeDelete(BeforeDeleteEvent<Genre> event) {
-//
-//        Object id = event.getSource().get("_id");
-//        Genre genre = genreService.findOne(id.toString()).block();
-//        List<Book> books = bookService.findByGenre(genre).collectList().block();
-//
-//        if (!books.isEmpty()) {
-//            throw new DataIntegrityViolationException("Could not delete genre." +
-//                    "\nReason: genre has books. To delete genre delete its books first.");
-//        }
-//
-//        super.onBeforeDelete(event);
-//    }
 }

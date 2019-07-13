@@ -49,12 +49,12 @@ public class BookServiceImpl implements BookService {
                 authorRepository.exists(book.getAuthor().getId())
                 , genreRepository.exists(book.getGenre().getId())
         )
-                .flatMap(tuple2 -> {
-                    if (!tuple2.getT1()) {
+                .flatMap(authorGenreTuple -> {
+                    if (!authorGenreTuple.getT1()) {
                         return Mono.error(new RuntimeException("Could not save book"
                                 , new NotFoundException("Author ID " + book.getAuthor().getId() + " not found")));
                     }
-                    if (!tuple2.getT2()) {
+                    if (!authorGenreTuple.getT2()) {
                         return Mono.error(new RuntimeException("Could not save book"
                                 , new NotFoundException("Genre ID " + book.getGenre().getId() + " not found")));
                     }

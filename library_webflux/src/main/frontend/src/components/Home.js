@@ -11,7 +11,6 @@ export default function Home() {
                 <Link to="/authors" className="list-group-item list-group-item-action">Authors</Link>
                 <Link to="/genres" className="list-group-item list-group-item-action">Genres</Link>
             </div>
-            <p className="mt-3"><a href="/">Switch to classic web application</a></p>
         </>
     )
 }

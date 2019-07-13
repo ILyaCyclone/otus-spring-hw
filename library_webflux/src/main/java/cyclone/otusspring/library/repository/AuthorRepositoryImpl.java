@@ -47,11 +47,20 @@ public class AuthorRepositoryImpl implements AuthorRepository {
         }
         return mongoRepository.deleteById(id);
 
+        // hangs
+//        return mongoRepository.existsById(id)
+//            .flatMap(exists -> {
+//                if(!exists) {
+//                    throw new NotFoundException("Author ID " + id + " not found");
+//                }
+//                return mongoRepository.deleteById(id);
+//            });
+
+
 //        return Mono.just(id)
 //                .filterWhen(mongoRepository::existsById)
 //                .switchIfEmpty(Mono.error(new NotFoundException("Author ID " + id + " not found")))
 //                .flatMap(mongoRepository::deleteById)
-//                .then();
     }
 
     @Override

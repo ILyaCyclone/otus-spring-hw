@@ -49,7 +49,6 @@ class BookServiceTest {
 
         assertThat(createdBook.getId()).isNotNull();
         assertThat(createdBook).isEqualToIgnoringGivenFields(bookToCreate, "id", "comments");
-        //TODO unblock
         assertThat(bookService.findOne(createdBook.getId()).block()).isEqualToIgnoringGivenFields(bookToCreate, "comments");
 
 

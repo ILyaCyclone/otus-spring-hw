@@ -14,7 +14,7 @@ import BookForm from "./components/BookForm";
 export default function App() {
     return (
         <>
-            <BrowserRouter basename="/spa">
+            <BrowserRouter>
                 <Header/>
                 <div className="container">
                     <Switch>
@@ -28,8 +28,8 @@ export default function App() {
                         <Route exact path="/books" component={Books}/>
                         <Route exact path="/books/:id" component={BookForm}/>
 
-                        {/*<Route render={() => <p>No such page</p>}/>*/}
-                        <Route component={Home}/>
+                        <Route render={() => <h2>No such page</h2>}/>
+                        {/*<Route component={Home}/>*/}
                     </Switch>
                 </div>
             </BrowserRouter>

@@ -23,24 +23,6 @@ public class AuthorDeleteListener extends AbstractMongoEventListener<Author> {
         this.bookService = bookService;
     }
 
-//    @Override
-//    public void onBeforeDelete(BeforeDeleteEvent<Author> event) {
-//
-//        Object id = event.getSource().get("_id");
-//        //TODO unblock
-//        Author author = authorService.findOne(id.toString()).block();
-//        //TODO unblock
-//        List<Book> books = bookService.findByAuthor(author)
-//                .collectList().block();
-//
-//        if (!books.isEmpty()) {
-//            throw new DataIntegrityViolationException("Could not delete author." +
-//                    "\nReason: author has books. To delete author delete their books first.");
-//        }
-//
-//        super.onBeforeDelete(event);
-//    }
-
     @Override
     public void onBeforeDelete(BeforeDeleteEvent<Author> event) {
         Mono.just(event)

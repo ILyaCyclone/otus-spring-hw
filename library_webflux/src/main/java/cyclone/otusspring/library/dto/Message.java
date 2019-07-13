@@ -2,6 +2,9 @@ package cyclone.otusspring.library.dto;
 
 import lombok.Data;
 
+/**
+ * May be used for sending status messages to user interface. Currently not used.
+ */
 @Data
 public class Message {
     private final String text;
