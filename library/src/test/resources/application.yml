@@ -2,16 +2,16 @@ spring:
   data:
     mongodb:
       database: otus-library-test
-      host: localhost
+      host: mongodb
       # workaround for "Only one usage of each socket address" when setting static port
       # is to set port to random - port: 0. Default port is 27017.
-      port: 0
+      port: 27017
 
   shell:
     interactive:
       enabled: false
-logging:
-  level:
-    org:
-      springframework:
-        web: DEBUG
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        web: DEBUG

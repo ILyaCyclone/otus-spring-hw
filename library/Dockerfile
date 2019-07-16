@@ -1,4 +1,6 @@
 #docker build -t otus-library:0.0.1 .
+#spring-shell issue: https://stackoverflow.com/questions/51449432/spring-shell-appilication-inside-docker
+#spring-shell issue: https://github.com/spring-projects/spring-shell/issues/167
 
 FROM maven:3.6.1-jdk-8 AS MAVEN_BUILD
 

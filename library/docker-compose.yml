@@ -1,0 +1,21 @@
+# docker-compose up
+version: '3.1'
+
+services:
+  mongodb:
+    # https://hub.docker.com/_/mongo
+    image: mongo:4.0.10
+    container_name: otus-library-mongo
+    #    command: --smallfiles
+    restart: on-failure:3
+  #    environment:
+  #      MONGO_INITDB_ROOT_USERNAME: root
+  #      MONGO_INITDB_ROOT_PASSWORD: example
+
+  otus-library:
+    build: .
+    depends_on:
+      - mongodb
+    restart: on-failure:3
+    ports:
+      - 8080:8080
