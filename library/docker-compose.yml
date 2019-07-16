@@ -7,7 +7,7 @@ services:
     image: mongo:4.0.10
     container_name: otus-library-mongo
     #    command: --smallfiles
-    restart: on-failure:3
+    restart: on-failure:2
   #    environment:
   #      MONGO_INITDB_ROOT_USERNAME: root
   #      MONGO_INITDB_ROOT_PASSWORD: example
@@ -16,6 +16,8 @@ services:
     build: .
     depends_on:
       - mongodb
-    restart: on-failure:3
+    restart: on-failure:2
+    volumes:
+      - $HOME/.m2:/root/.m2
     ports:
       - 8080:8080

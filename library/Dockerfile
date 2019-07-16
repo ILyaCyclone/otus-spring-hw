@@ -1,4 +1,5 @@
-#docker build -t otus-library:0.0.1 .
+#docker build -t ilyacyclone/otus-library:0.0.1 .
+# -v "$HOME/.m2":/root/.m2 --- add this to reuse local maven repo
 #spring-shell issue: https://stackoverflow.com/questions/51449432/spring-shell-appilication-inside-docker
 #spring-shell issue: https://github.com/spring-projects/spring-shell/issues/167
 
@@ -13,7 +14,7 @@ RUN mvn dependency:resolve
 # .dockerignore will ignore node_modules when copying
 COPY ./src/ $PROJECT_DIR/src
 
-RUN mvn clean package -Dmaven.test.skip=true
+RUN mvn -DskipTests=true clean package
 
 
 #FROM openjdk:8-jre-alpine
@@ -27,4 +28,4 @@ COPY --from=MAVEN_BUILD $PROJECT_DIR/target/library-*.jar $PROJECT_DIR/
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "/app/library-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app/library-0.0.1-SNAPSHOT.jar"]
