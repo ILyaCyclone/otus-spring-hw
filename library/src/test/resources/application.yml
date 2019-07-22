@@ -2,7 +2,7 @@ spring:
   data:
     mongodb:
       database: otus-library-test
-      host: mongodb
+      host: ${MONGO_HOST}
       # workaround for "Only one usage of each socket address" when setting static port
       # is to set port to random - port: 0. Default port is 27017.
       port: 27017

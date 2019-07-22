@@ -5,6 +5,7 @@
 
 FROM maven:3.6.1-jdk-8 AS MAVEN_BUILD
 
+VOLUME $HOME/.m2:/root/.m2
 ENV PROJECT_DIR=/app
 RUN mkdir -p $PROJECT_DIR
 WORKDIR $PROJECT_DIR
@@ -24,8 +25,8 @@ ENV PROJECT_DIR=/app
 RUN mkdir -p $PROJECT_DIR
 WORKDIR $PROJECT_DIR
 
-COPY --from=MAVEN_BUILD $PROJECT_DIR/target/library-*.jar $PROJECT_DIR/
+COPY --from=MAVEN_BUILD $PROJECT_DIR/target/otus-library.jar $PROJECT_DIR/
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "/app/library-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app/otus-library.jar"]
