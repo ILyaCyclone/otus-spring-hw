@@ -1,9 +1,8 @@
 #docker build -t ilyacyclone/otus-library:0.0.1 .
-# -v "$HOME/.m2":/root/.m2 --- add this to reuse local maven repo
-#spring-shell issue: https://stackoverflow.com/questions/51449432/spring-shell-appilication-inside-docker
-#spring-shell issue: https://github.com/spring-projects/spring-shell/issues/167
+# -v "$HOME/.m2":/root/.m2 --- add this to reuse local maven repo (or not?)
 
 FROM maven:3.6.1-jdk-8 AS MAVEN_BUILD
+#FROM maven:3.6.1-jdk-8-alpine AS MAVEN_BUILD # build failed
 
 VOLUME $HOME/.m2:/root/.m2
 ENV PROJECT_DIR=/app
@@ -18,8 +17,7 @@ COPY ./src/ $PROJECT_DIR/src
 RUN mvn -DskipTests=true clean package
 
 
-#FROM openjdk:8-jre-alpine
-FROM openjdk:8
+FROM openjdk:8-jre-alpine
 
 ENV PROJECT_DIR=/app
 RUN mkdir -p $PROJECT_DIR
