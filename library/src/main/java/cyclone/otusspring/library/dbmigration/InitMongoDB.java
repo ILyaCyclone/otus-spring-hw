@@ -7,6 +7,7 @@ import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
 import cyclone.otusspring.library.model.Genre;
+import cyclone.otusspring.library.security.User;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.time.LocalDateTime;
@@ -27,14 +28,20 @@ public class InitMongoDB {
         database.drop();
     }
 
-    @ChangeSet(order = "001", id = "initAuthors", author = "cyclone", runAlways = true)
+    @ChangeSet(order = "010", id = "initUsers", author = "cyclone", runAlways = true)
+    public void initUsers(MongoTemplate template) {
+        template.save(new User("user1", "{noop}user1"));
+        template.save(new User("user2", "{noop}user2"));
+    }
+
+    @ChangeSet(order = "020", id = "initAuthors", author = "cyclone", runAlways = true)
     public void initAuthors(MongoTemplate template) {
         author1 = template.save(new Author("1", "Arthur", "Hailey", "Canada"));
         author2 = template.save(new Author("2", "Isaac", "Asimov", "Russia"));
         author3 = template.save(new Author("3", "Gabriel", "Marquez", "Argentina"));
     }
 
-    @ChangeSet(order = "002", id = "initGenres", author = "cyclone", runAlways = true)
+    @ChangeSet(order = "030", id = "initGenres", author = "cyclone", runAlways = true)
     public void initGenres(MongoTemplate template) {
         genre1 = template.save(new Genre("1", "Adventures"));
         genre2 = template.save(new Genre("2", "Science fiction"));
@@ -42,7 +49,7 @@ public class InitMongoDB {
         template.save(new Genre("4", "Magic realism"));
     }
 
-    @ChangeSet(order = "003", id = "initBooks", author = "cyclone", runAlways = true)
+    @ChangeSet(order = "040", id = "initBooks", author = "cyclone", runAlways = true)
     public void initBooks(MongoTemplate template) {
         Book book1 = new Book("1", "Wheels", 1971, author1, genre1);
         book1.addComment(new Comment("Commentator 1", "exciting!", LocalDateTime.of(2019, 5, 29, 10, 0)));
