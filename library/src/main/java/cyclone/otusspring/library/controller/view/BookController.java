@@ -14,6 +14,7 @@ import cyclone.otusspring.library.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -97,6 +98,8 @@ public class BookController {
     @PostMapping("/{id}/comments/save")
     public String saveComment(@PathVariable(name = "id") String bookId, CommentDto commentDto, RedirectAttributes redirectAttributes) {
         Book book = bookService.findOne(bookId);
+
+        commentDto.setCommentator(SecurityContextHolder.getContext().getAuthentication().getName());
 
         Comment comment = commentMapper.toComment(commentDto);
         book.addComment(comment);

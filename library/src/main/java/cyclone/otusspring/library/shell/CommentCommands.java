@@ -5,7 +5,12 @@ import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
 import cyclone.otusspring.library.service.BookService;
 import cyclone.otusspring.library.service.CommentService;
-import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -20,8 +25,8 @@ public class CommentCommands {
     private final BookService bookService;
     private final CommentsFormatter commentsFormatter;
 
-    @Getter
-    private String currentUser;
+    @Autowired
+    AuthenticationManager authenticationManager;
 
     public CommentCommands(CommentService commentService, BookService bookService, CommentsFormatter commentsFormatter) {
         this.commentService = commentService;
@@ -29,32 +34,40 @@ public class CommentCommands {
         this.commentsFormatter = commentsFormatter;
     }
 
+    String getCurrentUserName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null ? authentication.getName() : null;
+    }
+
 
     @ShellMethod(value = "Sign in")
-    String signIn(String name) {
-        if (StringUtils.isEmpty(name)) {
-            throw new IllegalArgumentException("name must not be empty");
-        }
+    String signIn(String username, String password) {
+        try {
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        currentUser = name;
-        return "Signed in as " + currentUser;
+            return "Signed in as " + getCurrentUserName();
+        } catch (AuthenticationException e) {
+            return "Could not authenticate: " + e.getMessage();
+        }
     }
 
     @ShellMethod(value = "Sign out")
     String signOut() {
-        currentUser = null;
+        SecurityContextHolder.getContext().setAuthentication(null);
         return "Signed out";
     }
 
     @ShellMethod(value = "Add comment")
     String addComment(String bookId, String text) {
-        CommentDto commentDto = new CommentDto(bookId, currentUser, text);
+        CommentDto commentDto = new CommentDto(bookId, getCurrentUserName(), text);
         commentService.create(commentDto);
         return "Your comment saved";
     }
 
     public Availability addCommentAvailability() {
-        return StringUtils.hasText(currentUser)
+        return StringUtils.hasText(getCurrentUserName())
                 ? Availability.available()
                 : Availability.unavailable("you need to sign in to leave comments");
     }

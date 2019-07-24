@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -28,10 +29,10 @@
                     <a class="nav-link" href="/genres.html" th:href="@{/genres}">Genres</a>
                 </li>
             </ul>
-            <span class="navbar-text" th:text="${currentUser.username}">
-                current user
+            <span class="navbar-text">
+                Logged user: <span sec:authentication="name">current username</span>
             </span>
-            <a href="/logout"></a>
+            <a href="/logout" class="btn btn-sm btn-outline-primary ml-4">Logout</a>
         </div>
     </nav>
     <header>
