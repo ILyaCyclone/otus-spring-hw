@@ -8,6 +8,7 @@ import cyclone.otusspring.library.mapper.BookMapper;
 import cyclone.otusspring.library.mapper.CommentMapper;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.BookWithoutComments;
+import cyclone.otusspring.library.service.AuthenticationServiceImpl;
 import cyclone.otusspring.library.service.AuthorService;
 import cyclone.otusspring.library.service.BookService;
 import cyclone.otusspring.library.service.GenreService;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -41,6 +43,9 @@ class BookControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @MockBean
+    UserDetailsService userDetailsService;
 
     @Autowired
     BookMapper bookMapper;
