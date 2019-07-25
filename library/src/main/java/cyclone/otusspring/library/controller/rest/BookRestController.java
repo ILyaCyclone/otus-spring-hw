@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static cyclone.otusspring.library.controller.rest.BookRestController.BASE_URL;
@@ -92,6 +93,9 @@ public class BookRestController {
         Book book = bookService.findOne(bookId);
 
         commentDto.setCommentator(authenticationService.getCurrentUsername());
+        if (commentDto.getDate() == null) {
+            commentDto.setDate(LocalDateTime.now());
+        }
 
         Comment comment = commentMapper.toComment(commentDto);
         book.addComment(comment);
