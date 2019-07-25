@@ -8,13 +8,13 @@ import cyclone.otusspring.library.mapper.CommentMapper;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.BookWithoutComments;
 import cyclone.otusspring.library.model.Comment;
+import cyclone.otusspring.library.service.AuthenticationService;
 import cyclone.otusspring.library.service.AuthorService;
 import cyclone.otusspring.library.service.BookService;
 import cyclone.otusspring.library.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +36,8 @@ public class BookController {
     private final GenreService genreService;
     private final BookMapper bookMapper;
     private final CommentMapper commentMapper;
+
+    private final AuthenticationService authenticationService;
 
     @ExceptionHandler(Exception.class)
     public String handleError(HttpServletRequest req, Exception e, RedirectAttributes redirectAttributes) {
@@ -99,7 +101,7 @@ public class BookController {
     public String saveComment(@PathVariable(name = "id") String bookId, CommentDto commentDto, RedirectAttributes redirectAttributes) {
         Book book = bookService.findOne(bookId);
 
-        commentDto.setCommentator(SecurityContextHolder.getContext().getAuthentication().getName());
+        commentDto.setCommentator(authenticationService.getCurrentUsername());
 
         Comment comment = commentMapper.toComment(commentDto);
         book.addComment(comment);

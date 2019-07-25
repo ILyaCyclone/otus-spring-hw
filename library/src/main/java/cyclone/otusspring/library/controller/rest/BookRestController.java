@@ -7,6 +7,7 @@ import cyclone.otusspring.library.mapper.BookMapper;
 import cyclone.otusspring.library.mapper.CommentMapper;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
+import cyclone.otusspring.library.service.AuthenticationService;
 import cyclone.otusspring.library.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -33,6 +34,8 @@ public class BookRestController {
     private final BookMapper bookMapper;
 
     private final CommentMapper commentMapper;
+
+    private final AuthenticationService authenticationService;
 
 
 
@@ -87,6 +90,8 @@ public class BookRestController {
     @ResponseStatus(value = HttpStatus.CREATED)
     public void saveComment(@PathVariable(name = "id") String bookId, @RequestBody CommentDto commentDto) {
         Book book = bookService.findOne(bookId);
+
+        commentDto.setCommentator(authenticationService.getCurrentUsername());
 
         Comment comment = commentMapper.toComment(commentDto);
         book.addComment(comment);

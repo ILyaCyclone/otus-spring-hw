@@ -3,14 +3,11 @@ package cyclone.otusspring.library.shell;
 import cyclone.otusspring.library.dto.CommentDto;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
+import cyclone.otusspring.library.service.AuthenticationService;
 import cyclone.otusspring.library.service.BookService;
 import cyclone.otusspring.library.service.CommentService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -19,43 +16,32 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 @ShellComponent
+@RequiredArgsConstructor
 public class CommentCommands {
 
     private final CommentService commentService;
     private final BookService bookService;
     private final CommentsFormatter commentsFormatter;
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+    private final AuthenticationService authenticationService;
 
-    public CommentCommands(CommentService commentService, BookService bookService, CommentsFormatter commentsFormatter) {
-        this.commentService = commentService;
-        this.bookService = bookService;
-        this.commentsFormatter = commentsFormatter;
-    }
-
-    String getCurrentUserName() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication != null ? authentication.getName() : null;
-    }
 
 
     @ShellMethod(value = "Sign in")
     String signIn(String username, String password) {
         try {
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String authenticatedUsername = authenticationService.authenticate(username, password);
 
-            return "Signed in as " + getCurrentUserName();
+            return "Signed in as " + authenticatedUsername;
         } catch (AuthenticationException e) {
             return "Could not authenticate: " + e.getMessage();
         }
     }
 
+
     @ShellMethod(value = "Sign out")
     String signOut() {
-        SecurityContextHolder.getContext().setAuthentication(null);
+        authenticationService.logout();
         return "Signed out";
     }
 
@@ -94,5 +80,11 @@ public class CommentCommands {
     String removeComment(String bookId, String commentId) {
         commentService.delete(bookId, commentId);
         return "Comment ID " + commentId + " removed";
+    }
+
+
+
+    public String getCurrentUserName() {
+        return authenticationService.getCurrentUsername();
     }
 }

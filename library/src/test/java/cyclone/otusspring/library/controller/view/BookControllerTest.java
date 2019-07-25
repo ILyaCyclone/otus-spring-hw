@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(BookController.class)
 @WithMockUser(username = "user1")
-@Import({BookMapper.class, CommentMapper.class})
+@Import({BookMapper.class, CommentMapper.class, AuthenticationServiceImpl.class})
 class BookControllerTest {
 
     @Autowired

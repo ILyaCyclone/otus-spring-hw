@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AuthorController.class)
 @WithMockUser(username = "user1")
-@Import(AuthorMapper.class)
+@Import({AuthorMapper.class})
 class AuthorControllerTest {
 
     @Autowired
