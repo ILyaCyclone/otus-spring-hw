@@ -1,6 +1,6 @@
 # Spring Developer course
 
-Homework for https://otus.ru/ Spring Developer course
+Homework for https://otus.ru Spring Developer course
 
 ## HW5. DAO на Spring JDBC 
 
@@ -49,3 +49,7 @@ View на Thymeleaf, classic Controllers.
 Переписать приложение с классических View на AJAX архитектуру и REST-контроллеры.
 
 Опционально: Сделать SPA приложение на любом из Web-фреймоврков
+
+## HW17. Docker, оркестрация, облака, облачные хостинги
+
+Обернуть приложение в docker-контейнер, БД тоже. Настроить связь между ними.

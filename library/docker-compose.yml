@@ -1,0 +1,28 @@
+# docker-compose up
+version: '3.1'
+
+services:
+  mongodb-service:
+    image: mongo:4.0.10
+    container_name: otus-library-mongo
+    # https://hub.docker.com/_/mongo
+    #    command: --smallfiles
+    restart: on-failure:2
+  #    environment:
+  #      MONGO_INITDB_ROOT_USERNAME: root
+  #      MONGO_INITDB_ROOT_PASSWORD: example
+
+  otus-library-service:
+    container_name: otus-library
+    build: .
+    depends_on:
+      - mongodb-service
+    restart: on-failure:2
+    volumes:
+      - $HOME/.m2:/root/.m2
+    ports:
+      - 9090:8080
+    stdin_open: true # --interactive , -i		Keep STDIN open even if not attached
+    tty: true # --tty , -t		Allocate a pseudo-TTY
+    environment:
+      - MONGO_HOST=mongodb-service
