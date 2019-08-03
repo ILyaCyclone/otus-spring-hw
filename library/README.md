@@ -54,3 +54,7 @@ View на Thymeleaf, classic Controllers.
 
 В существующее CRUD-приложение добавить механизм Form-based аутентификации.  
 UserDetailsService реализовать самостоятельно.
+
+## HW13. Spring Security: ACL
+
+Настроить в приложении авторизацию на уровне URL и/или доменных сущностей.
