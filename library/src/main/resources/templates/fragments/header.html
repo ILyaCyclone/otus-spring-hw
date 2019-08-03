@@ -31,6 +31,7 @@
             </ul>
             <span class="navbar-text">
                 Logged user: <span sec:authentication="name">current username</span>
+                Roles: <span sec:authentication="principal.authorities">roles...</span>
             </span>
             <a href="/logout" class="btn btn-sm btn-outline-primary ml-4">Logout</a>
         </div>

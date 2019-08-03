@@ -7,10 +7,12 @@ import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
 import cyclone.otusspring.library.model.Genre;
+import cyclone.otusspring.library.security.Role;
 import cyclone.otusspring.library.security.User;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 @ChangeLog(order = "001")
 public class InitMongoDB {
@@ -30,8 +32,12 @@ public class InitMongoDB {
 
     @ChangeSet(order = "010", id = "initUsers", author = "cyclone", runAlways = true)
     public void initUsers(MongoTemplate template) {
-        template.save(new User("user1", "{noop}user1"));
-        template.save(new User("user2", "{noop}user2"));
+        Role roleUser = template.save(new Role("ROLE_USER"));
+        Role roleAdmin = template.save(new Role("ROLE_ADMIN"));
+
+        template.save(new User("user1", "{noop}user1", Collections.singleton(roleUser)));
+        template.save(new User("user2", "{noop}user2", Collections.singleton(roleUser)));
+        template.save(new User("admin1", "{noop}admin1", Collections.singleton(roleAdmin)));
     }
 
     @ChangeSet(order = "020", id = "initAuthors", author = "cyclone", runAlways = true)

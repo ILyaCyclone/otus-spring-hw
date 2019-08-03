@@ -30,7 +30,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .and().httpBasic()
 //                .and()
 
-                .authorizeRequests().anyRequest().authenticated()
+                .authorizeRequests()
+                .antMatchers("/genres", "/genres/**").hasRole("ADMIN") // don't prefix with ROLE_
+                .anyRequest().authenticated()
                 .and()
                 // Включает Form-based аутентификацию
                 .formLogin()
