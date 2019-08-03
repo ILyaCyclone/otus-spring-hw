@@ -3,9 +3,11 @@ package cyclone.otusspring.library.shell;
 import cyclone.otusspring.library.dto.CommentDto;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Comment;
+import cyclone.otusspring.library.service.AuthenticationService;
 import cyclone.otusspring.library.service.BookService;
 import cyclone.otusspring.library.service.CommentService;
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -14,47 +16,44 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 @ShellComponent
+@RequiredArgsConstructor
 public class CommentCommands {
 
     private final CommentService commentService;
     private final BookService bookService;
     private final CommentsFormatter commentsFormatter;
 
-    @Getter
-    private String currentUser;
+    private final AuthenticationService authenticationService;
 
-    public CommentCommands(CommentService commentService, BookService bookService, CommentsFormatter commentsFormatter) {
-        this.commentService = commentService;
-        this.bookService = bookService;
-        this.commentsFormatter = commentsFormatter;
-    }
 
 
     @ShellMethod(value = "Sign in")
-    String signIn(String name) {
-        if (StringUtils.isEmpty(name)) {
-            throw new IllegalArgumentException("name must not be empty");
-        }
+    String signIn(String username, String password) {
+        try {
+            String authenticatedUsername = authenticationService.authenticate(username, password);
 
-        currentUser = name;
-        return "Signed in as " + currentUser;
+            return "Signed in as " + authenticatedUsername;
+        } catch (AuthenticationException e) {
+            return "Could not authenticate: " + e.getMessage();
+        }
     }
+
 
     @ShellMethod(value = "Sign out")
     String signOut() {
-        currentUser = null;
+        authenticationService.logout();
         return "Signed out";
     }
 
     @ShellMethod(value = "Add comment")
     String addComment(String bookId, String text) {
-        CommentDto commentDto = new CommentDto(bookId, currentUser, text);
+        CommentDto commentDto = new CommentDto(bookId, getCurrentUserName(), text);
         commentService.create(commentDto);
         return "Your comment saved";
     }
 
     public Availability addCommentAvailability() {
-        return StringUtils.hasText(currentUser)
+        return StringUtils.hasText(getCurrentUserName())
                 ? Availability.available()
                 : Availability.unavailable("you need to sign in to leave comments");
     }
@@ -81,5 +80,11 @@ public class CommentCommands {
     String removeComment(String bookId, String commentId) {
         commentService.delete(bookId, commentId);
         return "Comment ID " + commentId + " removed";
+    }
+
+
+
+    public String getCurrentUserName() {
+        return authenticationService.getCurrentUsername();
     }
 }

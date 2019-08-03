@@ -4,7 +4,7 @@ import {alertError} from "../utils/alert";
 
 export default function Comments(props) {
     const comments = props.comments;
-    const emptyComment = {commentator: "", text: ""};
+    const emptyComment = {commentator: props.currentUserName, text: ""};
     const [newComment, setNewComment] = useState(emptyComment);
 
     function submit() {
@@ -37,27 +37,29 @@ export default function Comments(props) {
                 }
             </div>
 
+            {props.currentUserName !== "" &&
             <div className="mt-4">
                 <h4>Leave a comment:</h4>
                 <form>
 
                     <div className="form-group">
-                        <input value={newComment.commentator} onChange={onTextChange}
+                        <input value={newComment.commentator} readOnly={true}
                                name="commentator" type="text" required
                                className="form-control" placeholder="Your name..."
                         />
                     </div>
 
                     <div className="form-group">
-                        <textarea value={newComment.text} onChange={onTextChange}
-                                  name="text" required
-                                  className="form-control" placeholder="Type a comment..."
-                        />
+                            <textarea value={newComment.text} onChange={onTextChange}
+                                      name="text" required
+                                      className="form-control" placeholder="Type a comment..."
+                            />
                     </div>
 
                     <input type="button" onClick={submit} value="Submit" className="btn btn-primary"/>
                 </form>
             </div>
+            }
         </section>
     )
 }

@@ -31,30 +31,28 @@ class CommentCommandsTest {
 
     @Test
     void signIn() {
-        final String username = "someusername";
+        String message = commentCommands.signIn("user1", "user1");
 
-        String message = commentCommands.signIn(username);
-
-        assertThat(commentCommands.getCurrentUser()).isEqualTo(username);
+        assertThat(commentCommands.getCurrentUserName()).isEqualTo("user1");
         assertThat(message)
                 .containsIgnoringCase("signed in")
-                .contains(username);
+                .contains("user1");
     }
 
     @Test
     void signOut() {
         String message = commentCommands.signOut();
 
-        assertThat(commentCommands.getCurrentUser()).isNull();
+        assertThat(commentCommands.getCurrentUserName()).isNull();
         assertThat(message).containsIgnoringCase("signed out");
     }
 
     @Test
     void addComment() {
-        final String username = "somebody";
+        final String username = "user1";
         final String commentText = "new comment";
 
-        commentCommands.signIn(username);
+        commentCommands.signIn(username, username);
         //act
         String message = commentCommands.addComment(BOOK1.getId(), commentText);
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
     <title>Library</title>
@@ -74,19 +75,22 @@
         </div>
 
 
-        <h4 class="mt-4">Leave a comment:</h4>
-        <form th:action="@{/books/{id}/comments/save(id=${bookDto.id})}" method="post">
+        <section sec:authorize="isAuthenticated()">
+            <h4 class="mt-4">Leave a comment:</h4>
+            <form th:action="@{/books/{id}/comments/save(id=${bookDto.id})}" method="post">
 
-            <div class="form-group">
-                <input class="form-control" type="text" name="commentator" required placeholder="Your name...">
-            </div>
+                <div class="form-group">
+                    <input class="form-control" type="text" name="commentator" readonly
+                           th:value="${#authentication.name}">
+                </div>
 
-            <div class="form-group">
-                <textarea class="form-control" name="text" required placeholder="Type a comment..."></textarea>
-            </div>
+                <div class="form-group">
+                    <textarea class="form-control" name="text" required placeholder="Type a comment..."></textarea>
+                </div>
 
-            <input class="btn btn-primary" type="submit" value="Submit">
-        </form>
+                <input class="btn btn-primary" type="submit" value="Submit">
+            </form>
+        </section>
 
 
     </section>

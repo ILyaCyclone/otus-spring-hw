@@ -8,7 +8,7 @@ import {getFromApi} from './../utils/backendApi';
 import PageTitle from "./layout/PageTitle";
 import Comments from "./Comments";
 
-function BookForm({match, history}) {
+function BookForm({match, history, currentUserName}) {
 
     const apiPath = "/api/v1/books";
     const bookId = match.params.id;
@@ -150,7 +150,8 @@ function BookForm({match, history}) {
                 </form>
 
                 {!isNew &&
-                <Comments comments={book.commentDtoList} submitComment={submitComment}/>
+                <Comments comments={book.commentDtoList} submitComment={submitComment}
+                          currentUserName={currentUserName}/>
                 }
 
             </>
