@@ -18,4 +18,6 @@ public interface AuthorRepository {
     void delete(Author author);
 
     boolean exists(String id);
+
+    long count();
 }

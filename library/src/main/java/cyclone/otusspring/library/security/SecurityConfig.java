@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .and()
 
                 .authorizeRequests()
-                .antMatchers("/genres", "/genres/**").hasRole("ADMIN") // don't prefix with ROLE_
+                .antMatchers("/dashboard").hasRole("ADMIN") // don't prefix with ROLE_
                 .anyRequest().authenticated()
                 .and()
                 // Включает Form-based аутентификацию

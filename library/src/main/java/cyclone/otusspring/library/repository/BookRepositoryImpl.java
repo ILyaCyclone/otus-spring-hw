@@ -84,4 +84,9 @@ public class BookRepositoryImpl implements BookRepository {
     public boolean exists(String id) {
         return mongoRepository.existsById(id);
     }
+
+    @Override
+    public long count() {
+        return mongoRepository.count();
+    }
 }

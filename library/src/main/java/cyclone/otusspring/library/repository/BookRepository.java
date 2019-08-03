@@ -27,4 +27,6 @@ public interface BookRepository {
     void delete(Book book);
 
     boolean exists(String id);
+
+    long count();
 }
