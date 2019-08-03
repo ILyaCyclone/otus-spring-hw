@@ -23,21 +23,24 @@
     <section>
         <form>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Books</label>
-                <div class="col-sm-10">
-                    <input type="text" readonly class="form-control-plaintext" th:value="${bookCount}">
+                <label class="col-2 col-form-label">Books</label>
+                <div class="col-2">
+                    <a class="form-control-plaintext text-primary" href="/books.html" th:href="@{/books}"
+                       th:text="${bookCount}">book count</a>
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Authors</label>
-                <div class="col-sm-10">
-                    <input type="text" readonly class="form-control-plaintext" th:value="${authorCount}">
+                <label class="col-2 col-form-label">Authors</label>
+                <div class="col-2">
+                    <a class="form-control-plaintext text-primary" href="/author.html" th:href="@{/authors}"
+                       th:text="${authorCount}">author count</a>
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Genres</label>
-                <div class="col-sm-10">
-                    <input type="text" readonly class="form-control-plaintext" th:value="${genreCount}">
+                <label class="col-2 col-form-label">Genres</label>
+                <div class="col-2">
+                    <a class="form-control-plaintext text-primary" href="/genres.html" th:href="@{/genres}"
+                       th:text="${genreCount}">genre count</a>
                 </div>
             </div>
         </form>
