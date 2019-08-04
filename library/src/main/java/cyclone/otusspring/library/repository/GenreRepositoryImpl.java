@@ -52,4 +52,9 @@ public class GenreRepositoryImpl implements GenreRepository {
     public boolean exists(String id) {
         return mongoRepository.existsById(id);
     }
+
+    @Override
+    public long count() {
+        return mongoRepository.count();
+    }
 }

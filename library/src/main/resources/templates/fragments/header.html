@@ -28,9 +28,14 @@
                 <li class="nav-item" th:classappend="${active == 'genres' ? 'active' : ''}">
                     <a class="nav-link" href="/genres.html" th:href="@{/genres}">Genres</a>
                 </li>
+                <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')"
+                    th:classappend="${active == 'dashboard' ? 'active' : ''}">
+                    <a class="nav-link" href="/dashboard.html" th:href="@{/dashboard}">Dashboard</a>
+                </li>
             </ul>
             <span class="navbar-text">
                 Logged user: <span sec:authentication="name">current username</span>
+                Roles: <span sec:authentication="principal.authorities">roles...</span>
             </span>
             <a href="/logout" class="btn btn-sm btn-outline-primary ml-4">Logout</a>
         </div>

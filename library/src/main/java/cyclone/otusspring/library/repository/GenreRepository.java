@@ -18,4 +18,6 @@ public interface GenreRepository {
     void delete(Genre genre);
 
     boolean exists(String id);
+
+    long count();
 }

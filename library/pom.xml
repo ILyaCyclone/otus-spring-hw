@@ -26,8 +26,9 @@
     <spring-shell-starter.version>2.0.0.RELEASE</spring-shell-starter.version>
     <junit-jupiter.version>5.4.1</junit-jupiter.version>
     <mongock-spring.version>2.0.0</mongock-spring.version>
+    <ehcache-core.version>2.6.11</ehcache-core.version>
 
-
+    <!-- plugins -->
     <frontend-src-dir>${project.basedir}/src/main/frontend</frontend-src-dir>
     <node.version>v12.3.1</node.version>
     <yarn.version>v1.16.0</yarn.version>
@@ -64,10 +65,35 @@
           <artifactId>thymeleaf-extras-springsecurity5</artifactId>
       </dependency>
 
+    <!-- security -->
       <dependency>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-starter-security</artifactId>
       </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-acl</artifactId>
+    </dependency>
+    <!-- security ACL dependencies -->
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache-core</artifactId>
+      <version>${ehcache-core.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+    </dependency>
+    <!-- store ACLs -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+    </dependency>
 
       <dependency>
           <groupId>org.springframework.shell</groupId>

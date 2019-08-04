@@ -11,6 +11,7 @@ import cyclone.otusspring.library.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,8 @@ public class BookServiceImpl implements BookService {
     private final AuthorRepository authorRepository;
     private final GenreRepository genreRepository;
 
+    private final LibraryAclService libraryAclService;
+
     @Override
     public Book findOne(String bookId) {
         return bookRepository.findOne(bookId);
@@ -31,6 +34,7 @@ public class BookServiceImpl implements BookService {
 
 
     @Override
+    @PostFilter("hasPermission(filterObject, 'READ') || hasRole('ROLE_ADMIN')")
     public List<Book> findAll() {
         return bookRepository.findAll();
     }
@@ -57,12 +61,29 @@ public class BookServiceImpl implements BookService {
                     , new NotFoundException("Genre ID " + book.getGenre().getId() + " not found"));
 
         }
-        return bookRepository.save(book);
+
+        boolean isNewBook = book.getId() == null;
+
+        Book savedBook = bookRepository.save(book);
+
+        if (isNewBook) {
+            libraryAclService.grantNewBookPermissions(savedBook.getId());
+        }
+
+        return savedBook;
     }
 
     @Override
     public BookWithoutComments save(BookWithoutComments bookWithoutComments) {
-        return bookRepository.save(bookWithoutComments);
+        boolean isNewBook = bookWithoutComments.getId() == null;
+
+        BookWithoutComments savedBook = bookRepository.save(bookWithoutComments);
+
+        if (isNewBook) {
+            libraryAclService.grantNewBookPermissions(savedBook.getId());
+        }
+
+        return savedBook;
     }
 
     @Override

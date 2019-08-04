@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Library</title>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<div th:replace="fragments/header :: header (active='dashboard')">
+    <h1>App Name</h1>
+
+    Navigation goes here
+</div>
+
+<div class="container">
+
+    <div th:replace="fragments/header-text :: headerText (text='Dashboard')"></div>
+
+    <div th:replace="fragments/message :: message (headerText=${message})">Message text</div>
+
+    <section>
+        <form>
+            <div class="form-group row">
+                <label class="col-2 col-form-label">Books</label>
+                <div class="col-2">
+                    <a class="form-control-plaintext text-primary" href="/books.html" th:href="@{/books}"
+                       th:text="${bookCount}">book count</a>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-2 col-form-label">Authors</label>
+                <div class="col-2">
+                    <a class="form-control-plaintext text-primary" href="/author.html" th:href="@{/authors}"
+                       th:text="${authorCount}">author count</a>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-2 col-form-label">Genres</label>
+                <div class="col-2">
+                    <a class="form-control-plaintext text-primary" href="/genres.html" th:href="@{/genres}"
+                       th:text="${genreCount}">genre count</a>
+                </div>
+            </div>
+        </form>
+    </section>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>
