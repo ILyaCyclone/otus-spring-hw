@@ -9,16 +9,19 @@ import cyclone.otusspring.library.mapper.GenreMapper;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Genre;
+import cyclone.otusspring.library.service.AuthenticationService;
 import cyclone.otusspring.library.service.AuthorService;
 import cyclone.otusspring.library.service.BookService;
 import cyclone.otusspring.library.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.shell.table.Table;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -33,6 +36,8 @@ public class LibraryCommands {
     private final AuthorMapper authorMapper;
     private final GenreMapper genreMapper;
     private final BookMapper bookMapper;
+
+    private final AuthenticationService authenticationService;
 
     @ShellMethod(value = "List all books")
     public Table listBooks(
@@ -62,6 +67,14 @@ public class LibraryCommands {
                     .build();
         }
     }
+
+    public Availability listBooksAvailability() {
+        return StringUtils.hasText(authenticationService.getCurrentUsername())
+                ? Availability.available()
+                : Availability.unavailable("you need to sign in to list books");
+    }
+
+
 
     @ShellMethod(value = "Create book")
     public String createBook(
