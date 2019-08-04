@@ -11,6 +11,7 @@ import cyclone.otusspring.library.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class BookServiceImpl implements BookService {
 
 
     @Override
+    @PostFilter("hasPermission(filterObject, 'READ')")
     public List<Book> findAll() {
         return bookRepository.findAll();
     }
