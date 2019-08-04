@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.shell.table.Table;
 
 import static cyclone.otusspring.library.TestData.*;
@@ -60,9 +61,18 @@ class LibraryCommandsTest {
     @ParameterizedTest
     @DisplayName("listBooks (with --verbose and without)")
     @ValueSource(strings = {"true", "false"})
-        // doesn't support booleans, so let's use strings
-    void listBooks(String verboseString) {
-        assertTableRowCount(libraryCommands.listBooks(Boolean.valueOf(verboseString)), 5);
+    // doesn't support boolean, so let's use string parameter
+    @WithMockUser(username = "user1", roles = {"USER"})
+    void listBooksAsUser1(String verboseString) {
+        int expectedRowCount = 3; // ACL allows to see only 3 of 5 books to user1
+        assertTableRowCount(libraryCommands.listBooks(Boolean.valueOf(verboseString)), expectedRowCount);
+    }
+
+    @Test
+    @WithMockUser(username = "user2", roles = {"USER"})
+    void listBooksAsUser2() {
+        int expectedRowCount = 2; // ACL allows to see only 2 of 5 books to user2
+        assertTableRowCount(libraryCommands.listBooks(false), expectedRowCount);
     }
 
     @Test

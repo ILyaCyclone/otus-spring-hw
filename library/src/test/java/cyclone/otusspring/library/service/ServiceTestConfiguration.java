@@ -2,6 +2,7 @@ package cyclone.otusspring.library.service;
 
 import cyclone.otusspring.library.security.SecurityConfig;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -18,4 +19,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @Import(SecurityConfig.class) // required for AuthenticationService
 @EnableMongoRepositories(basePackages = "cyclone.otusspring.library.repository.mongo")
 public class ServiceTestConfiguration {
+    @MockBean
+    LibraryAclService libraryAclService;
 }

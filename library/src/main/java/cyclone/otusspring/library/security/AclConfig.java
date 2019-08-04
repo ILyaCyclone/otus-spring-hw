@@ -72,10 +72,8 @@ public class AclConfig {
     @Bean
     public LookupStrategy lookupStrategy() {
         // conversionService will convert from String to String, so use GenericConversionService
-        BasicLookupStrategyWithConversion basicLookupStrategy = new BasicLookupStrategyWithConversion(dataSource, aclCache(), aclAuthorizationStrategy(), new ConsoleAuditLogger()
+        return new BasicLookupStrategyWithConversion(dataSource, aclCache(), aclAuthorizationStrategy(), new ConsoleAuditLogger()
                 , new GenericConversionService());
-
-        return basicLookupStrategy;
     }
 
     @Bean
