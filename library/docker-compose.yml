@@ -25,4 +25,4 @@ services:
     stdin_open: true # --interactive , -i		Keep STDIN open even if not attached
     tty: true # --tty , -t		Allocate a pseudo-TTY
     environment:
-      - MONGO_HOST=mongodb-service
+      - SPRING_DATA_MONGODB_HOST=mongodb-service

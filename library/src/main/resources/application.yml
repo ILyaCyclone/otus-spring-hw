@@ -2,5 +2,5 @@ spring:
   data:
     mongodb:
       database: otus-library
-      host: ${MONGO_HOST}
+      host: localhost
       port: 27017

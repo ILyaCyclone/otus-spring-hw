@@ -1,4 +1,5 @@
 #docker build -t ilyacyclone/otus-library:0.0.1 .
+# docker run -e SPRING_DATA_MONGODB_HOST=<mongodb_host> ilyacyclone/otus-library:0.0.1
 # -v "$HOME/.m2":/root/.m2 --- add this to reuse local maven repo (or not?)
 
 FROM maven:3.6.1-jdk-8 AS MAVEN_BUILD
