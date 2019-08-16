@@ -13,13 +13,12 @@ services:
   #      MONGO_INITDB_ROOT_PASSWORD: example
 
   otus-library-service:
-    container_name: otus-library
-    build: .
     depends_on:
       - mongodb-service
+    build: .
+    image: ilyacyclone/otus-library:0.0.1
+    container_name: otus-library-app
     restart: on-failure:2
-    volumes:
-      - $HOME/.m2:/root/.m2
     ports:
       - 9090:8080
     stdin_open: true # --interactive , -i		Keep STDIN open even if not attached
