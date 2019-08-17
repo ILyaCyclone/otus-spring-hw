@@ -13,7 +13,7 @@
   <artifactId>library-migration</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>library-migration</name>
-  <description>Spring Batch migration from MongoDB to PostgreSQL</description>
+  <description>Spring Batch migration for OTUS Library data from MongoDB to PostgreSQL</description>
 
   <properties>
     <java.version>1.8</java.version>
@@ -29,6 +29,23 @@
   </properties>
 
   <dependencies>
+    <!--    <dependency>-->
+    <!--      <groupId>org.springframework.boot</groupId>-->
+    <!--      <artifactId>spring-boot-starter-batch</artifactId>-->
+    <!--    </dependency>-->
+
+    <dependency>
+      <groupId>org.springframework.shell</groupId>
+      <artifactId>spring-shell-starter</artifactId>
+      <version>${spring-shell-starter.version}</version>
+    </dependency>
+
+    <!-- works without mongo dependency outside docker -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-mongodb</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>cyclone.otus-spring-hw</groupId>
       <artifactId>library</artifactId>
@@ -90,6 +107,7 @@
   </dependencies>
 
   <build>
+    <finalName>otus-library-migration</finalName>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
