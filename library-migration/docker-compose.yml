@@ -5,39 +5,32 @@ services:
   library-migration-postgres:
     image: postgres:11
     container_name: library-migration-postgres
-    ports:
-      - 5432:5432 # temporary: access from outsude
-#    restart: on-failure:1
     environment:
       POSTGRES_PASSWORD: m1gr4ti0n
+    networks:
+      - library-migration_default
+#    ports:
+#      - 5432:5432 # uncomment to open access to postgres from outside
 
 
   library-migration-service:
-#    networks:
-#      - nexusnetwork
-#    external_links:
-#      - nexus
     build:
       context: ../
       dockerfile: library-migration/Dockerfile
     image: ilyacyclone/otus-library-migration:0.0.1
     container_name: library-migration
-#    restart: on-failure:1
-#    ports:
-#      - 8080:8080
     stdin_open: true # --interactive , -i		Keep STDIN open even if not attached
     tty: true # --tty , -t		Allocate a pseudo-TTY
     depends_on:
       - library-migration-postgres
-#    networks:
-#      - otus-library-network
     environment:
-#      - SPRING_DATA_MONGODB_HOST=mongodb-service
+      - SPRING_DATA_MONGODB_HOST=mongodb-service
       - SPRING_DATASOURCE_URL=jdbc:postgresql://library-migration-postgres:5432/postgres
+    networks:
+      - library-migration_default
+      - otus-library-network
 
-#networks:
-#  nexusnetwork:
-#    external: true
-#networks:
-#  otus-library-network:
-#    external: true
+networks:
+  library-migration_default:
+  otus-library-network:
+    external: true
