@@ -9,7 +9,6 @@ import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
-import liquibase.integration.spring.SpringLiquibase;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -22,26 +21,28 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.MongoItemReader;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
+import org.springframework.batch.item.database.ItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.util.HashMap;
 
 @Configuration
 @EnableBatchProcessing
 @RequiredArgsConstructor
 public class BatchConfig {
-    private final JdbcTemplate jdbcTemplate;
     private final MongoTemplate mongoTemplate;
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
+
+//    private final String LIQUIBASE_CHANGELOG = "db/changelog/db.changelog-master.yaml";
+    private final String LIQUIBASE_CHANGELOG = "db/changelog/db.changelog-library-migration.yaml";
 
 //    private final SpringLiquibase springLiquibase;
 
@@ -60,10 +61,11 @@ public class BatchConfig {
     public Step createLibrarySchema(DataSource dataSource) {
         return stepBuilderFactory.get("createLibrarySchema")
                 .tasklet((stepContribution, chunkContext) -> {
+                    // https://dzone.com/articles/executing-liquibase-3-use-cases
                     Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(
                             new JdbcConnection(dataSource.getConnection()));
 //                    Liquibase liquibase = new liquibase.Liquibase(springLiquibase.getChangeLog()
-                    Liquibase liquibase = new liquibase.Liquibase("db/changelog/db.changelog-master.yaml"
+                    Liquibase liquibase = new liquibase.Liquibase(LIQUIBASE_CHANGELOG
                             , new ClassLoaderResourceAccessor(), database);
                     liquibase.update(new Contexts(), new LabelExpression());
                 return RepeatStatus.FINISHED;
@@ -107,12 +109,19 @@ public class BatchConfig {
 
     @Bean
     public JdbcBatchItemWriter authorWriter(DataSource dataSource) {
-        JdbcBatchItemWriter writer = new JdbcBatchItemWriter();
+        JdbcBatchItemWriter<Author> writer = new JdbcBatchItemWriter<>();
         writer.setDataSource(dataSource);
         writer.setSql("insert into author (firstname, lastname, homeland) " +
                 "values (:firstname, :lastname, :homeland)");
-//        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<Author>());
-        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider());
+        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
+
+        // custom SqlParameterSourceProvider example:
+//        writer.setItemSqlParameterSourceProvider(author ->
+//            new MapSqlParameterSource()
+//                .addValue("firstname", author.getFirstname())
+//                .addValue("lastname", author.getLastname())
+//                .addValue("homeland", author.getHomeland())
+//        );
         return writer;
     }
 

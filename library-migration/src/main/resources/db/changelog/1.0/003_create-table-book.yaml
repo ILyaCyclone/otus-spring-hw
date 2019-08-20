@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003_create-table-book
+      author: ilyacyclone
+      changes:
+        - createTable:
+            tableName: book
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: title
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: year
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    references: author(id)
+                    deleteCascade: true
+                    foreignKeyName: fk_book_author
+              - column:
+                  name: genre_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    references: genre(id)
+                    deleteCascade: true
+                    foreignKeyName: fk_book_genre

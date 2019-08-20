@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 001_create-table-comment
+      id: 001_create-table-author
       author: ilyacyclone
       changes:
         - createTable:
@@ -8,9 +8,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: serial
+                  type: bigserial
+                  autoIncrement: true
                   constraints:
-                    nullable: false
                     primaryKey: true
               - column:
                   name: firstname
