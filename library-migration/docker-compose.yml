@@ -2,9 +2,11 @@ version: '3.1'
 
 services:
 
-  library-migration-postgres-service:
+  library-migration-postgres:
     image: postgres:11
     container_name: library-migration-postgres
+    ports:
+      - 5432:5432 # temporary: access from outsude
 #    restart: on-failure:1
     environment:
       POSTGRES_PASSWORD: m1gr4ti0n
@@ -26,12 +28,12 @@ services:
     stdin_open: true # --interactive , -i		Keep STDIN open even if not attached
     tty: true # --tty , -t		Allocate a pseudo-TTY
     depends_on:
-      - library-migration-postgres-service
+      - library-migration-postgres
 #    networks:
 #      - otus-library-network
     environment:
 #      - SPRING_DATA_MONGODB_HOST=mongodb-service
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://library-migration-postgres-service:5432/postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://library-migration-postgres:5432/postgres
 
 #networks:
 #  nexusnetwork:

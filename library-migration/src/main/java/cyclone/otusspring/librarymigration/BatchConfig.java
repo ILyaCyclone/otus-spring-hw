@@ -28,9 +28,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import javax.sql.DataSource;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 
 @Configuration
@@ -47,6 +52,14 @@ public class BatchConfig {
 //    private final SpringLiquibase springLiquibase;
 
     @Bean
+    public Job onlyCreateSchemaJob(Step createLibrarySchema) {
+        return jobBuilderFactory.get("onlyCreateSchema")
+                .incrementer(new RunIdIncrementer())
+                .start(createLibrarySchema)
+                .build();
+    }
+
+    @Bean
     public Job libraryMigrationJob(Step createLibrarySchema, Step migrateAuthors) {
         return jobBuilderFactory.get("mongoMigrateToJdbc")
                 .incrementer(new RunIdIncrementer())
@@ -61,17 +74,41 @@ public class BatchConfig {
     public Step createLibrarySchema(DataSource dataSource) {
         return stepBuilderFactory.get("createLibrarySchema")
                 .tasklet((stepContribution, chunkContext) -> {
-                    // https://dzone.com/articles/executing-liquibase-3-use-cases
-                    Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(
-                            new JdbcConnection(dataSource.getConnection()));
-//                    Liquibase liquibase = new liquibase.Liquibase(springLiquibase.getChangeLog()
-                    Liquibase liquibase = new liquibase.Liquibase(LIQUIBASE_CHANGELOG
-                            , new ClassLoaderResourceAccessor(), database);
-                    liquibase.update(new Contexts(), new LabelExpression());
-                return RepeatStatus.FINISHED;
+                    InputStream stream = BatchConfig.class.getClassLoader().getResourceAsStream("library-schema.sql");
+                    String librarySchemaSql = readFromInputStream(stream);
+                    stream.close();
+                    new JdbcTemplate(dataSource).execute(librarySchemaSql);
+                    return RepeatStatus.FINISHED;
                 })
                 .build();
     }
+    private String readFromInputStream(InputStream inputStream)
+            throws IOException {
+        StringBuilder resultStringBuilder = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                resultStringBuilder.append(line).append("\n");
+            }
+        }
+        return resultStringBuilder.toString();
+    }
+
+    // works fine locally, doesn't do anything in Docker
+//    @Bean
+//    public Step createLibrarySchema(DataSource dataSource) {
+//        return stepBuilderFactory.get("createLibrarySchema")
+//                .tasklet((stepContribution, chunkContext) -> {
+//                    // https://dzone.com/articles/executing-liquibase-3-use-cases
+//                    Database database = DatabaseFactory.getInstance()
+//                            .findCorrectDatabaseImplementation(new JdbcConnection(dataSource.getConnection()));
+//                    Liquibase liquibase = new Liquibase(LIQUIBASE_CHANGELOG, new ClassLoaderResourceAccessor(), database);
+//                    liquibase.update(new Contexts(), new LabelExpression());
+////                    liquibase.update();
+//                    return RepeatStatus.FINISHED;
+//                })
+//                .build();
+//    }
 
 
     @Bean

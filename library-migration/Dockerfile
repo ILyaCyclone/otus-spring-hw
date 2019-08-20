@@ -20,6 +20,8 @@ ENV PROJECT_DIR=/library-migration-app
 RUN mkdir -p $PROJECT_DIR
 WORKDIR $PROJECT_DIR
 #COPY ./library/maven-settings.xml /root/.m2/settings.xml
+#COPY ./library/maven-settings_local-nexus.xml /root/.m2/settings.xml
+COPY ./library/maven-settings_docker-nexus.xml /root/.m2/settings.xml
 COPY --from=BUILD_LIBRARY_STAGE /library-app/target/otus-library-app-to-import.jar $PROJECT_DIR/
 RUN mvn install:install-file -Dfile=/library-migration-app/otus-library-app-to-import.jar -DgroupId=cyclone.otus-spring-hw -DartifactId=library -Dversion=0.0.1-SNAPSHOT -Dpackaging=jar -Dclassifier=app-to-import
 COPY ./library-migration/pom.xml $PROJECT_DIR
