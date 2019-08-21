@@ -3,6 +3,7 @@ package cyclone.otusspring.librarymigration;
 //import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 
 import cyclone.otusspring.library.model.Author;
+import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Genre;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
@@ -66,12 +67,14 @@ public class BatchConfig {
     public Job libraryMigrationJob(Step createLibrarySchema
             , Step migrateAuthors
             , Step migrateGenres
+            , Step migrateBooks
     ) {
         return jobBuilderFactory.get("mongoMigrateToJdbc")
                 .incrementer(new RunIdIncrementer())
                 .start(createLibrarySchema)
                 .next(migrateAuthors)
                 .next(migrateGenres)
+                .next(migrateBooks)
                 .build();
     }
 
@@ -142,25 +145,32 @@ public class BatchConfig {
                 .build();
     }
 
+    @Bean
+    public Step migrateBooks(ItemReader<Book> reader
+            , ItemWriter<Book> writer) {
+        return stepBuilderFactory.get("migrateBooks")
+                .<Book, Book>chunk(5)
+                .reader(reader)
+                .writer(writer)
+                .build();
+    }
+
 
 
 
     @Bean
     public MongoItemReader<Author> authorReader() {
-//        MongoItemReader<Author> reader = new MongoItemReader<>();
-//        reader.setTemplate(mongoTemplate);
-//        reader.setSort(new HashMap<String, Sort.Direction>() {{
-//            put("_id", Sort.Direction.DESC);
-//        }});
-//        reader.setTargetType(Author.class);
-//        reader.setQuery("{}");
-//        return reader;
         return libraryItemReader(Author.class);
     }
 
     @Bean
     public MongoItemReader<Genre> genreReader() {
         return libraryItemReader(Genre.class);
+    }
+
+    @Bean
+    public MongoItemReader<Book> bookReader() {
+        return libraryItemReader(Book.class);
     }
 
     private <T> MongoItemReader<T> libraryItemReader(Class<T> clazz) {
@@ -195,15 +205,38 @@ public class BatchConfig {
 ////                .addValue("homeland", author.getHomeland())
 ////        );
 //        return writer;
-        return libraryItemWriter(dataSource, Author.class, "insert into author (firstname, lastname, homeland) " +
-                "values (:firstname, :lastname, :homeland)");
+        return libraryItemWriter(dataSource, Author.class, "insert into author (id, firstname, lastname, homeland) " +
+                "values (:id, :firstname, :lastname, :homeland)");
     }
 
     @Bean
     public JdbcBatchItemWriter<Genre> genreWriter(DataSource dataSource) {
-        return libraryItemWriter(dataSource, Genre.class, "insert into genre (name) " +
-                "values (:name)");
+        return libraryItemWriter(dataSource, Genre.class, "insert into genre (id, name) " +
+                "values (:id, :name)");
     }
+
+    @Bean
+    public JdbcBatchItemWriter<Book> bookWriter(DataSource dataSource) {
+        String insertSql = "insert into book (id, title, year, author_id, genre_id) " +
+                "values (:id, :title, :year, :author_id, :genre_id)";
+
+        JdbcBatchItemWriter<Book> writer = new JdbcBatchItemWriter<>();
+        writer.setDataSource(dataSource);
+        writer.setSql(insertSql);
+        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
+
+        // custom SqlParameterSourceProvider example:
+        writer.setItemSqlParameterSourceProvider(book ->
+            new MapSqlParameterSource()
+                .addValue("id", book.getId())
+                .addValue("title", book.getTitle())
+                .addValue("year", book.getYear())
+                .addValue("author_id", book.getAuthor().getId())
+                .addValue("genre_id", book.getGenre().getId())
+        );
+        return writer;
+    }
+
 
     private <T> JdbcBatchItemWriter<T> libraryItemWriter(DataSource dataSource, Class<T> clazz, String insertSql) {
         JdbcBatchItemWriter<T> writer = new JdbcBatchItemWriter<>();
@@ -220,5 +253,6 @@ public class BatchConfig {
 //        );
         return writer;
     }
+
 
 }
