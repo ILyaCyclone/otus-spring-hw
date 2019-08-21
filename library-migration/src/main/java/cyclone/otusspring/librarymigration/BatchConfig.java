@@ -3,6 +3,7 @@ package cyclone.otusspring.librarymigration;
 //import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 
 import cyclone.otusspring.library.model.Author;
+import cyclone.otusspring.library.model.Genre;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -17,6 +18,7 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.MongoItemReader;
@@ -30,6 +32,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import sun.nio.ch.IOUtil;
 
 import javax.sql.DataSource;
 import java.io.BufferedReader;
@@ -51,21 +54,24 @@ public class BatchConfig {
 
 //    private final SpringLiquibase springLiquibase;
 
-    @Bean
-    public Job onlyCreateSchemaJob(Step createLibrarySchema) {
-        return jobBuilderFactory.get("onlyCreateSchema")
-                .incrementer(new RunIdIncrementer())
-                .start(createLibrarySchema)
-                .build();
-    }
+//    @Bean
+//    public Job onlyCreateSchemaJob(Step createLibrarySchema) {
+//        return jobBuilderFactory.get("onlyCreateSchema")
+//                .incrementer(new RunIdIncrementer())
+//                .start(createLibrarySchema)
+//                .build();
+//    }
 
     @Bean
-    public Job libraryMigrationJob(Step createLibrarySchema, Step migrateAuthors) {
+    public Job libraryMigrationJob(Step createLibrarySchema
+            , Step migrateAuthors
+            , Step migrateGenres
+    ) {
         return jobBuilderFactory.get("mongoMigrateToJdbc")
                 .incrementer(new RunIdIncrementer())
                 .start(createLibrarySchema)
                 .next(migrateAuthors)
-//                .next(migrateBooks)
+                .next(migrateGenres)
                 .build();
     }
 
@@ -114,9 +120,9 @@ public class BatchConfig {
     @Bean
     public Step migrateAuthors(ItemReader<Author> authorReader
 //            , ItemProcessor<Author> authorProcessor
-            , ItemWriter authorWriter) {
+            , ItemWriter<Author>  authorWriter) {
         return stepBuilderFactory.get("migrateAuthors")
-                .chunk(5)
+                .<Author, Author>chunk(5)
                 .reader(authorReader)
 //                .processor(authorProcessor)
                 .writer(authorWriter)
@@ -126,15 +132,44 @@ public class BatchConfig {
                 .build();
     }
 
+    @Bean
+    public Step migrateGenres(ItemReader<Genre> reader
+            , ItemWriter<Genre> writer) {
+        return stepBuilderFactory.get("migrateGenres")
+                .<Genre, Genre>chunk(5)
+                .reader(reader)
+                .writer(writer)
+                .build();
+    }
+
+
+
 
     @Bean
     public MongoItemReader<Author> authorReader() {
-        MongoItemReader<Author> reader = new MongoItemReader<>();
+//        MongoItemReader<Author> reader = new MongoItemReader<>();
+//        reader.setTemplate(mongoTemplate);
+//        reader.setSort(new HashMap<String, Sort.Direction>() {{
+//            put("_id", Sort.Direction.DESC);
+//        }});
+//        reader.setTargetType(Author.class);
+//        reader.setQuery("{}");
+//        return reader;
+        return libraryItemReader(Author.class);
+    }
+
+    @Bean
+    public MongoItemReader<Genre> genreReader() {
+        return libraryItemReader(Genre.class);
+    }
+
+    private <T> MongoItemReader<T> libraryItemReader(Class<T> clazz) {
+        MongoItemReader<T> reader = new MongoItemReader<>();
         reader.setTemplate(mongoTemplate);
         reader.setSort(new HashMap<String, Sort.Direction>() {{
             put("_id", Sort.Direction.DESC);
         }});
-        reader.setTargetType(Author.class);
+        reader.setTargetType(clazz);
         reader.setQuery("{}");
         return reader;
     }
@@ -145,11 +180,35 @@ public class BatchConfig {
 //    }
 
     @Bean
-    public JdbcBatchItemWriter authorWriter(DataSource dataSource) {
-        JdbcBatchItemWriter<Author> writer = new JdbcBatchItemWriter<>();
-        writer.setDataSource(dataSource);
-        writer.setSql("insert into author (firstname, lastname, homeland) " +
+    public JdbcBatchItemWriter<Author> authorWriter(DataSource dataSource) {
+//        JdbcBatchItemWriter<Author> writer = new JdbcBatchItemWriter<>();
+//        writer.setDataSource(dataSource);
+//        writer.setSql("insert into author (firstname, lastname, homeland) " +
+//                "values (:firstname, :lastname, :homeland)");
+//        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
+//
+//        // custom SqlParameterSourceProvider example:
+////        writer.setItemSqlParameterSourceProvider(author ->
+////            new MapSqlParameterSource()
+////                .addValue("firstname", author.getFirstname())
+////                .addValue("lastname", author.getLastname())
+////                .addValue("homeland", author.getHomeland())
+////        );
+//        return writer;
+        return libraryItemWriter(dataSource, Author.class, "insert into author (firstname, lastname, homeland) " +
                 "values (:firstname, :lastname, :homeland)");
+    }
+
+    @Bean
+    public JdbcBatchItemWriter<Genre> genreWriter(DataSource dataSource) {
+        return libraryItemWriter(dataSource, Genre.class, "insert into genre (name) " +
+                "values (:name)");
+    }
+
+    private <T> JdbcBatchItemWriter<T> libraryItemWriter(DataSource dataSource, Class<T> clazz, String insertSql) {
+        JdbcBatchItemWriter<T> writer = new JdbcBatchItemWriter<>();
+        writer.setDataSource(dataSource);
+        writer.setSql(insertSql);
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
 
         // custom SqlParameterSourceProvider example:
