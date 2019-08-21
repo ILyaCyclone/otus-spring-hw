@@ -1,4 +1,4 @@
-package cyclone.otusspring.librarymigration;
+package cyclone.otusspring.librarymigration.batch;
 
 import cyclone.otusspring.library.model.Comment;
 import lombok.Data;
