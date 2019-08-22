@@ -26,7 +26,6 @@
 
     <spring-shell-starter.version>2.0.1.RELEASE</spring-shell-starter.version>
     <junit-jupiter.version>5.4.1</junit-jupiter.version>
-    <liquibase-core.version>3.7.0</liquibase-core.version>
   </properties>
 
   <dependencies>
@@ -45,11 +44,6 @@
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.liquibase</groupId>
-      <artifactId>liquibase-core</artifactId>
-      <version>${liquibase-core.version}</version>
     </dependency>
 
     <dependency>

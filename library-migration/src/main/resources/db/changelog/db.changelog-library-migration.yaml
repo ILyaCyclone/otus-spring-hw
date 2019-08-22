@@ -1,7 +1,0 @@
-#default liquibase file classpath:/db/changelog/db.changelog-master.yaml
-
-databaseChangeLog:
-  - includeAll:
-      path: db/changelog/1.0/
-#  - includeAll:
-#      path: db/changelog/data/
