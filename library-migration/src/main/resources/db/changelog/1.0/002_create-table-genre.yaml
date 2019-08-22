@@ -8,8 +8,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: bigserial
-                  autoIncrement: true
+                  type: varchar(24)
+#                  type: bigserial
+#                  autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
