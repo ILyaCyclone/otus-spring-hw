@@ -4,3 +4,19 @@ spring:
       database: otus-library
       host: localhost
       port: 27047 # change from standard 27017
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,health,metrics,loggers,logfile
+  endpoint:
+    health:
+      show-details: always
+info:
+  app:
+    name: OTUS Library
+    description: Homework for https://otus.ru Spring Developer course
+
+logging:
+  file: library.log
