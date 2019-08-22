@@ -9,10 +9,11 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: info,health,metrics,loggers,logfile
   endpoint:
     health:
       show-details: always
+info:
   app:
     name: OTUS Library
     description: Homework for https://otus.ru Spring Developer course
