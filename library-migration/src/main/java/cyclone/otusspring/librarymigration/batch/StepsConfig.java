@@ -3,6 +3,13 @@ package cyclone.otusspring.librarymigration.batch;
 import cyclone.otusspring.library.model.Author;
 import cyclone.otusspring.library.model.Book;
 import cyclone.otusspring.library.model.Genre;
+import liquibase.Contexts;
+import liquibase.LabelExpression;
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
@@ -27,7 +34,7 @@ public class StepsConfig {
     private final StepBuilderFactory stepBuilderFactory;
 
     //    private final String LIQUIBASE_CHANGELOG = "db/changelog/db.changelog-master.yaml";
-    //    private final String LIQUIBASE_CHANGELOG = "db/changelog/db.changelog-library-migration.yaml";
+        private final String LIQUIBASE_CHANGELOG = "db/changelog/db.changelog-library-migration.yaml";
 
     @Bean
     public Step migrateAuthors(ItemReader<Author> authorReader
@@ -43,42 +50,16 @@ public class StepsConfig {
     public Step createLibrarySchema(DataSource dataSource) {
         return stepBuilderFactory.get("createLibrarySchema")
                 .tasklet((stepContribution, chunkContext) -> {
-                    InputStream stream = BatchConfig.class.getClassLoader().getResourceAsStream("library-schema.sql");
-                    String librarySchemaSql = readFromInputStream(stream);
-                    stream.close();
-                    new JdbcTemplate(dataSource).execute(librarySchemaSql);
+                    // https://dzone.com/articles/executing-liquibase-3-use-cases
+                    Database database = DatabaseFactory.getInstance()
+                            .findCorrectDatabaseImplementation(new JdbcConnection(dataSource.getConnection()));
+                    Liquibase liquibase = new Liquibase(LIQUIBASE_CHANGELOG, new ClassLoaderResourceAccessor(), database);
+                    liquibase.update(new Contexts(), new LabelExpression());
+//                    liquibase.update();
                     return RepeatStatus.FINISHED;
                 })
                 .build();
     }
-
-    private String readFromInputStream(InputStream inputStream)
-            throws IOException {
-        StringBuilder resultStringBuilder = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                resultStringBuilder.append(line).append("\n");
-            }
-        }
-        return resultStringBuilder.toString();
-    }
-
-    // works fine locally, doesn't create schema in Docker
-//    @Bean
-//    public Step createLibrarySchema(DataSource dataSource) {
-//        return stepBuilderFactory.get("createLibrarySchema")
-//                .tasklet((stepContribution, chunkContext) -> {
-//                    // https://dzone.com/articles/executing-liquibase-3-use-cases
-//                    Database database = DatabaseFactory.getInstance()
-//                            .findCorrectDatabaseImplementation(new JdbcConnection(dataSource.getConnection()));
-//                    Liquibase liquibase = new Liquibase(LIQUIBASE_CHANGELOG, new ClassLoaderResourceAccessor(), database);
-//                    liquibase.update(new Contexts(), new LabelExpression());
-////                    liquibase.update();
-//                    return RepeatStatus.FINISHED;
-//                })
-//                .build();
-//    }
 
 
 
