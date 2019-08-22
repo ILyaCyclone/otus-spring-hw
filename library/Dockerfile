@@ -1,4 +1,4 @@
-#docker build -t ilyacyclone/otus-library:0.0.1 .
+# docker build -t ilyacyclone/otus-library:0.0.1 .
 # docker run -e SPRING_DATA_MONGODB_HOST=<mongodb_host> ilyacyclone/otus-library:0.0.1
 # -v "$HOME/.m2":/root/.m2 --- add this to reuse local maven repo (or not?)
 
@@ -9,8 +9,12 @@ ENV PROJECT_DIR=/app
 RUN mkdir -p $PROJECT_DIR
 WORKDIR $PROJECT_DIR
 
+# optionally provide custom Maven settings
+COPY ./maven-settings $PROJECT_DIR/maven-settings
+RUN if [ -f $PROJECT_DIR/maven-settings/settings.xml ] ; \
+    then mkdir /root/.m2/ ; cp $PROJECT_DIR/maven-settings/settings.xml /root/.m2/settings.xml ; fi
+
 COPY ./pom.xml $PROJECT_DIR
-#RUN mvn dependency:resolve # this doesn't help caching dependencies
 #cache dependencies
 RUN mvn dependency:go-offline -B
 
@@ -18,6 +22,7 @@ RUN mvn dependency:go-offline -B
 COPY ./src/ $PROJECT_DIR/src
 
 RUN mvn -DskipTests=true clean package
+
 
 
 FROM openjdk:8-jre-alpine

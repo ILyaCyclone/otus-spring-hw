@@ -5,12 +5,16 @@ services:
   mongodb-service:
     image: mongo:4.0.10
     container_name: otus-library-mongo
-    # https://hub.docker.com/_/mongo
-    #    command: --smallfiles
-    restart: on-failure:2
-  #    environment:
-  #      MONGO_INITDB_ROOT_USERNAME: root
-  #      MONGO_INITDB_ROOT_PASSWORD: example
+    command: --smallfiles
+    restart: on-failure:1
+
+    networks:
+      - otus-library-network
+
+#    ports:
+#      - 27017:27017 # uncomment to open access to mongo from outside
+
+
 
   otus-library-service:
     depends_on:
@@ -18,10 +22,18 @@ services:
     build: .
     image: ilyacyclone/otus-library:0.0.1
     container_name: otus-library-app
-    restart: on-failure:2
+    restart: on-failure:1
     ports:
       - 9090:8080
     stdin_open: true # --interactive , -i		Keep STDIN open even if not attached
     tty: true # --tty , -t		Allocate a pseudo-TTY
     environment:
       - SPRING_DATA_MONGODB_HOST=mongodb-service
+    networks:
+      - otus-library-network
+
+
+
+networks:
+  otus-library-network:
+    external: true
