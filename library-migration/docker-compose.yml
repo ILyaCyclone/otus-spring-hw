@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_PASSWORD: m1gr4ti0n
     networks:
-      - library-migration_default
+      - default
 #    ports:
 #      - 5432:5432 # uncomment to open access to postgres from outside
 
@@ -27,10 +27,10 @@ services:
       - SPRING_DATA_MONGODB_HOST=mongodb-service
       - SPRING_DATASOURCE_URL=jdbc:postgresql://library-migration-postgres:5432/postgres
     networks:
-      - library-migration_default
+      - default
       - otus-library-network
 
 networks:
-  library-migration_default:
+  default:
   otus-library-network:
     external: true
