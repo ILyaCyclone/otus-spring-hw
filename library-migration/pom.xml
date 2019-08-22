@@ -96,41 +96,6 @@
       <artifactId>lombok</artifactId>
       <optional>true</optional>
     </dependency>
-
-
-    <!--    <dependency>-->
-<!--      <groupId>org.springframework.boot</groupId>-->
-<!--      <artifactId>spring-boot-starter-batch</artifactId>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.boot</groupId>-->
-<!--      <artifactId>spring-boot-starter-data-jpa</artifactId>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.boot</groupId>-->
-<!--      <artifactId>spring-boot-starter-data-mongodb</artifactId>-->
-<!--    </dependency>-->
-
-<!--    <dependency>-->
-<!--      <groupId>org.postgresql</groupId>-->
-<!--      <artifactId>postgresql</artifactId>-->
-<!--      <scope>runtime</scope>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.projectlombok</groupId>-->
-<!--      <artifactId>lombok</artifactId>-->
-<!--      <optional>true</optional>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.boot</groupId>-->
-<!--      <artifactId>spring-boot-starter-test</artifactId>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.batch</groupId>-->
-<!--      <artifactId>spring-batch-test</artifactId>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
   </dependencies>
 
   <build>
@@ -140,33 +105,6 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
-
-<!--      <plugin>-->
-<!--        <groupId>org.apache.maven.plugins</groupId>-->
-<!--        <artifactId>maven-shade-plugin</artifactId>-->
-<!--        <version>2.4.3</version>-->
-<!--        <executions>-->
-<!--          <execution>-->
-<!--            <phase>package</phase>-->
-<!--            <goals>-->
-<!--              <goal>shade</goal>-->
-<!--            </goals>-->
-<!--            <configuration>-->
-<!--              <filters>-->
-<!--                <filter>-->
-<!--                  <artifact>cyclone.otus-spring-hw:library:app-to-import</artifact>-->
-<!--                  <excludes>-->
-<!--                    <exclude>cyclone/otusspring/library/controller/**</exclude>-->
-<!--                    <exclude>cyclone/otusspring/library/shell/**</exclude>-->
-<!--                  </excludes>-->
-<!--                </filter>-->
-<!--              </filters>-->
-<!--            </configuration>-->
-<!--          </execution>-->
-<!--        </executions>-->
-<!--      </plugin>-->
-
-
     </plugins>
   </build>
 
